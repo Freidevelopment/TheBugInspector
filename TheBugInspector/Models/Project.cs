@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TheBugInspector.Client;
-using TheBugInspector.Client.Components.Models;
+using TheBugInspector.Client.Models;
 using TheBugInspector.Data;
 
 namespace TheBugInspector.Models
@@ -15,7 +15,7 @@ namespace TheBugInspector.Models
         public string? Name { get; set; }
         [Required]
         [Display(Name = "Project Description")]
-        [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
+        [MinLength(2)]
         public string? Description { get; set; }
 
         [Required]

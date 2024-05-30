@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TheBugInspector.Data;
 using TheBugInspector.Client;
-using TheBugInspector.Client.Components.Models;
+using TheBugInspector.Client.Models;
 
 namespace TheBugInspector.Models
 {
@@ -15,7 +15,7 @@ namespace TheBugInspector.Models
         public string? Title { get; set; }
         [Required]
         [Display(Name = "Ticket Description")]
-        [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
+        [MinLength(2)]
         public string? Description { get; set; }
 
         [Required]
@@ -25,7 +25,7 @@ namespace TheBugInspector.Models
             set => _created = value.ToUniversalTime();
         }
 
-        public DateTimeOffset? JoinDate
+        public DateTimeOffset? Updated
         {
             get => _updated?.ToLocalTime();
             set => _updated = value?.ToUniversalTime();
@@ -34,7 +34,7 @@ namespace TheBugInspector.Models
         public bool IsArchived { get; set; }
         public bool IsArchivedByProject { get; set; }
 
-        public ProjectPriority Priority { get; set; }
+        public TicketPriority Priority { get; set; }
 
         public TicketType Type { get; set; }
 
@@ -64,7 +64,7 @@ namespace TheBugInspector.Models
                 Title = ticket.Title,
                 Description = ticket.Description,
                 Created = ticket.Created,
-                JoinDate = ticket.JoinDate,
+                Updated = ticket.Updated,
                 IsArchived = ticket.IsArchived,
                 IsArchivedByProject = ticket.IsArchivedByProject,
                 Priority = ticket.Priority,

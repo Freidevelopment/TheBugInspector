@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using FreiBlogBuilder.Client.Helpers;
 
-namespace TheBugInspector.Client.Components.Models
+namespace TheBugInspector.Client.Models
 {
     public class CompanyDTO
     {

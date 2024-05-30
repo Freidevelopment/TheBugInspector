@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using TheBugInspector.Client.Components.Models;
 using TheBugInspector.Client;
 using TheBugInspector.Helpers;
 using TheBugInspector.Models;
+using TheBugInspector.Client.Models;
 
 namespace TheBugInspector.Data
 {

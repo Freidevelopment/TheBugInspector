@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
 using TheBugInspector.Client;
-using TheBugInspector.Client.Components.Models;
+using TheBugInspector.Client.Models;
 using TheBugInspector.Data;
 using TheBugInspector.Helpers;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using System.ComponentModel.DataAnnotations;
-using TheBugInspector.Client.Components.Models;
+using TheBugInspector.Client.Models;
 using TheBugInspector.Data;
 using TheBugInspector.Helpers;
 
@@ -25,6 +25,7 @@ namespace TheBugInspector.Models
             set => _created = value.ToUniversalTime();
         }
 
+        [Required]
         public Guid? UploadId { get; set; }
         public virtual FileUpload? Upload { get; set; }
         [Required]

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
 using System.Xml.Linq;
 
-namespace TheBugInspector.Client.Components.Models
+namespace TheBugInspector.Client.Models
 {
     public class TicketDTO
     {
@@ -25,7 +25,7 @@ namespace TheBugInspector.Client.Components.Models
             set => _created = value.ToUniversalTime();
         }
 
-        public DateTimeOffset? JoinDate
+        public DateTimeOffset? Updated
         {
             get => _updated?.ToLocalTime();
             set => _updated = value?.ToUniversalTime();
@@ -34,7 +34,7 @@ namespace TheBugInspector.Client.Components.Models
         public bool IsArchived { get; set; }
         public bool IsArchivedByProject { get; set; }
 
-        public ProjectPriority Priority { get; set; }
+        public TicketPriority Priority { get; set; }
 
         public TicketType Type { get; set; }
 

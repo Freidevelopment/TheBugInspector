@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
-using TheBugInspector.Client.Components.Models;
+using TheBugInspector.Client.Models;
 using TheBugInspector.Data;
 
 namespace TheBugInspector.Models

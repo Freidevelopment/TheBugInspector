@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Sockets;
 
-namespace TheBugInspector.Client.Components.Models
+namespace TheBugInspector.Client.Models
 {
     public class ProjectDTO
     {
@@ -13,7 +13,6 @@ namespace TheBugInspector.Client.Components.Models
         public string? Name { get; set; }
         [Required]
         [Display(Name = "Project Description")]
-        [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
         public string? Description { get; set; }
 
         [Required]

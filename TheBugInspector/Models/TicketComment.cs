@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TheBugInspector.Client.Components.Models;
+using TheBugInspector.Client.Models;
 using TheBugInspector.Data;
 using TheBugInspector.Helpers;
 

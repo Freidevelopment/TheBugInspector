@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TheBugInspector.Client.Components.Models
+namespace TheBugInspector.Client.Models
 {
     public class InviteDTO
     {

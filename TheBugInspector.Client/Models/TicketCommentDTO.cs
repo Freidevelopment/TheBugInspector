@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Sockets;
 
-namespace TheBugInspector.Client.Components.Models
+namespace TheBugInspector.Client.Models
 {
     public class TicketCommentDTO
     {
