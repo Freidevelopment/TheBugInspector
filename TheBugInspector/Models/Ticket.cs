@@ -2,7 +2,6 @@
 using TheBugInspector.Data;
 using TheBugInspector.Client;
 using TheBugInspector.Client.Components.Models;
-using static TheBugInspector.Client.Enums;
 
 namespace TheBugInspector.Models
 {

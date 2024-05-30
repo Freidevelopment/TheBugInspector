@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Sockets;
-using static TheBugInspector.Client.Enums;
 
 namespace TheBugInspector.Client.Components.Models
 {
