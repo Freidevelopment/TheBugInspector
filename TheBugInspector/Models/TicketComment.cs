@@ -40,6 +40,12 @@ namespace TheBugInspector.Models
                UserId = ticket.UserId
             };
 
+            if(ticket.User is not null)
+            {
+                UserDTO userDTO = ticket.User.ToDTO();
+                dto.User = userDTO;
+            }
+
             return dto;
 
 

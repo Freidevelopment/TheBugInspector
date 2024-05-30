@@ -70,6 +70,28 @@ namespace TheBugInspector.Models
                 InvitorId = invite.InvitorId,
             };
 
+            if(invite.Project is not null)
+            {
+                ProjectDTO projectDTO = invite.Project.ToDTO();
+                dto.Project = projectDTO;
+            }
+            
+            if(invite.Invitor is not null)
+            {
+                invite.Invitor.Projects = [];
+
+                UserDTO userDTO = invite.Invitor.ToDTO();
+                dto.Invitor = userDTO;
+            }
+
+            if (invite.Invitee is not null)
+            {
+                invite.Invitee.Projects = [];
+
+                UserDTO userDTO = invite.Invitee.ToDTO();
+                dto.Invitor = userDTO;
+            }
+
             return dto;
         }
     }

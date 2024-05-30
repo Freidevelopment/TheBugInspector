@@ -39,7 +39,7 @@ namespace TheBugInspector.Client.Components.Models
         public TicketStatus Status { get; set; }
 
         public int ProjectId { get; set; }
-        public virtual ProjectDTO? ProjectName { get; set; }
+        public virtual ProjectDTO? Project { get; set; }
 
         [Required]
         public string? SubmitterUserId { get; set; }

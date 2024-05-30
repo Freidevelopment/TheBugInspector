@@ -47,6 +47,13 @@ namespace TheBugInspector.Models
                 UploadUrl = ticket.UploadId.HasValue ? $"api/uploads/{ticket.UploadId}" : UploadHelper.DefaultContactImage,
             };
 
+            if(ticket.User is not null)
+            {
+                UserDTO userDTO = ticket.User.ToDTO();
+                dto.User = userDTO;
+            }
+
+
             return dto;
 
 
