@@ -5,10 +5,10 @@ namespace FreiBlogBuilder.Client.Helpers
     public static class ImageHelper
     {
 
-        public static readonly string DefaultProfilePicture = "/img/DefaultProfilePicture.svg";
-        public static readonly string DefaultContactImage = "/img/DefaultContactImage.png";
-        public static readonly string DefaultCategoryImage = "/img/DefaultCategoryImage.svg";
-        public static readonly string DefaultBlogImage = "/img/DefaultBlogImage.jpg";
+        public static readonly string DefaultProfilePicture = "/Images/DefaultProfilePicture.svg";
+        public static readonly string DefaultContactImage = "/Images/DefaultContactImage.png";
+        public static readonly string DefaultCategoryImage = "/Images/DefaultCategoryImage.svg";
+        public static readonly string DefaultBlogImage = "/Images/DefaultBlogImage.jpg";
         public static readonly int MaxFileSize = 5 * 1024 * 1024;
 
         public static async Task<string> GetDataUrl(IBrowserFile file)
