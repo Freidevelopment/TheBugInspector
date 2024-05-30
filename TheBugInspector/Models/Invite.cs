@@ -29,8 +29,12 @@ namespace TheBugInspector.Models
         [Required]
         public string? InviteeEmail { get; set; }
         [Required]
+        [StringLength(50, ErrorMessage = "The {0} must be at least {2} at most {1} characters long.", MinimumLength = 2)]
+        [Display(Name = "First Name")]
         public string? InviteeFirstName { get; set; }
         [Required]
+        [StringLength(50, ErrorMessage = "The {0} must be at least {2} at most {1} characters long.", MinimumLength = 2)]
+        [Display(Name = "Last Name")]
         public string? InviteeLastName { get; set; }
 
         public string? Message { get; set; }

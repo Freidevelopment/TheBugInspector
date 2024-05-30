@@ -14,6 +14,9 @@ namespace TheBugInspector.Models
         [Required]
         public string? Name { get; set; }
 
+        [Required]
+        [Display(Name = "Company Description")]
+        [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
         public string? Description { get; set; }
 
         public Guid? ImageId { get; set; }

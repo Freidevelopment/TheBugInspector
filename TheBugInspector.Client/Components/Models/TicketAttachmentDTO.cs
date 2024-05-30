@@ -11,6 +11,9 @@ namespace TheBugInspector.Client.Components.Models
         [Required]
         public string? FileName { get; set; }
 
+        [Required]
+        [Display(Name = "Ticket Attachment Description")]
+        [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
         public string? Description { get; set; }
 
         [Required]
@@ -20,7 +23,7 @@ namespace TheBugInspector.Client.Components.Models
             set => _created = value.ToUniversalTime();
         }
 
-        public string UploadUrl { get; set; } = ImageHelper.DefaultProfilePicture;
+        public string? UploadUrl { get; set; } = ImageHelper.DefaultProfilePicture;
         [Required]
         public string? UserId { get; set; }
         public virtual UserDTO? User { get; set; }

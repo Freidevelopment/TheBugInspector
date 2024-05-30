@@ -9,7 +9,10 @@ namespace TheBugInspector.Models
     {
         private DateTimeOffset _created;
         public int Id { get; set; }
+
         [Required]
+        [Display(Name = "Ticket Comment Content")]
+        [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
         public string? Content { get; set; }
 
         [Required]
