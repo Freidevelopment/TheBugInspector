@@ -40,7 +40,7 @@ namespace TheBugInspector.Models
                 Id = company.Id,
                 Name = company.Name,
                 Description = company.Description,
-                ImageUrl = company.ImageId.HasValue ? $"api/uploads/{company.ImageId}" : UploadHelper.DefaultContactImage,
+                ImageUrl = company.ImageId.HasValue ? $"api/uploads/{company.ImageId}" : FileHelper.DefaultContactImage,
 
             };
 

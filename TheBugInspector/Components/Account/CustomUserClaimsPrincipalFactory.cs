@@ -18,7 +18,7 @@ namespace TheBugInspector.Components.Account
             ClaimsIdentity identity = await base.GenerateClaimsAsync(user);
 
 
-            string profilePictureUrl = user.ProfilePictureId.HasValue ? $"/api/uploads/{user.ProfilePictureId}" : UploadHelper.DefaultProfilePicture;
+            string profilePictureUrl = user.ProfilePictureId.HasValue ? $"/api/uploads/{user.ProfilePictureId}" : FileHelper.DefaultProfilePicture;
 
             List<Claim> customClaims = [
                 new Claim(nameof(UserInfo.FirstName), user.FirstName!),

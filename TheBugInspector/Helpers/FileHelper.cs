@@ -4,7 +4,7 @@ using TheBugInspector.Models;
 
 namespace TheBugInspector.Helpers
 {
-    public class UploadHelper
+    public class FileHelper
     {
         public static readonly string DefaultProfilePicture = ImageHelper.DefaultProfilePicture;
         public static readonly string DefaultContactImage = ImageHelper.DefaultContactImage;

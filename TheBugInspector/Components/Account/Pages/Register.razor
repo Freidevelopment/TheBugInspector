@@ -57,7 +57,7 @@
             </div>
             <div class="mb-3 row">
                 <div class="col-md-4 text-center overflow-hidden">
-                    <img src="@UploadHelper.DefaultProfilePicture" class="img-fluid" id="imagePreview" height="80"/>
+                    <img src="@FileHelper.DefaultProfilePicture" class="img-fluid" id="imagePreview" height="80"/>
                 </div>
                 <div class="col-md-8">
                     <label class="form-label" for="image">Profile Picture</label>
@@ -112,7 +112,7 @@
         {
             try
             {
-                FileUpload image = await UploadHelper.GetImageUploadAsync(Input.ProfilePicture);
+                FileUpload image = await FileHelper.GetImageUploadAsync(Input.ProfilePicture);
 
                 // Save the Image First
                 await DBContext.Images.AddAsync(image);

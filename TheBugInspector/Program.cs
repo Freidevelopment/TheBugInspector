@@ -1,9 +1,14 @@
+using FreiBlogBuilder.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using TheBugInspector.Client.Services.Interfaces;
 using TheBugInspector.Components;
 using TheBugInspector.Components.Account;
 using TheBugInspector.Data;
+using TheBugInspector.Services;
+using TheBugInspector.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +50,9 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, SendGridService>();
 builder.Services.AddSingleton<IEmailSender, SendGridService>();
+
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectDTOService, ProjectDTOService>();
 
 
 var app = builder.Build();

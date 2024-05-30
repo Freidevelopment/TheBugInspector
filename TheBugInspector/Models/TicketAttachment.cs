@@ -48,7 +48,7 @@ namespace TheBugInspector.Models
                 Created = ticket.Created,
                 TicketId = ticket.TicketId,
                 UserId = ticket.UserId,
-                UploadUrl = ticket.UploadId.HasValue ? $"api/uploads/{ticket.UploadId}" : UploadHelper.DefaultContactImage,
+                UploadUrl = ticket.UploadId.HasValue ? $"api/uploads/{ticket.UploadId}" : FileHelper.DefaultContactImage,
             };
 
             if(ticket.User is not null)
