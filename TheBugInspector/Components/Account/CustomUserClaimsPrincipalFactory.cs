@@ -7,8 +7,10 @@ using TheBugInspector.Helpers;
 
 namespace TheBugInspector.Components.Account
 {
-    public class CustomUserClaimsPrincipalFactory(UserManager<ApplicationUser> userManager, IOptions<IdentityOptions> options)
-        : UserClaimsPrincipalFactory<ApplicationUser>(userManager, options)
+    public class CustomUserClaimsPrincipalFactory(UserManager<ApplicationUser> userManager,
+                                                  RoleManager<IdentityRole> roleManager,
+                                                  IOptions<IdentityOptions> options)
+        : UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>(userManager, roleManager, options)
     {
 
         protected override async Task<ClaimsIdentity> GenerateClaimsAsync(ApplicationUser user)
@@ -16,12 +18,13 @@ namespace TheBugInspector.Components.Account
             ClaimsIdentity identity = await base.GenerateClaimsAsync(user);
 
 
-            string profilePictureUrl = user.ImageId.HasValue ? $"/api/uploads/{user.ImageId}" : UploadHelper.DefaultProfilePicture;
+            string profilePictureUrl = user.ProfilePictureId.HasValue ? $"/api/uploads/{user.ProfilePictureId}" : UploadHelper.DefaultProfilePicture;
 
             List<Claim> customClaims = [
                 new Claim(nameof(UserInfo.FirstName), user.FirstName!),
                 new Claim(nameof(UserInfo.LastName), user.LastName!),
                 new Claim(nameof(UserInfo.ProfilePictureUrl), profilePictureUrl),
+                new Claim("CompanyId", user.CompanyId.ToString())
 
                 ];
 

@@ -92,8 +92,9 @@ namespace TheBugInspector.Components.Account
                 string? firstName = principal.FindFirst(nameof(UserInfo.FirstName))?.Value;
                 string? lastName = principal.FindFirst(nameof(UserInfo.LastName))?.Value;
                 string? profilePictureUrl = principal.FindFirst(nameof(UserInfo.ProfilePictureUrl))?.Value;
+                string? companyId = principal.FindFirst("CompanyId")?.Value;
 
-                if (userId != null && email != null && firstName != null && lastName != null && profilePictureUrl != null)
+                if (userId != null && email != null && firstName != null && lastName != null && profilePictureUrl != null && companyId != null)
                 {
                     state.PersistAsJson(nameof(UserInfo), new UserInfo
                     {
@@ -101,7 +102,9 @@ namespace TheBugInspector.Components.Account
                         Email = email,
                         FirstName = firstName,
                         LastName = lastName,
-                        ProfilePictureUrl = profilePictureUrl
+                        ProfilePictureUrl = profilePictureUrl,
+                        Roles = [.. principal.FindAll(ClaimTypes.Role).Select(claim => claim.Value)],
+                        CompanyId = int.Parse(companyId)
                     });
                 }
             }

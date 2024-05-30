@@ -39,7 +39,7 @@
             </div>
 
                 <div class="col-md-6 order-first order-md-last">
-                <img src="@(user?.ImageId.HasValue == true ? $"/api/uploads/{user.ImageId}" : UploadHelper.DefaultProfilePicture)" class="img-fluid p-5 pt-0 rounded-3" id="imagePreview" />
+                <img src="@(user?.ProfilePictureId.HasValue == true ? $"/api/uploads/{user.ProfilePictureId}" : UploadHelper.DefaultProfilePicture)" class="img-fluid p-5 pt-0 rounded-3" id="imagePreview" />
                     
                     <label class="form-label" for="image">Profile Picture</label>
                     <input type="file"
@@ -89,14 +89,14 @@
                 FileUpload newImage = await UploadHelper.GetImageUploadAsync(Input.ProfilePicture);
                 await DBContext.AddAsync(newImage);
 
-                FileUpload? oldImage = await DBContext.Images.FirstOrDefaultAsync(i => i.Id == user.ImageId);
+                FileUpload? oldImage = await DBContext.Images.FirstOrDefaultAsync(i => i.Id == user.ProfilePictureId);
                 if(oldImage != null)
                 {
                     DBContext.Remove(oldImage);
                 }
 
-                user.Image = newImage;
-                user.ImageId = newImage.Id;
+                user.ProfilePicture = newImage;
+                user.ProfilePictureId = newImage.Id;
 
                 DBContext.Users.Update(user);
 

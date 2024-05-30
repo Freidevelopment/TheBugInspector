@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\UI\" />
     <Folder Include="Services\Interfaces\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>

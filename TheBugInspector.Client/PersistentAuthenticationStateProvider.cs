@@ -34,6 +34,8 @@ namespace TheBugInspector.Client
                     new Claim(nameof(UserInfo.FirstName), userInfo.FirstName),
                     new Claim(nameof(UserInfo.LastName), userInfo.LastName),
                     new Claim(nameof(UserInfo.ProfilePictureUrl), userInfo.ProfilePictureUrl),
+                    new Claim("CompanyId", userInfo.CompanyId.ToString()),
+                    .. userInfo.Roles.Select(role => new Claim(ClaimTypes.Role, role)).ToArray()
                 ];
 
             authenticationStateTask = Task.FromResult(
