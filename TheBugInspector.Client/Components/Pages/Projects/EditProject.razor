@@ -1,5 +1,76 @@
-﻿<h3>EditProject</h3>
+﻿@page "/projects/edit/{id:int}"
+
+@using TheBugInspector.Client.Components.UI.Projects
+@using TheBugInspector.Client.Helpers
+@using TheBugInspector.Client.Services
+@using TheBugInspector.Client.Services.Interfaces
+
+@rendermode InteractiveWebAssembly
+
+@inject IProjectDTOService ProjectService
+
+
+<PageTitle>BugInspector | Edit Projects</PageTitle>
+
+
+<div class="container-xxl">
+
+    <h3>Edit Project</h3>
+    <span class="text-danger">@ErrorMessage</span>
+    <div class="card-shadow">
+        <div class="card-body">
+            <ProjectForm Project="project"
+                         OnSubmit="HandleSubmit" />
+        </div>
+    </div>
+</div>
 
 @code {
+    #region Parameters
+    [Parameter]
+    public int Id { get; set; }
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    #endregion
+
+    #region State
+    private ProjectDTO? project;
+    private string? ErrorMessage = string.Empty;
+    private UserInfo? userInfo;
+    #endregion
+
+    #region Methods
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            ErrorMessage = string.Empty;
+
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+
+            project = await ProjectService.GetProjectByIdAsync(Id, userInfo!.CompanyId);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            // Change this errormessage
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task HandleSubmit(ProjectDTO project)
+    {
+        try
+        {
+            await ProjectService.UpdateProjectAsync(project, userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+    #endregion
 }

@@ -1,11 +1,11 @@
-﻿@page "/projects/index"
+﻿@page "/projects/Index"
 
 @using TheBugInspector.Client.Components.UI.Projects
 @using TheBugInspector.Client.Helpers
 @using TheBugInspector.Client.Services
 @using TheBugInspector.Client.Services.Interfaces
 
-@rendermode InteractiveServer
+@rendermode InteractiveWebAssembly
 
 @inject IProjectDTOService ProjectService
 
@@ -21,7 +21,7 @@
 
         <h1>Active Projects</h1>
 
-        <table class="table table-striped table-info">
+        <table class="table table-striped-columns table-info">
             <thead>
                 <tr>
                     <th scope="col">Project Name</th>
@@ -29,13 +29,16 @@
                     <th scope="col">Project Start Date</th>
                     <th scope="col">Project End Date</th>
                     <th scope="col">Project Priority</th>
+                    <th scope="col">Archive Project?</th>
+                    <th scope="col">Edit Project?</th>
                 </tr>
             </thead>
             <tbody>
-                    @foreach (ProjectDTO project in activeProjects)
-                    {
-                        <ProjectIndexForm ProjectInfo="project" />
-                    }
+                @foreach (ProjectDTO project in activeProjects)
+                {
+                    <ProjectEditIndex Project="project"
+                                      OnSubmit="HandleArchive"/>
+                }
 
             </tbody>
 
@@ -45,6 +48,10 @@
     {
         <span class="text-danger">@ErrorMessage</span>
     }
+</div>
+
+<div>
+    <a class="btn btn-primay" href="/projects/create">Create Project?</a>
 </div>
 
 @code {
@@ -75,6 +82,21 @@
             Console.WriteLine(ex);
             // Change this errormessage
             ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task HandleArchive(int projectId)
+    {
+        try
+        {
+            await ProjectService.ArchiveProjectAsync(projectId, userInfo!.CompanyId);
+
+            activeProjects = await ProjectService.GetAllProjectsAsync(userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
         }
     }
     #endregion

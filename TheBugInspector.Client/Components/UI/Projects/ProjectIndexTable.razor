@@ -1,0 +1,29 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+
+@if(TableData is not null)
+{
+    <tr>
+        <th scope="row">@TableData.Name</th>
+        <td>@TableData.Created</td>
+        <td>@TableData.StartDate</td>
+        <td>@TableData.EndDate</td>
+        <td>@TableData.Priority</td>
+    </tr>
+
+}
+
+
+
+@code {
+    #region Parameters
+    [Required, EditorRequired]
+    public ProjectDTO? TableData { get; set; }
+    #endregion
+
+    #region State
+    #endregion
+
+    #region Methods
+    #endregion
+}

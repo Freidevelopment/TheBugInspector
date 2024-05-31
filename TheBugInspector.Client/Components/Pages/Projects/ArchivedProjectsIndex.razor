@@ -1,0 +1,99 @@
+﻿@page "/archive/projects/Index"
+
+@using TheBugInspector.Client.Components.UI.Projects
+@using TheBugInspector.Client.Helpers
+@using TheBugInspector.Client.Services
+@using TheBugInspector.Client.Services.Interfaces
+
+@rendermode InteractiveWebAssembly
+
+@inject IProjectDTOService ProjectService
+
+
+<PageTitle>BugInspector | ArchivedProjects</PageTitle>
+
+
+<div class="container-xxl background-primary">
+
+
+    @if (archivedProjects is not null)
+    {
+
+        <h1>Archived Projects</h1>
+
+        <table class="table table-striped-columns table-info">
+            <thead>
+                <tr>
+                    <th scope="col">Project Name</th>
+                    <th scope="col">Project Created on</th>
+                    <th scope="col">Project Start Date</th>
+                    <th scope="col">Project End Date</th>
+                    <th scope="col">Project Priority</th>
+                    <th scope="col">Restore Project?</th>
+                    <th scope="col">Edit Project?</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ProjectDTO project in archivedProjects)
+                {
+                    <ProjectEditIndex Project="project"
+                                      OnSubmit="HandleArchive" />
+                }
+
+            </tbody>
+
+        </table>
+    }
+    else
+    {
+        <span class="text-danger">@ErrorMessage</span>
+    }
+</div>
+
+@code {
+    #region Parameters
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    #endregion
+
+    #region State
+    private IEnumerable<ProjectDTO> archivedProjects = [];
+    private string? ErrorMessage = string.Empty;
+    private UserInfo? userInfo;
+    #endregion
+
+    #region Methods
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            ErrorMessage = string.Empty;
+
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+
+            archivedProjects = await ProjectService.GetArchivedProjectsAsync(userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            // Change this errormessage
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task HandleArchive(int projectId)
+    {
+        try
+        {
+            await ProjectService.RestoreProjectAsync(projectId, userInfo!.CompanyId);
+
+            archivedProjects = await ProjectService.GetArchivedProjectsAsync(userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    #endregion
+}

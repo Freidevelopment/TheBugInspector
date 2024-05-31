@@ -1,5 +1,71 @@
-﻿<h3>CreateProject</h3>
+﻿@page "/projects/create"
+
+@using TheBugInspector.Client.Components.UI.Projects
+@using TheBugInspector.Client.Helpers
+@using TheBugInspector.Client.Services
+@using TheBugInspector.Client.Services.Interfaces
+
+@rendermode InteractiveWebAssembly
+
+@inject IProjectDTOService ProjectService
+
+
+<PageTitle>BugInspector | Create Projects</PageTitle>
+
+
+<div class="container-xxl">
+
+    <h3>New Project</h3>
+    <span class="text-danger">@ErrorMessage</span>
+    <div class="card-shadow">
+        <div class="card-body">
+            <ProjectForm Project="new ProjectDTO()"
+                         OnSubmit="HandleSubmit"/>
+        </div>
+    </div>
+</div>
 
 @code {
+    #region Parameters
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    #endregion
 
+    #region State
+
+    private string? ErrorMessage = string.Empty;
+    private UserInfo? userInfo;
+    #endregion
+
+    #region Methods
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            ErrorMessage = string.Empty;
+
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            // Change this errormessage
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task HandleSubmit(ProjectDTO project)
+    {
+        try
+        {
+            await ProjectService.AddProjectAsync(project, userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+    #endregion
 }

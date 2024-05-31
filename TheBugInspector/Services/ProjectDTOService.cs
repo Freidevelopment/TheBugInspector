@@ -14,14 +14,32 @@ namespace TheBugInspector.Services
             _repository = repository;
         }
 
-        public Task<ProjectDTO> AddProjectAsync(ProjectDTO project, int companyId)
+        public async Task<ProjectDTO> AddProjectAsync(ProjectDTO project, int companyId)
         {
-            throw new NotImplementedException();
+            Project newProject = new Project()
+            { 
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
+                Priority = project.Priority,
+                Name = project.Name,
+                Description = project.Description,
+                CompanyId = companyId
+            };
+
+            Project createdProject = await _repository.AddProjectAsync(newProject, companyId);
+
+            return createdProject.ToDTO();
+
         }
 
-        public Task ArchiveProjectAsync(int projectId, int companyId)
+        public async Task ArchiveProjectAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+           Project? project = await _repository.GetProjectByIdAsync(projectId, companyId);
+            
+            if (project is not null)
+            {
+                await _repository.ArchiveProjectAsync(projectId, project.CompanyId);
+            }
         }
 
         public async Task<IEnumerable<ProjectDTO>> GetAllProjectsAsync(int companyId)
@@ -33,24 +51,48 @@ namespace TheBugInspector.Services
             return result;
         }
 
-        public Task<IEnumerable<ProjectDTO>> GetArchivedProjectsAsync(int companyId)
+        public async Task<IEnumerable<ProjectDTO>> GetArchivedProjectsAsync(int companyId)
         {
-            throw new NotImplementedException();
+            IEnumerable<Project> projects = await _repository.GetArchivedProjectsAsync(companyId);
+
+            IEnumerable<ProjectDTO> result = projects.Select(p => p.ToDTO());
+
+            return result;
         }
 
-        public Task<ProjectDTO?> GetProjectByIdAsync(int projectId, int companyId)
+        public async Task<ProjectDTO?> GetProjectByIdAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+            Project? project = await _repository.GetProjectByIdAsync(projectId, companyId);
+
+            return project == null ? null : project.ToDTO();
         }
 
-        public Task RestoreProjectAsync(int projectId, int companyId)
+        public async Task RestoreProjectAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+            Project? project = await _repository.GetProjectByIdAsync(projectId, companyId);
+
+            if (project is not null)
+            {
+                await _repository.RestoreProjectAsync(projectId, project.CompanyId);
+            }
         }
 
-        public Task UpdateProjectAsync(ProjectDTO project, int companyId)
+        public async Task UpdateProjectAsync(ProjectDTO project, int companyId)
         {
-            throw new NotImplementedException();
+            Project? projectToUpdate = await _repository.GetProjectByIdAsync(project.Id, companyId);
+
+            if (projectToUpdate is not null)
+            {
+                projectToUpdate.StartDate = project.StartDate;
+                projectToUpdate.EndDate = project.EndDate;
+                projectToUpdate.Description = project.Description;
+
+                projectToUpdate.Name = project.Name;
+
+                projectToUpdate.Priority = project.Priority;
+
+                await _repository.UpdateProjectAsync(projectToUpdate, companyId);
+            }
         }
     }
 }

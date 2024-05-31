@@ -76,11 +76,6 @@ namespace TheBugInspector.Models
 
             };
 
-            if(ticket.Project is not null)
-            {
-                ProjectDTO projectDTO = ticket.Project.ToDTO();
-                dto.Project = projectDTO;
-            }
 
             if(ticket.SubmitterUser is not null)
             {

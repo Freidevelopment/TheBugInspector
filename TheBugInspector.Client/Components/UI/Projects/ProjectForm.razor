@@ -1,0 +1,90 @@
+﻿@if (Project is not null)
+{
+    <EditForm Model="Project" OnValidSubmit="HandleSubmit" class="row">
+        <DataAnnotationsValidator />
+        @* Name *@
+        <div class="col-lg-4 gap-2">
+            <div class="mb-2">
+                <label class="form-label">
+                    Project Name
+                </label>
+                <InputText class="form-control" @bind-Value="Project.Name" />
+                <ValidationMessage For="() => Project.Name" />
+            </div>
+            @* StartDate *@
+            <div class="mb-2">
+                <label class="form-label" for="StartDate">
+                    Project Start Date
+                </label>
+                <InputDate id="StartDate" @bind-Value="Project.StartDate" class="form-control" />
+                <ValidationMessage For="() => Project.StartDate" />
+            </div>
+            @* EndDate *@
+            <div class="mb-2">
+                <label class="form-label" for="EndDate">
+                    Project End Date
+                </label>
+                <InputDate id="EndDate" @bind-Value="Project.EndDate" class="form-control" />
+                <ValidationMessage For="() => Project.EndDate" />
+            </div>
+            @* Priority *@
+            <div class="mb-2">
+                <label for="priority" class="form-label">
+                    Project Priority
+                </label>
+                <InputSelect @bind-Value="Project.Priority" class="form-select">
+                    <option value="">Select a project Priority</option>
+                    @foreach (ProjectPriority priority in Enum.GetValues<ProjectPriority>())
+                    {
+                        <option value="@priority">
+                            @priority.ToString()
+                        </option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Project.Priority" />
+            </div>
+        </div>
+
+        @* Description *@
+        <div class="col-lg-8">
+            <div class="mb-2">
+                <label class="form-label">Project Description</label>
+                <InputTextArea class="form-control" rows="10" @bind-Value="Project.Description" />
+                <ValidationMessage For="() => Project.Description" />
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Save</button>
+    </EditForm>
+}
+
+
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public ProjectDTO? Project { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<ProjectDTO> OnSubmit { get; set; }
+    #endregion
+
+    #region State
+    #endregion
+
+    #region Methods
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            await OnSubmit.InvokeAsync(Project);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    #endregion
+}

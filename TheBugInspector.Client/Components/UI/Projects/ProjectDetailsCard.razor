@@ -1,0 +1,54 @@
+﻿@if (Project is not null)
+{
+    @if (Project!.IsArchived == true)
+    {
+        backgroundColor = "bg-success-subtle";
+    }
+    else
+    {
+        backgroundColor = "bg-info-subtle";
+    }
+
+
+    <div class="card @backgroundColor">
+        <div class="card-header">
+            @Project.Name
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Project Description</h5>
+            <p class="card-text">@Project.Description</p>
+            <div class="row row-cols-3">
+                <div class="col">
+                    <h2>Created</h2>
+                    <span>@Project.Created.ToString("g")</span>
+                </div>
+                <div class="col">
+                    <h2>Created</h2>
+                    <span>@Project.StartDate.ToString("D")</span>
+                </div>
+                <div class="col">
+                    <h2>Created</h2>
+                    <span>@Project.EndDate.ToString("D")</span>
+                </div>
+            </div>
+            <a href="/projects/edit/@Project.Id" class="btn btn-warning">Edit?</a>
+        </div>
+    </div>
+}
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public ProjectDTO? Project { get; set; }
+
+    #endregion
+
+    #region State
+    private string? backgroundColor = string.Empty;
+    #endregion
+
+    #region Methods
+
+    #endregion
+}
