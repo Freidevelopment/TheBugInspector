@@ -1,0 +1,121 @@
+﻿@page "/tickets/Index"
+
+@using TheBugInspector.Client.Components.UI.Projects
+@using TheBugInspector.Client.Components.UI.Tickets
+@using TheBugInspector.Client.Helpers
+@using TheBugInspector.Client.Services
+@using TheBugInspector.Client.Services.Interfaces
+
+@rendermode InteractiveWebAssembly
+
+@inject ITicketDTOService TicketService
+
+
+<PageTitle>BugInspector | ArchivedProjects</PageTitle>
+
+
+<div class="container-xxl background-primary">
+
+
+    @if (tickets is not null)
+    {
+        <h1>All Tickets</h1>
+
+
+        <table class="table table-striped-columns table-info">
+            <thead>
+                <tr>
+                    <th scope="col">Ticket Name</th>
+                    <th scope="col">Ticket Created on</th>
+                    <th scope="col">Ticket Updated on</th>
+                    <th scope="col">Ticket Type</th>
+                    <th scope="col">Ticket Priority</th>
+                    <th scope="col">Ticket Status</th>
+                    <th scope="col">Ticket Submitter</th>
+                    <th scope="col">Archive Ticket?</th>
+                    <th scope="col">Edit Ticket?</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (TicketDTO ticket in tickets)
+                {
+                    <TicketCards Ticket="ticket"
+                                 OnArchive="HandleArchive"
+                                 OnRestore="HandleRestore" />
+                }
+
+            </tbody>
+
+        </table>
+
+
+    }
+    else
+    {
+        <span class="text-danger">@ErrorMessage</span>
+    }
+</div>
+
+@code {
+    #region Parameters
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    #endregion
+
+    #region State
+    private IEnumerable<TicketDTO> tickets = [];
+    private string? ErrorMessage = string.Empty;
+    private UserInfo? userInfo;
+    #endregion
+
+    #region Methods
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            ErrorMessage = string.Empty;
+
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+
+            tickets = await TicketService.GetAllTicketsAsync(userInfo!.CompanyId);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            // Change this errormessage
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task HandleArchive(int ticketId)
+    {
+        try
+        {
+            await TicketService.ArchiveTicketAsync(ticketId, userInfo!.CompanyId);
+
+            tickets = await TicketService.GetAllTicketsAsync(userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+
+    private async Task HandleRestore(int ticketId)
+    {
+        try
+        {
+            await TicketService.RestoreTicketAsync(ticketId, userInfo!.CompanyId);
+
+            tickets = await TicketService.GetAllTicketsAsync(userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    #endregion
+}

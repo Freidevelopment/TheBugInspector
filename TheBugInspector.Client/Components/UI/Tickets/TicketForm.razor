@@ -1,0 +1,166 @@
+﻿@using TheBugInspector.Client.Helpers
+@inject IProjectDTOService ProjectService
+
+@if (Ticket is not null)
+{
+
+    <EditForm Model="Ticket" OnValidSubmit="HandleSubmit" class="row">
+        <DataAnnotationsValidator />
+        @* Name *@
+        <div class="col-lg-4 gap-2">
+            <div class="mb-2">
+                <label class="form-label">
+                    Ticket Name
+                </label>
+                <InputText class="form-control" @bind-Value="Ticket.Title" />
+                <ValidationMessage For="() => Ticket.Title" />
+            </div>
+            @* Project *@
+            @if (IsNew == 1)
+            {
+                <div class="mb-2">
+                    <label for="priority" class="form-label">
+                        Project
+                    </label>
+                    <InputSelect @bind-Value="Ticket.ProjectId" class="form-select">
+                        <option value="">Select a Project</option>
+                        @foreach (ProjectDTO project in projects)
+                        {
+                            <option value="@project.Id">
+                                @project.Name
+                            </option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => Ticket.Priority" />
+                </div>
+            }
+            @* Type *@
+            <div class="mb-2">
+                <label for="priority" class="form-label">
+                    Ticket Type
+                </label>
+                <InputSelect @bind-Value="Ticket.Type" class="form-select">
+                    <option value="">Select a Ticket Type</option>
+                    @foreach (TicketType type in Enum.GetValues<TicketType>())
+                    {
+                        <option value="@type">
+                            @type.ToString()
+                        </option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Ticket.Priority" />
+            </div>
+            @* Priority *@
+            <div class="mb-2">
+                <label for="priority" class="form-label">
+                    Ticket Priority
+                </label>
+                <InputSelect @bind-Value="Ticket.Priority" class="form-select">
+                    <option value="">Select a project Priority</option>
+                    @foreach (TicketPriority priority in Enum.GetValues<TicketPriority>())
+                    {
+                        <option value="@priority">
+                            @priority.ToString()
+                        </option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Ticket.Priority" />
+            </div>
+            @if (IsNew == 2)
+            {
+                @* Status *@
+                <div class="mb-2">
+                    <label for="priority" class="form-label">
+                        Ticket Status
+                    </label>
+                    <InputSelect @bind-Value="Ticket.Status" class="form-select">
+                        <option value="">Select a Ticket Status</option>
+                        @foreach (TicketStatus status in Enum.GetValues<TicketStatus>())
+                        {
+                            <option value="@status">
+                                @status.ToString()
+                            </option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => Ticket.Status" />
+                </div>
+            }
+        </div>
+
+        @* Description *@
+        <div class="col-lg-8">
+            <div class="mb-2">
+                <label class="form-label">Project Description</label>
+                <InputTextArea class="form-control" rows="10" @bind-Value="Ticket.Description" />
+                <ValidationMessage For="() => Ticket.Description" />
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Save</button>
+
+        <ValidationSummary />
+    </EditForm>
+
+
+
+}
+
+
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public TicketDTO? Ticket { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<TicketDTO> OnSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public int IsNew { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    #endregion
+
+    #region State
+    private IEnumerable<ProjectDTO> projects = [];
+
+
+    private UserInfo? userInfo;
+    #endregion
+
+    #region Methods
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+
+            projects = await ProjectService.GetAllProjectsAsync(userInfo!.CompanyId);
+
+            Ticket!.SubmitterUserId = userInfo.UserId;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    private async Task HandleSubmit()
+    {
+        try
+        {
+
+            await OnSubmit.InvokeAsync(Ticket);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    #endregion
+}

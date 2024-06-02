@@ -79,7 +79,8 @@ namespace TheBugInspector.Models
 
             foreach (Ticket ticket in project.Tickets)
             {
-                
+                ticket.Project!.Tickets.Clear();
+
                 TicketDTO ticketDTO = ticket.ToDTO();
                 dto.Tickets.Add(ticketDTO);
             }

@@ -1,0 +1,61 @@
+﻿@if (Ticket is not null)
+{
+
+    <tr>
+        <th scope="row"><a class="nav-link" href="/tickets/Index/@Ticket.Id">@Ticket.Title</a></th>
+        <td>@Ticket.Created.ToString("g")</td>
+        @if (Ticket.Updated is not null)
+        {
+            <td>@Ticket.Updated.Value.ToString("D")</td>
+
+        }
+        else
+        {
+            <td>This Ticket has not been updated</td>
+        }
+        <td>@Ticket.Type</td>
+        <td>@Ticket.Priority</td>
+        <td>@Ticket.Status</td>
+        <td>@Ticket.SubmitterUser!.FullName</td>
+        @if (Ticket.IsArchived is false)
+        {
+            <td><button class="btn btn-success" @onclick="HandleArchive">Archive</button></td>
+
+        }
+        else if (Ticket.IsArchived is true)
+        {
+            <td><button class="btn btn-success" @onclick="HandleRestore">Restore</button></td>
+        }
+        <td><a class="btn btn-warning" href="/tickets/edit/@Ticket.Id">Edit?</a></td>
+    </tr>
+
+}
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public TicketDTO? Ticket { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnRestore { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnArchive { get; set; }
+    #endregion
+
+    #region State
+    private string? backgroundColor = string.Empty;
+    #endregion
+
+    #region Methods
+    private async Task HandleArchive()
+    {
+        await OnArchive.InvokeAsync(Ticket!.Id);
+    }
+    private async Task HandleRestore()
+    {
+        await OnRestore.InvokeAsync(Ticket!.Id);
+    }
+    #endregion
+}

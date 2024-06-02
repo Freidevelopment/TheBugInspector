@@ -19,12 +19,13 @@ namespace TheBugInspector.Services
         {
             using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
 
-            project.Created = DateTimeOffset.Now;
 
-            bool shouldCreate = await context.Projects.AnyAsync(c => c.CompanyId == companyId);
+            bool shouldCreate = await context.Companies.AnyAsync(c => c.Id == companyId);
 
             if (shouldCreate)
             {
+
+                project.Created = DateTimeOffset.Now;
                 context.Projects.Add(project);
                 await context.SaveChangesAsync();
 
@@ -45,7 +46,7 @@ namespace TheBugInspector.Services
 
             if (shouldEdit)
             {
-                Project? project = await context.Projects.FirstOrDefaultAsync(p  => p.CompanyId == companyId && p.Id == projectId);
+                Project? project = await context.Projects.FirstOrDefaultAsync(p => p.CompanyId == companyId && p.Id == projectId);
 
                 if (project is not null)
                 {
@@ -117,7 +118,7 @@ namespace TheBugInspector.Services
 
         public async Task UpdateProjectAsync(Project project, int companyId)
         {
-            
+
             using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
 
             bool shouldEdit = await context.Projects.AnyAsync(p => p.CompanyId == companyId && p.Id == project.Id);

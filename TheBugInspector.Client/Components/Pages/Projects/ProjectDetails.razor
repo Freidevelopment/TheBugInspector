@@ -5,7 +5,7 @@
 @using TheBugInspector.Client.Services
 @using TheBugInspector.Client.Services.Interfaces
 
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveAuto
 
 @inject IProjectDTOService ProjectService
 
@@ -17,7 +17,7 @@
 
     <h3>Project Details</h3>
     <span class="text-danger">@ErrorMessage</span>
-    
+    <ProjectDetailsCard Project="project" />
 </div>
 
 @code {

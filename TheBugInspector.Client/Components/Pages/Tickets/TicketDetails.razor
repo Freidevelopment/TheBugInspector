@@ -1,29 +1,34 @@
-﻿@page "/projects/edit/{id:int}"
+﻿@page "/tickets/Index/{id:int}"
 
 @using TheBugInspector.Client.Components.UI.Projects
+@using TheBugInspector.Client.Components.UI.Tickets
 @using TheBugInspector.Client.Helpers
 @using TheBugInspector.Client.Services
 @using TheBugInspector.Client.Services.Interfaces
 
 @rendermode InteractiveWebAssembly
 
-@inject IProjectDTOService ProjectService
+@inject ITicketDTOService TicketService
 
 
-<PageTitle>BugInspector | Edit Projects</PageTitle>
+<PageTitle>BugInspector | Ticket: @ticket.Title</PageTitle>
 
 
 <div class="container-xxl">
 
-    <h3>Edit Project</h3>
-    <span class="text-danger">@ErrorMessage</span>
-    <div class="card-shadow">
-        <div class="card-body">
-            <ProjectForm Project="project"
-                         OnSubmit="HandleSubmit"
-                         IsNew="2" />
-        </div>
-    </div>
+
+    @if (ticket is not null)
+    {
+        <h1>Ticket Details: @ticket.Title</h1>
+
+            <TicketDetailsCard Ticket="ticket" />
+        
+
+    }
+    else
+    {
+        <span class="text-danger">@ErrorMessage</span>
+    }
 </div>
 
 @code {
@@ -36,7 +41,7 @@
     #endregion
 
     #region State
-    private ProjectDTO? project;
+    private TicketDTO? ticket;
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
     #endregion
@@ -50,26 +55,13 @@
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
 
-            project = await ProjectService.GetProjectByIdAsync(Id, userInfo!.CompanyId);
+            ticket = await TicketService.GetTicketByIdAsync(Id, userInfo!.CompanyId);
 
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
             // Change this errormessage
-            ErrorMessage = "Something went wrong, check the DevTools";
-        }
-    }
-
-    private async Task HandleSubmit(ProjectDTO project)
-    {
-        try
-        {
-            await ProjectService.UpdateProjectAsync(project, userInfo!.CompanyId);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
     }

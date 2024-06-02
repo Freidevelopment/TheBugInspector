@@ -1,6 +1,7 @@
-﻿@page "/projects/edit/{id:int}"
+﻿@page "/Tickets/edit/{id:int}"
 
 @using TheBugInspector.Client.Components.UI.Projects
+@using TheBugInspector.Client.Components.UI.Tickets
 @using TheBugInspector.Client.Helpers
 @using TheBugInspector.Client.Services
 @using TheBugInspector.Client.Services.Interfaces
@@ -8,20 +9,25 @@
 @rendermode InteractiveWebAssembly
 
 @inject IProjectDTOService ProjectService
+@inject ITicketDTOService TicketService
 
 
 <PageTitle>BugInspector | Edit Projects</PageTitle>
 
 
+<PageTitle>BugInspector | Create Ticket</PageTitle>
+
+
 <div class="container-xxl">
 
-    <h3>Edit Project</h3>
+    <h3>New Ticket</h3>
     <span class="text-danger">@ErrorMessage</span>
     <div class="card-shadow">
         <div class="card-body">
-            <ProjectForm Project="project"
-                         OnSubmit="HandleSubmit"
-                         IsNew="2" />
+            <TicketForm Ticket="ticket"
+                        OnSubmit="HandleSubmit"
+                        IsNew="2"/>
+
         </div>
     </div>
 </div>
@@ -36,7 +42,7 @@
     #endregion
 
     #region State
-    private ProjectDTO? project;
+    private TicketDTO? ticket;
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
     #endregion
@@ -50,7 +56,7 @@
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
 
-            project = await ProjectService.GetProjectByIdAsync(Id, userInfo!.CompanyId);
+            ticket = await TicketService.GetTicketByIdAsync(Id, userInfo!.CompanyId);
 
         }
         catch (Exception ex)
@@ -61,11 +67,11 @@
         }
     }
 
-    private async Task HandleSubmit(ProjectDTO project)
+    private async Task HandleSubmit(TicketDTO ticket)
     {
         try
         {
-            await ProjectService.UpdateProjectAsync(project, userInfo!.CompanyId);
+            await TicketService.UpdateTicketAsync(ticket, userInfo!.CompanyId, userInfo.UserId);
         }
         catch (Exception ex)
         {

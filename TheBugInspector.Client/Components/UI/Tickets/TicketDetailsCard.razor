@@ -1,0 +1,94 @@
+﻿@if (Ticket is not null)
+{
+    @if (Ticket!.IsArchived == true)
+    {
+        backgroundColor = "bg-success-subtle";
+    }
+    else
+    {
+        backgroundColor = "bg-info-subtle";
+    }
+
+
+    <div class="card @backgroundColor">
+        <div class="card-header">
+            @Ticket.Title
+        </div>
+
+
+        <div class="card-body">
+            <h5 class="card-title">Ticket Description</h5>
+            <p class="card-text">@Ticket.Description</p>
+            <div class="row row-cols-2">
+                <div class="col">
+                    <h2>Created</h2>
+                    <span>@Ticket.Created.ToString("g")</span>
+                </div>
+                <div class="col">
+                    @if (Ticket.Updated.HasValue)
+                    {
+                        <h2>Last Updated</h2>
+                        <span>@Ticket.Updated!.Value.ToString("g")</span>
+                    }
+                    else
+                    {
+                        <h2>Has not been updated</h2>
+                    }
+                </div>
+                <div class="row row-cols-2">
+                    <div class="vstak text-start">
+                        @if (Ticket.Project is not null)
+                        {
+                            <div>
+                                Project: @Ticket.Project.Name
+                            </div>
+
+                        }
+                        @if (Ticket.SubmitterUser is not null)
+                        {
+                            <div>
+                                Submitter: @Ticket.SubmitterUser.FullName
+                            </div>
+
+                        }
+                        @if (Ticket.DeveloperUser is not null)
+                        {
+                            <div>
+                                Developer: @Ticket.DeveloperUser.FullName
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="vstack text-end">
+                    <div>
+                        Type: @Ticket.Type
+                    </div>
+                    <div>
+                        Priority: @Ticket.Priority
+                    </div>
+                    <div>
+                        Status: @Ticket.Status
+                    </div>
+                </div>
+            </div>
+            @*             <a href="/projects/edit/@Project.Id" class="btn btn-warning">Edit?</a> *@
+        </div>
+    </div>
+}
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public TicketDTO? Ticket { get; set; }
+
+    #endregion
+
+    #region State
+    private string? backgroundColor = string.Empty;
+    #endregion
+
+    #region Methods
+
+    #endregion
+}

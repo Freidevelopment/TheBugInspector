@@ -22,7 +22,7 @@ namespace TheBugInspector.Controllers
             _projectService = projectService;
             _userManager = userManager;
         }
-
+        
 
 
         [HttpGet("{companyId:int}/active")] // api/projects/1/active
@@ -94,7 +94,7 @@ namespace TheBugInspector.Controllers
             }
         }
 
-        [HttpPut("{projectId:int}")]
+        [HttpPut("{projectId:int}")] // api/projects/5
         public async Task<IActionResult> UpdateProject([FromRoute] int projectId,
                                                        [FromBody] ProjectDTO project)
         {
@@ -112,7 +112,7 @@ namespace TheBugInspector.Controllers
             }
         }
 
-        [HttpPut("{projectId:int}/archived")]
+        [HttpPut("{projectId:int}/archived")] // api/projects/5/archived
         public async Task<IActionResult> RestoreProject([FromRoute] int projectId)
         {
             int companyId = _companyId ?? 0;

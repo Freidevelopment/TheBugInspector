@@ -15,7 +15,7 @@ namespace TheBugInspector.Client.Models
         public string? Title { get; set; }
         [Required]
         [Display(Name = "Ticket Description")]
-        [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
+        [MinLength(2)]
         public string? Description { get; set; }
 
         [Required]

@@ -68,12 +68,25 @@
 
     [Parameter, EditorRequired]
     public EventCallback<ProjectDTO> OnSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public int IsNew { get; set; }
     #endregion
 
     #region State
     #endregion
 
     #region Methods
+    protected async Task OnInitializedAsync()
+    {
+        if(IsNew == 1)
+        {
+            Project!.StartDate = DateTimeOffset.Now;
+            Project!.EndDate = DateTimeOffset.Now;
+            
+        }
+        
+    }
     private async Task HandleSubmit()
     {
         try
