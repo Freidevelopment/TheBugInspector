@@ -11,6 +11,8 @@
 @inject IProjectDTOService ProjectService
 @inject ITicketDTOService TicketService
 
+@inject NavigationManager Nav
+
 
 <PageTitle>BugInspector | Edit Projects</PageTitle>
 
@@ -26,7 +28,7 @@
         <div class="card-body">
             <TicketForm Ticket="ticket"
                         OnSubmit="HandleSubmit"
-                        IsNew="2"/>
+                        IsNew="false"/>
 
         </div>
     </div>
@@ -78,6 +80,7 @@
             Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
+        Nav.NavigateTo("/tickets/Index");
     }
     #endregion
 }

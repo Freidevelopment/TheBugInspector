@@ -19,6 +19,8 @@ namespace TheBugInspector.Client.Models
         [Required]
         public string? ProfilePictureUrl { get; set; }
 
+        public string? Role { get; set; }
+
         public string FullName => $"{FirstName} {LastName}";
     }
 }

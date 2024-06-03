@@ -112,7 +112,7 @@
         {
             try
             {
-                FileUpload image = await FileHelper.GetImageUploadAsync(Input.ProfilePicture);
+                FileUpload image = await FileHelper.GetFileUploadAsync(Input.ProfilePicture);
 
                 // Save the Image First
                 await DBContext.Images.AddAsync(image);

@@ -23,5 +23,23 @@ namespace TheBugInspector.Client.Services.Interfaces
 
         #region Delete
         #endregion
+
+
+        #region Ticket Comments
+        Task<IEnumerable<TicketCommentDTO>> GetTicketCommentsAsync(int ticketId, int companyId);
+
+        Task<TicketCommentDTO?> GetTicketCommentByIdAsync(int ticketId, int companyId);
+
+        Task AddCommentAsync(TicketCommentDTO comment, int companyId);
+
+        Task DeleteCommentAsync(int commentId, int ticketId);
+
+        Task UpdateCommentAsync(TicketCommentDTO comment, int companyId);
+        #endregion
+
+        #region Attachments
+        Task<TicketAttachmentDTO> AddTicketAttachment(TicketAttachmentDTO attachment, byte[] uploadData, string contentType, int companyId);
+        Task DeleteTicketAttachment(int attachmentId, int companyId);
+        #endregion
     }
 }

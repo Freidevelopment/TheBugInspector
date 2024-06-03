@@ -12,7 +12,7 @@ namespace TheBugInspector.Helpers
         public static readonly string DefaultBlogImage = ImageHelper.DefaultBlogImage;
         public static readonly int MaxFileSize = ImageHelper.MaxFileSize;
 
-        public static async Task<FileUpload> GetImageUploadAsync(IFormFile file)
+        public static async Task<FileUpload> GetFileUploadAsync(IFormFile file)
         {
             using var ms = new MemoryStream();
 
@@ -34,7 +34,7 @@ namespace TheBugInspector.Helpers
             return upload;
         }
 
-        public static FileUpload GetImageUpload(string dataUrl)
+        public static FileUpload GetFileUpload(string dataUrl)
         {
             GroupCollection matchGroups = Regex.Match(dataUrl, @"data:(?<type>.+?);base64,(?<data>.+)").Groups;
 

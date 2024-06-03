@@ -11,7 +11,7 @@
 @inject ITicketDTOService TicketService
 
 
-<PageTitle>BugInspector | Ticket: @ticket.Title</PageTitle>
+<PageTitle>BugInspector | Ticket: @* @ticket.Title *@</PageTitle>
 
 
 <div class="container-xxl">
@@ -21,8 +21,51 @@
     {
         <h1>Ticket Details: @ticket.Title</h1>
 
-            <TicketDetailsCard Ticket="ticket" />
-        
+        <TicketDetailsCard Ticket="ticket" />
+
+        <p class="text-end mt-3">
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
+                add a comment?
+            </button>
+        </p>
+
+        <div class="collapse" id="TicketCreation">
+            <div class="card card-body">
+                <TicketCommentForm ticketComment="userComment"
+                                   Id="ticket.Id"
+                                   userInfo="userInfo"
+                                   OnSubmit="CreateComment" />
+            </div>
+        </div>
+
+        <div class="text-end">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
+                Add Attachment?
+            </button>
+
+        </div>
+
+        @foreach (TicketCommentDTO comment in ticketComments)
+        {
+            <TicketCommentCards Comment="comment"
+                                userInfo="userInfo"
+                                OnDelete="DeleteComment"
+                                OnUpdate="UpdateComment" />
+        }
+
+        <div class="row row-cols-3 g-3">
+            @foreach (TicketAttachmentDTO attachment in ticket.Attachments)
+            {
+                <div class="col">
+
+                    <AttachmentCards Attachment="attachment"
+                                     userInfo="userInfo"
+                                     OnSubmit="DeleteAttachment" />
+                </div>
+            }
+
+        </div>
 
     }
     else
@@ -30,6 +73,16 @@
         <span class="text-danger">@ErrorMessage</span>
     }
 </div>
+
+@if (ticket is not null)
+{
+    <!-- Modal -->
+    <div class="modal fade" id="AttachmentModal" tabindex="-1" aria-labelledby="AttachmentModal" aria-hidden="true">
+        <TicketAttachmentModal TicketId="ticket.Id" />
+
+    </div>
+
+}
 
 @code {
     #region Parameters
@@ -44,6 +97,8 @@
     private TicketDTO? ticket;
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
+    private TicketCommentDTO? userComment;
+    private IEnumerable<TicketCommentDTO> ticketComments = [];
     #endregion
 
     #region Methods
@@ -57,11 +112,91 @@
 
             ticket = await TicketService.GetTicketByIdAsync(Id, userInfo!.CompanyId);
 
+            ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo!.CompanyId);
+
+            userComment = new TicketCommentDTO()
+                {
+                    TicketId = ticket!.Id,
+                    UserId = userInfo!.UserId,
+
+                };
+
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
             // Change this errormessage
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task CreateComment(TicketCommentDTO comment)
+    {
+        try
+        {
+            await TicketService.AddCommentAsync(comment, userInfo!.CompanyId);
+
+            ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo!.CompanyId);
+            // ticket = await TicketService.GetTicketByIdAsync(Id, userInfo!.CompanyId);
+
+            userComment = new TicketCommentDTO()
+                {
+                    TicketId = ticket!.Id,
+                    UserId = userInfo!.UserId,
+
+                };
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task UpdateComment(TicketCommentDTO comment)
+    {
+        try
+        {
+            await TicketService.UpdateCommentAsync(comment, userInfo!.CompanyId);
+
+            ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo!.CompanyId);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task DeleteComment(int commentId)
+    {
+        try
+        {
+            await TicketService.DeleteCommentAsync(commentId, ticket!.Id);
+
+            ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo!.CompanyId);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task DeleteAttachment(int AttachmentId)
+    {
+        try
+        {
+            await TicketService.DeleteTicketAttachment(AttachmentId, userInfo!.CompanyId);
+
+            ticket = await TicketService.GetTicketByIdAsync(Id, userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
     }

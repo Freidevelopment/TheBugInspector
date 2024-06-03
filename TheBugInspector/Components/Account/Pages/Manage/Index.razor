@@ -86,7 +86,7 @@
         {
             try
             {
-                FileUpload newImage = await FileHelper.GetImageUploadAsync(Input.ProfilePicture);
+                FileUpload newImage = await FileHelper.GetFileUploadAsync(Input.ProfilePicture);
                 await DBContext.AddAsync(newImage);
 
                 FileUpload? oldImage = await DBContext.Images.FirstOrDefaultAsync(i => i.Id == user.ProfilePictureId);

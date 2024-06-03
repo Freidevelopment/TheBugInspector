@@ -16,7 +16,7 @@
                 <ValidationMessage For="() => Ticket.Title" />
             </div>
             @* Project *@
-            @if (IsNew == 1)
+            @if (IsNew == true)
             {
                 <div class="mb-2">
                     <label for="priority" class="form-label">
@@ -66,7 +66,7 @@
                 </InputSelect>
                 <ValidationMessage For="() => Ticket.Priority" />
             </div>
-            @if (IsNew == 2)
+            @if (IsNew == false)
             {
                 @* Status *@
                 <div class="mb-2">
@@ -117,7 +117,7 @@
     public EventCallback<TicketDTO> OnSubmit { get; set; }
 
     [Parameter, EditorRequired]
-    public int IsNew { get; set; }
+    public bool IsNew { get; set; }
 
     [CascadingParameter]
     private Task<AuthenticationState>? AuthStateTask { get; set; }

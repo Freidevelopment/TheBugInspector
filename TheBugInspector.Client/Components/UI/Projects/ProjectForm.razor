@@ -70,23 +70,24 @@
     public EventCallback<ProjectDTO> OnSubmit { get; set; }
 
     [Parameter, EditorRequired]
-    public int IsNew { get; set; }
+    public bool IsNew { get; set; }
     #endregion
 
     #region State
     #endregion
 
     #region Methods
-    protected async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        if(IsNew == 1)
+        if (IsNew == true)
         {
-            Project!.StartDate = DateTimeOffset.Now;
-            Project!.EndDate = DateTimeOffset.Now;
-            
+            Project!.StartDate = DateTime.Today;
+            Project!.EndDate = DateTime.Today.AddDays(7);
+
         }
-        
+
     }
+
     private async Task HandleSubmit()
     {
         try

@@ -43,7 +43,7 @@ namespace TheBugInspector.Data
                 UserId = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                ProfilePictureUrl = user.ProfilePictureId.HasValue ? $"api/uploads{user.ProfilePictureId}" : FileHelper.DefaultProfilePicture,
+                ProfilePictureUrl = user.ProfilePictureId.HasValue ? $"api/uploads/{user.ProfilePictureId}" : FileHelper.DefaultProfilePicture,
                 Email = user.Email,
 
             };

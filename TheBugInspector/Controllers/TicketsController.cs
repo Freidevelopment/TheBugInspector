@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using TheBugInspector.Client.Models;
 using TheBugInspector.Client.Services.Interfaces;
 using TheBugInspector.Data;
+using TheBugInspector.Helpers;
+using TheBugInspector.Models;
 
 namespace TheBugInspector.Controllers
 {
@@ -24,14 +26,48 @@ namespace TheBugInspector.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetAllTicketsAsync() 
-        { 
+        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetAllTicketsAsync()
+        {
             int companyId = _companyId ?? 0;
 
             try
             {
                 IEnumerable<TicketDTO> tickets = await _ticketService.GetAllTicketsAsync(companyId);
                 return Ok(tickets);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{ticketId:int}/comments")]
+        public async Task<ActionResult<IEnumerable<TicketCommentDTO>>> GetTicketCommentsAsync([FromRoute] int ticketId)
+        {
+            int companyId = _companyId ?? 0;
+
+            try
+            {
+                IEnumerable<TicketCommentDTO> comments = await _ticketService.GetTicketCommentsAsync(ticketId, companyId);
+                return Ok(comments);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{ticketId:int}/comment")]
+        public async Task<ActionResult<IEnumerable<TicketCommentDTO>>> GetTicketCommentByIdAsync([FromRoute] int ticketId)
+        {
+            int companyId = _companyId ?? 0;
+
+            try
+            {
+                TicketCommentDTO? comment = await _ticketService.GetTicketCommentByIdAsync(ticketId, companyId);
+                return Ok(comment);
             }
             catch (Exception ex)
             {
@@ -75,6 +111,68 @@ namespace TheBugInspector.Controllers
             }
         }
 
+        [HttpPost("{ticketId:int}/comments")]
+        public async Task<IActionResult> CreateComment([FromRoute] int ticketId,
+                                                        [FromBody] TicketCommentDTO commentDTO)
+        {
+            int companyId = _companyId ?? 0;
+
+            try
+            {
+                await _ticketService.AddCommentAsync(commentDTO, companyId);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest();
+            }
+        }
+
+        // POST: api/Tickets/5/attachments
+        // NOTE: the parameters are decorated with [FromForm] because they will be sent
+        // encoded as multipart/form-data and NOT the typical JSON
+        [HttpPost("{id}/attachments")]
+        public async Task<ActionResult<TicketAttachmentDTO>> PostTicketAttachment(int id,
+                                                                                    [FromForm] TicketAttachmentDTO attachment,
+                                                                                    [FromForm] IFormFile? file)
+        {
+            if (attachment.TicketId != id || file is null)
+            {
+                return BadRequest();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            var ticket = await _ticketService.GetTicketByIdAsync(id, user!.CompanyId);
+
+            if (ticket is null)
+            {
+                return NotFound();
+            }
+
+            attachment.UserId = user!.Id;
+            attachment.Created = DateTimeOffset.Now;
+
+            if (string.IsNullOrWhiteSpace(attachment.FileName))
+            {
+                attachment.FileName = file.FileName;
+            }
+
+            // ImageHelper was renamed to UploadHelper!
+            FileUpload upload = await FileHelper.GetFileUploadAsync(file);
+
+            try
+            {
+                var newAttachment = await _ticketService.AddTicketAttachment(attachment, upload.Data!, upload.Type!, user!.CompanyId);
+                return Ok(newAttachment);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
         [HttpPut("{ticketId:int}")]
         public async Task<IActionResult> UpdateTicket([FromRoute] int ticketId,
                                                       [FromBody] TicketDTO ticket)
@@ -93,6 +191,37 @@ namespace TheBugInspector.Controllers
                 Console.WriteLine(ex);
                 return Problem();
             }
+        }
+
+        [HttpPut("{commentId:int}/comments")]
+        public async Task<IActionResult> UpdateComment([FromRoute] int commentId,
+                                                       [FromBody] TicketCommentDTO ticketCommentDTO)
+        {
+
+            int companyId = _companyId ?? 0;
+            string userId = _userManager.GetUserId(User)!;
+
+            TicketCommentDTO? comment = await _ticketService.GetTicketCommentByIdAsync(ticketCommentDTO.TicketId, companyId);
+
+            if (comment is not null)
+            {
+                if (userId == comment.UserId)
+                {
+                    try
+                    {
+                        await _ticketService.UpdateCommentAsync(ticketCommentDTO, companyId);
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return BadRequest(ex.Message);
+                    }
+                }
+            }
+
+            return Problem();
+
         }
 
         [HttpPut("{ticketId:int}/archived")]
@@ -129,6 +258,47 @@ namespace TheBugInspector.Controllers
                 Console.WriteLine(ex);
                 return Problem();
             }
+        }
+
+        [HttpDelete("{ticketId:int}/{commentId:int}/comments")]
+        public async Task<IActionResult> DeleteComment([FromRoute] int ticketId,
+                                                       [FromRoute] int commentId)
+        {
+            int companyId = _companyId ?? 0;
+            string userId = _userManager.GetUserId(User)!;
+
+            TicketCommentDTO? comment = await _ticketService.GetTicketCommentByIdAsync(ticketId, companyId);
+
+            if(comment is not null)
+            {
+                if(userId == comment.UserId)
+                {
+                    try
+                    {
+                        await _ticketService.DeleteCommentAsync(commentId, ticketId);
+                        return NoContent();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return BadRequest(ex.Message);
+                    }
+                }
+            }
+
+            return Problem();
+            
+        }
+
+        // DELETE: api/Tickets/attachments/1
+        [HttpDelete("attachments/{attachmentId}")]
+        public async Task<IActionResult> DeleteTicketAttachment(int attachmentId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            await _ticketService.DeleteTicketAttachment(attachmentId, user!.CompanyId);
+
+            return NoContent();
         }
     }
 }

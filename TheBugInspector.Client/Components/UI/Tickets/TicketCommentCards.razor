@@ -1,0 +1,121 @@
+﻿@if (Comment is not null)
+{
+
+    @if (status == Status.Viewing)
+    {
+        <div class="border-bottom py-4 mt-2 mb-4">
+            <div class="d-flex align-items-center pb-1 mb-3">
+                <img class="rounded-circle" src="@Comment.User!.ProfilePictureUrl" width="48" alt="@Comment.UserId">
+                <div class="ps-3">
+                    <h6 class="mb-0">@Comment.User.FullName</h6>
+                    <span class="fs-sm text-body-secondary">@Comment.Created.ToString("f")</span>
+                </div>
+            </div>
+            <p class="pb-2 mb-0">@Comment.Content</p>
+            <div class="col-12 text-end">
+                <div class="form-check mb-2">
+                    <AuthorizeView>
+                        @if (Comment.UserId == userInfo!.UserId)
+                        {
+                            <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
+                            <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
+                        }
+                    </AuthorizeView>
+                </div>
+
+            </div>
+        </div>
+
+    }
+    else if (status == Status.Updating)
+    {
+        <EditForm Model="Comment">
+            <DataAnnotationsValidator />
+            <div class="border-bottom py-4 mt-2 mb-4">
+                <div class="d-flex align-items-center pb-1 mb-3">
+                    <img class="rounded-circle" src="@Comment.User!.ProfilePictureUrl" width="48" alt="@Comment.UserId">
+                    <div class="ps-3">
+                        <h6 class="mb-0">@Comment.User.FullName</h6>
+
+                        <span class="fs-sm text-body-secondary">@Comment.Created.ToString("d")</span>
+                    </div>
+                </div>
+                <InputTextArea class="form-control" rows="3" @bind-Value="Comment.Content" />
+                <ValidationMessage For="() => Comment.Content" />
+                <div class="col-12 text-end mt-2">
+                    <div class="form-check mb-2">
+                        <span class="text-info">Do you wish to edit your Comment?</span>
+                        <button class="btn btn-info" @onclick="HandleUpdate"><i class="bi bi-pencil-fill"></i></button>
+                        <button class="btn btn-danger" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    }
+    else if (status == Status.Deleting)
+    {
+        <div class="border-bottom py-4 mt-2 mb-4">
+            <div class="d-flex align-items-center pb-1 mb-3">
+                <img class="rounded-circle" src="@Comment.User!.ProfilePictureUrl" width="48" alt="@Comment.UserId">
+                <div class="ps-3">
+                    <h6 class="mb-0">@Comment.User.FullName</h6>
+                    <span class="fs-sm text-body-secondary">@Comment.Created.ToString("d")</span>
+                </div>
+            </div>
+            <p class="pb-2 mb-0">@Comment.Content</p>
+            <div class="col-12 text-end">
+                <div class="form-check mb-2">
+                    <span class="text-danger">Are you sure you wish to delete your comment?</span>
+                    <button class="btn btn-danger" @onclick="HandleDelete"><i class="bi bi-trash-fill"></i></button>
+                    <button class="btn btn-info" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public TicketCommentDTO? Comment { get; set; }
+
+    [Parameter]
+    public UserInfo? userInfo { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<TicketCommentDTO> OnUpdate { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnDelete { get; set; }
+
+
+    #endregion
+
+    #region State
+    private enum Status
+    {
+        Viewing,
+        Updating,
+        Deleting
+    }
+
+    private Status status = Status.Viewing;
+    #endregion
+
+    #region Methods
+    private async Task HandleUpdate()
+    {
+        await OnUpdate.InvokeAsync(Comment);
+
+        status = Status.Viewing;
+    }
+
+    private async Task HandleDelete()
+    {
+        await OnDelete.InvokeAsync(Comment!.Id);
+
+        status = Status.Viewing;
+    }
+
+    #endregion
+}

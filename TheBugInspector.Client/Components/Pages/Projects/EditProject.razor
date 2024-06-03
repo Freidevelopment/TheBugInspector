@@ -8,7 +8,7 @@
 @rendermode InteractiveWebAssembly
 
 @inject IProjectDTOService ProjectService
-
+@inject NavigationManager Nav
 
 <PageTitle>BugInspector | Edit Projects</PageTitle>
 
@@ -21,7 +21,7 @@
         <div class="card-body">
             <ProjectForm Project="project"
                          OnSubmit="HandleSubmit"
-                         IsNew="2" />
+                         IsNew="false" />
         </div>
     </div>
 </div>
@@ -72,6 +72,7 @@
             Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
+        Nav.NavigateTo("/projects/Index");
     }
     #endregion
 }

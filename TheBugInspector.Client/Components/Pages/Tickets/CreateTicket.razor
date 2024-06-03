@@ -8,8 +8,8 @@
 
 @rendermode InteractiveWebAssembly
 
-@inject IProjectDTOService ProjectService
 @inject ITicketDTOService TicketService
+@inject NavigationManager Nav
 
 
 <PageTitle>BugInspector | Create Ticket</PageTitle>
@@ -23,7 +23,7 @@
         <div class="card-body">
             <TicketForm Ticket="new TicketDTO()"
                         OnSubmit="HandleSubmit"
-                        IsNew="1"/>
+                        IsNew="true"/>
 
         </div>
     </div>
@@ -71,6 +71,7 @@
             Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
+        Nav.NavigateTo("/tickets/Index");
     }
     #endregion
 }

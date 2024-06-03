@@ -1,0 +1,82 @@
+﻿@if (Attachment is not null)
+{
+    @if (IsDeleting == false)
+    {
+        <div class="card w-100 h-100">
+            <div class="card-body">
+                <h5 class="card-title">@Attachment.FileName</h5>
+                @if(Attachment.Description is not null)
+                {
+                <h6 class="card-subtitle mb-2 text-body-secondary">Description: </h6>
+                <p class="card-text">@Attachment.Description</p>
+                    
+                }
+                @* Work on getting the showing of attachment files to work
+                <div>
+                    @{
+                        string? extension = Path.GetExtension(Attachment.FileName)?.Trim('.') ?? "default";
+                    }
+                </div>
+                <img src="@($"png/{extension}.png")"/> *@
+                <img src="@Attachment.UploadUrl" class="img-fluid" />
+                <p class="card-text">@Attachment.Created.ToString("f")</p>
+                <p class="card-text">Submitted By: @userInfo.FullName</p>
+                <a href="#" class="card-link">@Attachment.UploadUrl</a>
+
+                @if (Attachment.UserId == userInfo!.UserId)
+                {
+                    <button class="btn btn-danger" @onclick="() => IsDeleting = true">Delete Attachment</button>
+                }
+            </div>
+        </div>
+
+    }
+    @if (IsDeleting == true)
+    {
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">@Attachment.FileName</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Description of Attachment</h6>
+                <p class="card-text">@Attachment.Description</p>
+                <p class="card-text">@Attachment.Created.ToString("f")</p>
+                <p class="card-text">Submitted By: @Attachment.User.FullName</p>
+                <a href="#" class="card-link">@Attachment.UploadUrl</a>
+
+                @if (Attachment.UserId == userInfo!.UserId)
+                {
+                    <span class="text-danger">do you want to delete this Attachment?</span>
+                    <button class="btn btn-danger" @onclick="HandleDelete">Delete Attachment</button>
+                    <button class="btn btn-danger" @onclick="() => IsDeleting = false">Cancel Delete</button>
+                }
+            </div>
+        </div>
+    }
+
+}
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public TicketAttachmentDTO? Attachment { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnSubmit { get; set; }
+
+    [Parameter]
+    public UserInfo? userInfo { get; set; }
+    #endregion
+
+    #region State
+    private bool IsDeleting = false;
+    #endregion
+
+    #region Methods
+
+    private async Task HandleDelete()
+    {
+        await OnSubmit.InvokeAsync(Attachment!.Id);
+
+        IsDeleting = false;
+    }
+    #endregion
+}
