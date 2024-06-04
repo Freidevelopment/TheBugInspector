@@ -1,43 +1,64 @@
-﻿@if (User is not null)
+﻿@inject ICompanyDTOService CompanyService
+
+@if (User is not null)
 {
     @if (IsEdit is false)
     {
         <li class="list-group-item">
-            <span>@User.FullName</span>
-            <span>@User.Role</span>
-            <AuthorizeView>
-                @if (context.User.IsInRole("Admin"))
-                {
-                    <button class="btn btn-primary text-end" @onclick="() => IsEdit = true">
-                        Assign Member Role
-                    </button>
-                }
-            </AuthorizeView>
+            <div class="row row-cols-3">
+                <div class="col">
+                    <span>@User.FullName</span>
+
+                </div>
+                <div class="col">
+                    <span>@Role</span>
+                </div>
+                <div class="col">
+                    <AuthorizeView>
+                        @if (context.User.IsInRole("Admin"))
+                        {
+                            <button class="btn btn-primary text-end" @onclick="() => IsEdit = true">
+                                Assign Member Role
+                            </button>
+                        }
+                    </AuthorizeView>
+                </div>
+
+            </div>
         </li>
     }
-    else if(IsEdit is true)
+    else if (IsEdit is true)
     {
         <EditForm Model="User">
             <DataAnnotationsValidator />
             <li class="list-group-item">
-            <span>@User.FullName</span>
-            <span>@User.Role</span>
-            <label class="form-label">
-                Roles
-            </label>
-            <InputSelect class="form-control" @bind-Value="User.Role">
-                <option value="">
-                    Roles
-                </option>
-                @foreach(Roles role in Enum.GetValues<Roles>())
-                    {
-                        <option value="@role">
-                            @role.ToString()
-                        </option>
-                    }
-                </InputSelect>
-                <button class="btn btn-info" @onclick="HandleSubmit">Edit Role</button>
-                <button class="btn btn-warning" @onclick="() => IsEdit = false">Cancel</button>
+                <div class="row row-cols-3">
+                    <div class="col">
+                        <span>@User.FullName</span>
+
+                    </div>
+                    <div class="col">
+                        <span>@User.Role</span>
+
+                    </div>
+                    <div class="col">
+                        <label class="form-label">
+                            Roles
+                        </label>
+                        <InputSelect class="form-control" @bind-Value="User.Role">
+                            @foreach (CompanyRoles role in Enum.GetValues<CompanyRoles>())
+                            {
+                                <option value="@role">
+                                    @role.ToString()
+                                </option>
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button class="btn btn-info" @onclick="HandleSubmit">Edit Role</button>
+                    <button class="btn btn-warning" @onclick="() => IsEdit = false">Cancel</button>
+                </div>
             </li>
         </EditForm>
     }
@@ -50,25 +71,47 @@
     public UserDTO? User { get; set; }
 
     [Parameter, EditorRequired]
+    public UserInfo? UserInfo { get; set; }
+
+    [Parameter, EditorRequired]
     public EventCallback<UserDTO> OnSubmit { get; set; }
     #endregion
 
     #region State
     private bool IsEdit = false;
+    private string? Role;
     #endregion
 
     #region Methods
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (User is not null)
+            {
+                Role = await CompanyService.GetUserRoleAsync(User.UserId, UserInfo!.CompanyId);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
     private async Task HandleSubmit()
     {
         try
         {
             await OnSubmit.InvokeAsync(User);
+
+            IsEdit = false;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            
+
         }
     }
 

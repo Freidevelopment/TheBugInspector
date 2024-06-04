@@ -1,0 +1,105 @@
+﻿@using FreiBlogBuilder.Client.Helpers
+@if (Company is not null)
+{
+    <EditForm Model="Company" OnValidSubmit="HandleSubmit" class="row">
+        <DataAnnotationsValidator />
+        @* Name *@
+        <div class="col-lg-4 gap-2">
+            <div class="mb-2">
+                <label class="form-label">
+                    Company Name
+                </label>
+                <InputText class="form-control" @bind-Value="Company.Name" />
+                <ValidationMessage For="() => Company.Name" />
+            </div>
+            <div class="mb-3 row">
+                <div class="col-md-4 text-center overflow-hidden">
+                    <img src="@Company.ImageUrl" class="img-fluid" id="imagePreview" height="80" />
+                </div>
+                @* image *@
+                <div class="mb-2">
+                    <img class="img-fluid" style="max-height: 350px"
+                         src="@( string.IsNullOrEmpty(Company.ImageUrl) ? ImageHelper.DefaultContactImage : Company.ImageUrl)" />
+                    <InputFile OnChange="OnFileChange" class="form-control mt-2" accept=".png,.jpg, .jpeg, .svg" />
+                    <span class="text-danger">@imageError</span>
+
+
+                </div>
+            </div>
+        </div>
+
+        @* Description *@
+        <div class="col-lg-8">
+            <div class="mb-2">
+                <label class="form-label">Project Description</label>
+                <InputTextArea class="form-control" rows="10" @bind-Value="Company.Description" />
+                <ValidationMessage For="() => Company.Description" />
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+    </EditForm>
+}
+
+
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public CompanyDTO? Company { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<CompanyDTO> OnSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public bool IsNew { get; set; }
+    #endregion
+
+    #region State
+    private string? imageError;
+    #endregion
+
+    #region Methods
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            await OnSubmit.InvokeAsync(Company);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+
+    private async Task OnFileChange(InputFileChangeEventArgs changeEvent)
+    {
+        imageError = null;
+
+        if (changeEvent.File is null)
+        {
+            Company!.ImageUrl = ImageHelper.DefaultBlogImage;
+        }
+        else if (changeEvent.File.Size > ImageHelper.MaxFileSize)
+        {
+            imageError = "Images must be less than 5MB";
+        }
+        else
+        {
+            try
+            {
+                Company!.ImageUrl = await ImageHelper.GetDataUrl(changeEvent.File);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                imageError = "Could not read the selected file. Please select a different image.";
+            }
+        }
+
+    }
+    #endregion
+}

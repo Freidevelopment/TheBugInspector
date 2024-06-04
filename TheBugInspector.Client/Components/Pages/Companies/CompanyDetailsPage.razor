@@ -4,7 +4,7 @@
 
 @inject ICompanyDTOService CompanyService
 
-@rendermode InteractiveServer
+@rendermode InteractiveWebAssembly
 
 <PageTitle>BugInspector | Company</PageTitle>
 
@@ -15,7 +15,7 @@
     <div class="container">
         <div class="text-center">
             <span>@company.Name</span>
-            <img src="@company.ImageUrl" />
+            <img src="@company.ImageUrl" class="img-fluid"/>
             <div>
                 <div>
                     Projects
@@ -37,11 +37,23 @@
                 <ul class="list-group">
                     @foreach (UserDTO member in Members)
                     {
-                        <CompanyMembersDisplay User="member"
-                                                OnSubmit="UpdateRole"/>
+                        <CompanyMembersDisplay @key="member.UserId"
+                                               User="member"
+                                               UserInfo="userInfo"
+                                               OnSubmit="UpdateRole" />
                     }
 
                 </ul>
+            </div>
+            <div>
+                <AuthorizeView Context="AdminCompanyControl">
+                    @if (AdminCompanyControl.User.IsInRole("Admin"))
+                    {
+                        <a href="/Company/Edit/@company.Id" class="btn btn-primary text-end">
+                            Edit Company Page
+                        </a>
+                    }
+                </AuthorizeView>
             </div>
         </div>
     </div>
@@ -85,7 +97,9 @@
     {
         try
         {
-             await CompanyService.UpdateUserRoleAsync(user, userInfo!.UserId);
+            await CompanyService.UpdateUserRoleAsync(user, userInfo!.UserId);
+
+            Members = await CompanyService.GetCompanyMembersAsync(company!.Id);
         }
         catch (Exception ex)
         {

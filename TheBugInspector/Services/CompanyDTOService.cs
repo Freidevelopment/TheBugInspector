@@ -1,6 +1,7 @@
 ﻿using TheBugInspector.Client.Models;
 using TheBugInspector.Client.Services.Interfaces;
 using TheBugInspector.Data;
+using TheBugInspector.Helpers;
 using TheBugInspector.Models;
 using TheBugInspector.Services.Interfaces;
 
@@ -28,7 +29,7 @@ namespace TheBugInspector.Services
 
             List<UserDTO> members = [];
 
-            foreach(ApplicationUser user in company.CompanyMembers)
+            foreach (ApplicationUser user in company.CompanyMembers)
             {
                 UserDTO member = user.ToDTO();
                 member.Role = await repository.GetUserRoleAsync(user.Id, companyId);
@@ -38,9 +39,21 @@ namespace TheBugInspector.Services
             return members;
         }
 
-        public Task<string?> GetUserRoleAsync(string userId, int companyId)
+        public async Task<string?> GetUserRoleAsync(string userId, int companyId)
         {
-            throw new NotImplementedException();
+            Company? company = await repository.GetCompanyByIdAsync(companyId);
+
+            if (company is null) return null;
+
+            string? Role = string.Empty;
+
+            ApplicationUser? appUser = company.CompanyMembers.FirstOrDefault(u => u.Id == userId);
+
+            if (appUser is null) return null;
+
+            Role = await repository.GetUserRoleAsync(userId, companyId);
+
+            return Role;
         }
 
         public async Task<IEnumerable<UserDTO>> GetUsersInRoleAsync(string roleName, int companyId)
@@ -49,7 +62,7 @@ namespace TheBugInspector.Services
 
             IEnumerable<UserDTO> userDTOs = users.Select(u => u.ToDTO());
 
-            foreach(UserDTO user in userDTOs)
+            foreach (UserDTO user in userDTOs)
             {
                 user.Role = roleName;
             }
@@ -57,9 +70,27 @@ namespace TheBugInspector.Services
             return userDTOs;
         }
 
-        public Task UpdateCompanyAsync(CompanyDTO company, string adminId)
+        public async Task UpdateCompanyAsync(CompanyDTO company, string adminId)
         {
-            throw new NotImplementedException();
+            Company? companyToUpdate = await repository.GetCompanyByIdAsync(company.Id);
+
+            if (companyToUpdate is not null)
+            {
+                companyToUpdate.Description = company.Description;
+                companyToUpdate.Name = company.Name;
+
+                if (company.ImageUrl.StartsWith("data:"))
+                {
+                    companyToUpdate.Image = FileHelper.GetFileUpload(company.ImageUrl);
+                }
+                else
+                {
+                    companyToUpdate.Image = null;
+                }
+
+                await repository.UpdateCompanyAsync(companyToUpdate, adminId);
+
+            }
         }
 
         public async Task UpdateUserRoleAsync(UserDTO user, string adminId)

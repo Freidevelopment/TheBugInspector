@@ -1,0 +1,72 @@
+﻿@page "/Company/Edit/{id:int}"
+@using TheBugInspector.Client.Components.UI.Companies
+@using TheBugInspector.Client.Helpers
+
+@inject ICompanyDTOService CompanyService
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>BugInspector | Edit Company</PageTitle>
+
+<div class="container-xxl">
+
+    <h3>Edit Company</h3>
+    <span class="text-danger">@ErrorMessage</span>
+
+    @if (company is not null)
+    {
+        <div class="card-shadow">
+            <div class="card-body">
+                <CompanyForm Company="company" OnSubmit="EditCompany" IsNew="false"></CompanyForm>
+            </div>
+
+        </div>
+
+    }
+</div>
+
+@code {
+    #region Parameters
+    [Parameter]
+    public int Id { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    #endregion
+
+    #region State
+    private CompanyDTO? company;
+    private UserInfo? userInfo;
+    private string? ErrorMessage = string.Empty;
+    #endregion
+
+    #region Methods
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ErrorMessage = string.Empty;
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+            company = await CompanyService.GetCompanyByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task EditCompany(CompanyDTO company)
+    {
+        try
+        {
+            await CompanyService.UpdateCompanyAsync(company, userInfo!.UserId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+    #endregion
+}

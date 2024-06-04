@@ -20,7 +20,7 @@ namespace TheBugInspector.Services
 
             ApplicationUser? admin = await userManager.FindByIdAsync(adminId);
 
-            if(admin is not null && await userManager.IsInRoleAsync(admin, nameof(Roles.Admin)))
+            if (admin is not null && await userManager.IsInRoleAsync(admin, nameof(Roles.Admin)))
             {
                 ApplicationUser? user = await userManager.FindByIdAsync(userId);
 
@@ -29,12 +29,12 @@ namespace TheBugInspector.Services
                     IList<string> currentRoles = await userManager.GetRolesAsync(user);
                     string? currentRole = currentRoles.FirstOrDefault(r => r != nameof(Roles.DemoUser));
 
-                    if(string.Equals(currentRole, roleName, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(currentRole, roleName, StringComparison.OrdinalIgnoreCase))
                     {
                         return;
                     }
 
-                    if(!string.IsNullOrEmpty(currentRole))
+                    if (!string.IsNullOrEmpty(currentRole))
                     {
                         await userManager.RemoveFromRoleAsync(user, currentRole);
                     }
@@ -66,14 +66,14 @@ namespace TheBugInspector.Services
 
             string role = "Unknown";
 
-                if(user?.CompanyId == companyId)
+            if (user?.CompanyId == companyId)
             {
                 IList<string> roles = await userManager.GetRolesAsync(user);
 
                 role = roles.FirstOrDefault(r => r != nameof(Roles.DemoUser), role);
             }
 
-                return role;
+            return role;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersInRoleAsync(string roleName, int companyId)
@@ -87,9 +87,47 @@ namespace TheBugInspector.Services
             return companyUsers;
         }
 
-        public Task UpdateCompanyAsync(Company company, string adminId)
+        public async Task UpdateCompanyAsync(Company company, string adminId)
         {
-            throw new NotImplementedException();
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+          
+
+            using IServiceScope scope = serviceProvider.CreateScope();
+            UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            ApplicationUser? admin = await userManager.FindByIdAsync(adminId);
+
+            if (admin is not null && await userManager.IsInRoleAsync(admin, nameof(Roles.Admin)))
+            {
+                FileUpload? oldImage = null;
+
+                if(company.Image is not null)
+                {
+                    context.Images.Add(company.Image);
+
+                    oldImage = await context.Images.FirstOrDefaultAsync(i => i.Id == company.ImageId);
+
+                    company.ImageId = company.Image.Id;
+                }
+
+                try
+                {
+                    context.Companies.Update(company);
+
+                    await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    
+                }
+
+                if (oldImage is not null)
+                {
+                    context.Images.Remove(oldImage);
+                    await context.SaveChangesAsync();
+                }
+            }
         }
     }
 }
