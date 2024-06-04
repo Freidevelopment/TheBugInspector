@@ -17,6 +17,7 @@
         <td>@Ticket.Priority</td>
         <td>@Ticket.Status</td>
         <td>@Ticket.SubmitterUser!.FullName</td>
+        <td>@Ticket.Comments.Count()</td>
         @if (Ticket.IsArchived is false)
         {
             <td><button class="btn btn-success" @onclick="HandleArchive">Archive</button></td>

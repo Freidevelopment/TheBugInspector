@@ -1,0 +1,76 @@
+﻿@if (User is not null)
+{
+    @if (IsEdit is false)
+    {
+        <li class="list-group-item">
+            <span>@User.FullName</span>
+            <span>@User.Role</span>
+            <AuthorizeView>
+                @if (context.User.IsInRole("Admin"))
+                {
+                    <button class="btn btn-primary text-end" @onclick="() => IsEdit = true">
+                        Assign Member Role
+                    </button>
+                }
+            </AuthorizeView>
+        </li>
+    }
+    else if(IsEdit is true)
+    {
+        <EditForm Model="User">
+            <DataAnnotationsValidator />
+            <li class="list-group-item">
+            <span>@User.FullName</span>
+            <span>@User.Role</span>
+            <label class="form-label">
+                Roles
+            </label>
+            <InputSelect class="form-control" @bind-Value="User.Role">
+                <option value="">
+                    Roles
+                </option>
+                @foreach(Roles role in Enum.GetValues<Roles>())
+                    {
+                        <option value="@role">
+                            @role.ToString()
+                        </option>
+                    }
+                </InputSelect>
+                <button class="btn btn-info" @onclick="HandleSubmit">Edit Role</button>
+                <button class="btn btn-warning" @onclick="() => IsEdit = false">Cancel</button>
+            </li>
+        </EditForm>
+    }
+
+}
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public UserDTO? User { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<UserDTO> OnSubmit { get; set; }
+    #endregion
+
+    #region State
+    private bool IsEdit = false;
+    #endregion
+
+    #region Methods
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            await OnSubmit.InvokeAsync(User);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            
+        }
+    }
+
+    #endregion
+}

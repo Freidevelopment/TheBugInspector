@@ -1,17 +1,98 @@
-﻿@page "/companies/Index/{id:int}"
+﻿@page "/companies/Index"
+@using TheBugInspector.Client.Components.UI.Companies
+@using TheBugInspector.Client.Helpers
 
-<h3>CompanyDetailsPage</h3>
+@inject ICompanyDTOService CompanyService
+
+@rendermode InteractiveServer
+
+<PageTitle>BugInspector | Company</PageTitle>
+
+@if (company is not null)
+{
+
+
+    <div class="container">
+        <div class="text-center">
+            <span>@company.Name</span>
+            <img src="@company.ImageUrl" />
+            <div>
+                <div>
+                    Projects
+                </div>
+                <ul class="list-group">
+                    @foreach (ProjectDTO project in company.Projects)
+                    {
+                        <li>@project.Name</li>
+                    }
+                </ul>
+            </div>
+            <div>
+                @company.Description
+            </div>
+            <div>
+                <div>
+                    Company Members
+                </div>
+                <ul class="list-group">
+                    @foreach (UserDTO member in Members)
+                    {
+                        <CompanyMembersDisplay User="member"
+                                                OnSubmit="UpdateRole"/>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     #region Parameters
     [Parameter]
     public int Id { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
     #endregion
 
     #region State
+    private CompanyDTO? company;
+    private string? ErrorMessage = string.Empty;
+    private IEnumerable<UserDTO> Members = [];
+    private UserInfo? userInfo;
     #endregion
 
     #region Methods
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+
+            company = await CompanyService.GetCompanyByIdAsync(userInfo!.CompanyId);
+
+            Members = await CompanyService.GetCompanyMembersAsync(company!.Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the Devtools";
+        }
+    }
+
+    private async Task UpdateRole(UserDTO user)
+    {
+        try
+        {
+             await CompanyService.UpdateUserRoleAsync(user, userInfo!.UserId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the Devtools";
+        }
+    }
     #endregion
-    
+
 }

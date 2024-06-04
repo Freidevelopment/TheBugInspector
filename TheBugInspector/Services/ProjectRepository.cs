@@ -91,6 +91,7 @@ namespace TheBugInspector.Services
 
             Project? project = await context.Projects
                                                      .Include(p => p.Tickets)
+                                                        .ThenInclude(p => p.SubmitterUser)
                                                      .Include(p => p.CompanyMembers)
                                                      .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
             return project;

@@ -15,11 +15,19 @@
 
 <div class="container-xxl background-primary">
 
+    <div class="row row-cols-2">
+        <div class="col">
+            <h1>Active Projects</h1>
+
+        </div>
+        <div class="col text-end">
+            <a class="btn btn-primay bg-info" href="/projects/create">Create Project?</a>
+        </div>
+    </div>
 
     @if (activeProjects is not null)
     {
 
-        <h1>Active Projects</h1>
 
         <table class="table table-striped-columns table-info">
             <thead>
@@ -29,6 +37,7 @@
                     <th scope="col">Project Start Date</th>
                     <th scope="col">Project End Date</th>
                     <th scope="col">Project Priority</th>
+                    <th scope="col">Number of Tickets</th>
                     <th scope="col">Archive Project?</th>
                     <th scope="col">Edit Project?</th>
                 </tr>
@@ -37,7 +46,7 @@
                 @foreach (ProjectDTO project in activeProjects)
                 {
                     <ProjectEditIndex Project="project"
-                                      OnSubmit="HandleArchive"/>
+                                      OnSubmit="HandleArchive" />
                 }
 
             </tbody>
@@ -50,9 +59,6 @@
     }
 </div>
 
-<div>
-    <a class="btn btn-primay bg-info" href="/projects/create">Create Project?</a>
-</div>
 
 @code {
     #region Parameters

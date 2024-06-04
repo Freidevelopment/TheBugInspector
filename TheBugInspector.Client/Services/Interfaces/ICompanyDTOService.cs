@@ -11,6 +11,7 @@ namespace TheBugInspector.Client.Services.Interfaces
         #region Retrieve
         Task<CompanyDTO?> GetCompanyByIdAsync(int id);
 
+        Task<IEnumerable<UserDTO>> GetCompanyMembersAsync(int companyId);
         Task<string?> GetUserRoleAsync(string userId, int companyId);
 
         Task<IEnumerable<UserDTO>> GetUsersInRoleAsync(string roleName, int companyId);
@@ -18,6 +19,8 @@ namespace TheBugInspector.Client.Services.Interfaces
 
         #region Update
         Task UpdateCompanyAsync(CompanyDTO company, string adminId);
+
+        Task UpdateUserRoleAsync(UserDTO user, string adminId);
         #endregion
 
         #region Delete

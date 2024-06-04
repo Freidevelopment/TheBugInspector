@@ -6,7 +6,7 @@
 @using TheBugInspector.Client.Services
 @using TheBugInspector.Client.Services.Interfaces
 
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveAuto
 
 @inject ITicketDTOService TicketService
 @inject NavigationManager Nav
@@ -21,7 +21,7 @@
     <span class="text-danger">@ErrorMessage</span>
     <div class="card-shadow">
         <div class="card-body">
-            <TicketForm Ticket="new TicketDTO()"
+            <TicketForm Ticket="Ticket"
                         OnSubmit="HandleSubmit"
                         IsNew="true"/>
 
@@ -39,6 +39,7 @@
 
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
+    private TicketDTO? Ticket = new();
     #endregion
 
     #region Methods
@@ -50,6 +51,7 @@
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
 
+            Ticket!.SubmitterUserId = userInfo!.UserId;
         }
         catch (Exception ex)
         {

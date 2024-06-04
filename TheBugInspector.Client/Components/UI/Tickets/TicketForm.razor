@@ -140,7 +140,6 @@
 
             projects = await ProjectService.GetAllProjectsAsync(userInfo!.CompanyId);
 
-            Ticket!.SubmitterUserId = userInfo.UserId;
 
         }
         catch (Exception ex)

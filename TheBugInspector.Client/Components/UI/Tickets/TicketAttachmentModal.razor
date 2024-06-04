@@ -10,9 +10,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-@*                 <div class="text-center">
-                    <img src="@ImageHelper.DefaultProfilePicture" class="img-fluid" id="FilePlaceholder" height="30" />
-                </div> *@
                 <InputFile OnChange="e => newFile = e.File" />
                 <InputText @bind-Value="newAttachment.Description"
                            class="form-control"
@@ -22,7 +19,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Upload</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Upload</button>
             </div>
         </EditForm>
     </div>

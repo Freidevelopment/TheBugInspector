@@ -214,7 +214,9 @@ namespace TheBugInspector.Services
 
             bool ticketEdit = await context.Tickets.AnyAsync(t => t.Id == comment.TicketId);
 
-            if (shouldEdit && ticketEdit) 
+            bool commentEdit = await context.TicketComments.AnyAsync(c => c.Id == comment.Id);
+
+            if (shouldEdit && ticketEdit && commentEdit) 
             { 
                 context.TicketComments.Update(comment);
                 await context.SaveChangesAsync();

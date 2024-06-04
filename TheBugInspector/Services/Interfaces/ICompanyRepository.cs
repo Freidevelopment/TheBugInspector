@@ -1,5 +1,6 @@
-﻿using Bogus.DataSets;
+﻿
 using TheBugInspector.Data;
+using TheBugInspector.Models;
 
 namespace TheBugInspector.Services.Interfaces
 {

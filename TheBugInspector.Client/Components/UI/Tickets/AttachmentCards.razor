@@ -5,27 +5,27 @@
         <div class="card w-100 h-100">
             <div class="card-body">
                 <h5 class="card-title">@Attachment.FileName</h5>
-                @if(Attachment.Description is not null)
+                @if (Attachment.Description is not null)
                 {
-                <h6 class="card-subtitle mb-2 text-body-secondary">Description: </h6>
-                <p class="card-text">@Attachment.Description</p>
-                    
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Description: </h6>
+                    <p class="card-text">@Attachment.Description</p>
+
                 }
-                @* Work on getting the showing of attachment files to work
                 <div>
                     @{
                         string? extension = Path.GetExtension(Attachment.FileName)?.Trim('.') ?? "default";
                     }
                 </div>
-                <img src="@($"png/{extension}.png")"/> *@
-                <img src="@Attachment.UploadUrl" class="img-fluid" />
                 <p class="card-text">@Attachment.Created.ToString("f")</p>
-                <p class="card-text">Submitted By: @userInfo.FullName</p>
-                <a href="#" class="card-link">@Attachment.UploadUrl</a>
+                <p class="card-text">Submitted By: @userInfo!.FullName</p>
+                <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" class="img-fluid"/></a>
 
                 @if (Attachment.UserId == userInfo!.UserId)
                 {
-                    <button class="btn btn-danger" @onclick="() => IsDeleting = true">Delete Attachment</button>
+                    <div>
+                        <button class="btn btn-danger mt-5" @onclick="() => IsDeleting = true">Delete Attachment</button>
+
+                    </div>
                 }
             </div>
         </div>
