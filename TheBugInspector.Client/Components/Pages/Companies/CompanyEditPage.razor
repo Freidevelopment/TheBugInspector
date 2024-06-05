@@ -3,6 +3,7 @@
 @using TheBugInspector.Client.Helpers
 
 @inject ICompanyDTOService CompanyService
+@inject NavigationManager Nav
 
 @rendermode InteractiveWebAssembly
 
@@ -67,6 +68,7 @@
             Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
+        Nav.NavigateTo("/companies/Index");
     }
     #endregion
 }

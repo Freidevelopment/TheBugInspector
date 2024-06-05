@@ -40,7 +40,7 @@ namespace TheBugInspector.Client.Services
 
             try
             {
-                CompanyMembers = await _httpClient.GetFromJsonAsync<IEnumerable<UserDTO>>($"api/company/{companyId}/members") ?? [];
+                CompanyMembers = await _httpClient.GetFromJsonAsync<IEnumerable<UserDTO>>($"api/company/members") ?? [];
                 return CompanyMembers;
             }
             catch (Exception ex)
@@ -52,12 +52,13 @@ namespace TheBugInspector.Client.Services
 
         public async Task<string?> GetUserRoleAsync(string userId, int companyId)
         {
-            
 
             try
             {
-                string? role = await _httpClient.GetFromJsonAsync<string>($"api/company/{userId}/role");
-                
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/company/{userId}/role"); 
+                response.EnsureSuccessStatusCode();
+
+                string role = await response.Content.ReadAsStringAsync();
                 return role;
             }
             catch (Exception ex)
@@ -67,19 +68,32 @@ namespace TheBugInspector.Client.Services
             }
         }
 
-        public Task<IEnumerable<UserDTO>> GetUsersInRoleAsync(string roleName, int companyId)
+        public async Task<IEnumerable<UserDTO>> GetUsersInRoleAsync(string roleName, int companyId)
         {
-            throw new NotImplementedException();
+            IEnumerable<UserDTO> UsersInRole= [];
+
+            try
+            {
+                UsersInRole = await _httpClient.GetFromJsonAsync<IEnumerable<UserDTO>>($"api/company/{roleName}/roles") ?? [];
+                return UsersInRole;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return UsersInRole;
+            }
         }
 
-        public Task UpdateCompanyAsync(CompanyDTO company, string adminId)
+        public async Task UpdateCompanyAsync(CompanyDTO company, string adminId)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync("api/company/edit", company);
+            response.EnsureSuccessStatusCode();
         }
 
-        public Task UpdateUserRoleAsync(UserDTO user, string adminId)
+        public async Task UpdateUserRoleAsync(UserDTO user, string adminId)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/company/roles", user);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

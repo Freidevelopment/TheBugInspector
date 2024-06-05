@@ -14,7 +14,7 @@ namespace TheBugInspector.Controllers
     [Authorize]
     public class CompanyController : ControllerBase
     {
-        private readonly ICompanyDTOService _compnayService;
+        private readonly ICompanyDTOService _companyService;
         private readonly UserManager<ApplicationUser> _userManager;
 
         private int CompanyId => int.Parse(User.FindFirst("CompanyId")!.Value);
@@ -23,14 +23,14 @@ namespace TheBugInspector.Controllers
 
         public CompanyController(ICompanyDTOService companyService, UserManager<ApplicationUser> userManager)
         {
-            _compnayService = companyService;
+            _companyService = companyService;
             _userManager = userManager;
         }
 
         [HttpGet]
         public async Task<ActionResult<CompanyDTO>> GetCompany()
         {
-            CompanyDTO? company = await _compnayService.GetCompanyByIdAsync(CompanyId);
+            CompanyDTO? company = await _companyService.GetCompanyByIdAsync(CompanyId);
 
             if (company is null)
             {
@@ -40,13 +40,13 @@ namespace TheBugInspector.Controllers
             return Ok(company);
         }
 
-        [HttpGet("{companyId:int}/members")]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetCompanyMembers([FromRoute] int companyId)
+        [HttpGet("members")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetCompanyMembers()
         {
 
             try
             {
-                IEnumerable<UserDTO> members = await _compnayService.GetCompanyMembersAsync(CompanyId);
+                IEnumerable<UserDTO> members = await _companyService.GetCompanyMembersAsync(CompanyId);
                 return Ok(members);
             }
             catch (Exception ex)
@@ -56,12 +56,17 @@ namespace TheBugInspector.Controllers
             }
         }
 
-        [HttpGet("{userId:string}/role")]
+        [HttpGet("{userId}/role")]
         public async Task<ActionResult<string?>> GetUserRole([FromRoute] string userId)
         {
             try
             {
-                string? role = await _compnayService.GetUserRoleAsync(userId, CompanyId);
+                string? role = await _companyService.GetUserRoleAsync(userId, CompanyId);
+                if (string.IsNullOrEmpty(role))
+                {
+                    return NotFound();
+                }
+
                 return Ok(role);
             }
             catch (Exception ex)
@@ -69,6 +74,68 @@ namespace TheBugInspector.Controllers
                 Console.WriteLine(ex);
                 return BadRequest(ex.Message);
             }
+            
+        }
+
+        [HttpGet("{roleName}/roles")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsersInRole([FromRoute] string roleName)
+        {
+            try
+            {
+                IEnumerable<UserDTO> members = await _companyService.GetUsersInRoleAsync(roleName, CompanyId);
+                return Ok(members);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("roles")]
+        public async Task<IActionResult> UpdateUserRole([FromBody]  UserDTO userDTO)
+        {
+            bool InAdminRole = User.IsInRole("Admin");
+
+            if(InAdminRole)
+            {
+
+            try
+            {
+                await _companyService.UpdateUserRoleAsync(userDTO, UserId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPut("edit")]
+        public async Task<IActionResult> UpdateCompany([FromBody] CompanyDTO companyDTO)
+        {
+            bool InAdminRole = User.IsInRole("Admin");
+
+            if (InAdminRole)
+            {
+
+                try
+                {
+                    await _companyService.UpdateCompanyAsync(companyDTO, UserId);
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
+            }
+
+            return BadRequest();
         }
     }
 }

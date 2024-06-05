@@ -11,7 +11,7 @@
 
                 </div>
                 <div class="col">
-                    <span>@Role</span>
+                    <span>@User.Role</span>
                 </div>
                 <div class="col">
                     <AuthorizeView>
@@ -46,11 +46,15 @@
                             Roles
                         </label>
                         <InputSelect class="form-control" @bind-Value="User.Role">
-                            @foreach (CompanyRoles role in Enum.GetValues<CompanyRoles>())
+                            @foreach (Roles role in Enum.GetValues<Roles>())
                             {
-                                <option value="@role">
-                                    @role.ToString()
-                                </option>
+                                @if (role != Roles.DemoUser)
+                                {
+                                    <option value="@role">
+                                        @role.ToString()
+                                    </option>
+
+                                }
                             }
                         </InputSelect>
                     </div>
@@ -84,22 +88,6 @@
 
     #region Methods
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            if (User is not null)
-            {
-                Role = await CompanyService.GetUserRoleAsync(User.UserId, UserInfo!.CompanyId);
-
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-
-        }
-    }
     private async Task HandleSubmit()
     {
         try

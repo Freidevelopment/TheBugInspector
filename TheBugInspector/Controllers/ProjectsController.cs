@@ -25,11 +25,11 @@ namespace TheBugInspector.Controllers
         
 
 
-        [HttpGet("{companyId:int}/active")] // api/projects/1/active
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetAllProjectsAsync([FromRoute] int companyId)
+        [HttpGet("active")] // api/projects/active
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetAllProjectsAsync()
         {
             // ensuring that the companyId is the correct users company Id
-             companyId = _companyId ?? 0;
+             int companyId = _companyId ?? 0;
 
             try
             {
@@ -43,10 +43,10 @@ namespace TheBugInspector.Controllers
             }
         }
 
-        [HttpGet("{companyId}/archived")] // api/projects/1/archived
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetArchivedProjectsAsync([FromRoute] int companyId)
+        [HttpGet("archived")] // api/projects/1/archived
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetArchivedProjectsAsync()
         {
-            companyId = _companyId ?? 0;
+            int companyId = _companyId ?? 0;
 
             try
             {

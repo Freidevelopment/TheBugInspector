@@ -27,14 +27,6 @@ public enum Roles
     [Display(Name = "Demo User")] DemoUser
 }
 
-public enum CompanyRoles
-{
-    Admin,
-    [Display(Name = "Project Manager")] ProjectManager,
-    Developer,
-    Submitter,
-    
-}
 
 public enum TicketPriority
 {

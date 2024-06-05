@@ -34,7 +34,7 @@ namespace TheBugInspector.Client.Services
 
             try
             {
-                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/{companyId}/active") ?? [];
+                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/active") ?? [];
                 return projects;
             }
             catch (Exception ex)
@@ -50,7 +50,7 @@ namespace TheBugInspector.Client.Services
 
             try
             {
-                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/{companyId}/archived") ?? [];
+                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/archived") ?? [];
                 return projects;
             }
             catch (Exception ex)
