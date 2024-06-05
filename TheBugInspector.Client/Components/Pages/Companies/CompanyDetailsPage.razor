@@ -15,22 +15,37 @@
     <div class="container">
         <div class="text-center">
             <span>@company.Name</span>
-            <img src="@company.ImageUrl" class="img-fluid"/>
-            <div>
-                <div>
-                    Projects
-                </div>
-                <ul class="list-group">
-                    @foreach (ProjectDTO project in company.Projects)
-                    {
-                        <li>@project.Name</li>
-                    }
-                </ul>
+            <img src="@company.ImageUrl" class="img-fluid" />
+            <div class="text-center">
+                
             </div>
             <div>
                 @company.Description
             </div>
-            <div>
+            <div class="row row-cols-4 mt-5">
+                <div class="col">
+                    <a href="/projects/Index" class="btn btn-primary">Active Projects</a>
+                </div>
+                <div class="col">
+                    <a href="/projects/Index" class="btn btn-primary">Archived Projects</a>
+                </div>
+                <div class="col">
+                    <a href="/projects/Index" class="btn btn-primary">All Tickets</a>
+                </div>
+                <div class="col">
+                    <div>
+                        <AuthorizeView Context="AdminCompanyControl">
+                            @if (AdminCompanyControl.User.IsInRole("Admin"))
+                            {
+                                <a href="/Company/Edit/@company.Id" class="btn btn-primary text-end">
+                                    Edit Company Page
+                                </a>
+                            }
+                        </AuthorizeView>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5">
                 <div>
                     Company Members
                 </div>
@@ -45,16 +60,7 @@
 
                 </ul>
             </div>
-            <div>
-                <AuthorizeView Context="AdminCompanyControl">
-                    @if (AdminCompanyControl.User.IsInRole("Admin"))
-                    {
-                        <a href="/Company/Edit/@company.Id" class="btn btn-primary text-end">
-                            Edit Company Page
-                        </a>
-                    }
-                </AuthorizeView>
-            </div>
+            
         </div>
     </div>
 }
