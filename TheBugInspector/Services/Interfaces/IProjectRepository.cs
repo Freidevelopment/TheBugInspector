@@ -1,4 +1,5 @@
-﻿using TheBugInspector.Models;
+﻿using TheBugInspector.Data;
+using TheBugInspector.Models;
 
 namespace TheBugInspector.Services.Interfaces
 {
@@ -22,6 +23,20 @@ namespace TheBugInspector.Services.Interfaces
         #endregion
 
         #region Delete
+        #endregion
+
+        #region Project Members
+        Task<IEnumerable<ApplicationUser>> GetProjectMembersAsync(int projectId, int companyId);
+
+        Task<ApplicationUser?> GetProjectManagerAsync(int projectId, int companyId);
+
+        Task AddMemberToProjectAsync(int projectId, string userId, string managerId);
+
+        Task RemoveMemberFromProjectAsync(int projectId, string userId, string managerId);
+
+        Task AssignProjectManagerAsync(int projectId, string userId, string adminId);
+
+        Task RemoveProjectManagerAsync(int projectId, string adminId);
         #endregion
     }
 }

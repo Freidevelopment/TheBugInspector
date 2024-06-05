@@ -14,12 +14,13 @@
 
     <div class="container">
         <div class="text-center">
-            <span>@company.Name</span>
+            <h1>@company.Name</h1>
             <img src="@company.ImageUrl" class="img-fluid" />
             <div class="text-center">
                 
             </div>
-            <div>
+            <div class="mt-4">
+                <h3>Description</h3>
                 @company.Description
             </div>
             <div class="row row-cols-4 mt-5">
@@ -27,10 +28,10 @@
                     <a href="/projects/Index" class="btn btn-primary">Active Projects</a>
                 </div>
                 <div class="col">
-                    <a href="/projects/Index" class="btn btn-primary">Archived Projects</a>
+                    <a href="/archived/projects/Index" class="btn btn-primary">Archived Projects</a>
                 </div>
                 <div class="col">
-                    <a href="/projects/Index" class="btn btn-primary">All Tickets</a>
+                    <a href="/tickets/Index" class="btn btn-primary">All Tickets</a>
                 </div>
                 <div class="col">
                     <div>
@@ -45,9 +46,9 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-5">
+            <div class="mt-5 mb-5">
                 <div>
-                    Company Members
+                    <h3>Company Members</h3>
                 </div>
                 <ul class="list-group">
                     @foreach (UserDTO member in Members)
@@ -58,6 +59,14 @@
                                                OnSubmit="UpdateRole" />
                     }
 
+                </ul>
+            </div>
+            <div>
+                <ul class="list-group">
+                    @foreach(UserDTO manager in projectManagers)
+                    {
+                        <li class="text-primary list-group-item">@manager.FullName</li>
+                    }
                 </ul>
             </div>
             
@@ -79,6 +88,7 @@
     private string? ErrorMessage = string.Empty;
     private IEnumerable<UserDTO> Members = [];
     private UserInfo? userInfo;
+    private IEnumerable<UserDTO> projectManagers = [];
     #endregion
 
     #region Methods
@@ -91,6 +101,8 @@
             company = await CompanyService.GetCompanyByIdAsync(userInfo!.CompanyId);
 
             Members = await CompanyService.GetCompanyMembersAsync(company!.Id);
+
+            projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo!.CompanyId);
         }
         catch (Exception ex)
         {
@@ -106,6 +118,8 @@
             await CompanyService.UpdateUserRoleAsync(user, userInfo!.UserId);
 
             Members = await CompanyService.GetCompanyMembersAsync(company!.Id);
+
+            projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo!.CompanyId);
         }
         catch (Exception ex)
         {
