@@ -187,6 +187,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             bool InAdminRole = User.IsInRole("Admin");
+
             if (InAdminRole)
             {
 

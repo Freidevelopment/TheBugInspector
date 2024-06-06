@@ -1,65 +1,32 @@
-﻿
-<div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h1 class="modal-title fs-5" id="AttachmentLabel">Assign or remove members from the Project</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="row row-cols-md-2">
-                <div class="col text-center">
-                    <AuthorizeView Context="AssignProjectMembers">
-                        @if (AssignProjectMembers.User.IsInRole("Admin") || userInfo!.UserId == ProjectManager!.UserId)
-                        {
-                            <label for="MemberAssignment" class="form-label">
-                                Project Members
-                            </label>
-                            <InputSelect @bind-Value="MemberAssignment" class="form-select">
-                                <option value="">Assign Members to Project</option>
-                                @if (Employees is not null)
-                                {
-                                    @foreach (UserDTO user in Employees)
-                                    {
-                                        bool shouldNotDisplay = Members.Any(m => m.UserId == user.UserId);
-                                        if (shouldNotDisplay == false)
-                                        {
-                                            if (user.Role == Roles.Developer.ToString() || user.Role == Roles.Submitter.ToString())
-                                            {
-                                                <option value="@user.UserId">
-                                                    @user.FullName: @user.Role
-                                                </option>
-
-                                            }
-
-                                        }
-                                    }
-
-                                }
-                            </InputSelect>
-                            <div class="col">
-                                <button class="btn btn-primary mt-3" @onclick="AssignMember">Assign Members</button>
-
-                            </div>
-                        }
-                    </AuthorizeView>
-                </div>
-                <div class="col text-center">
-                    <AuthorizeView Roles="Admin">
-
-                        <label for="managerAssignment" class="form-label">
-                            Project Manager
+﻿<!-- Header and footer -->
+<div class="card text-center">
+    <div class="card-header">Assign or remove members from the Project</div>
+    <div class="card-body">
+        <div class="row row-cols-md-2">
+            <div class="col text-center">
+                <AuthorizeView Context="AssignProjectMembers">
+                    @if (AssignProjectMembers.User.IsInRole("Admin") || userInfo!.UserId == ProjectManager!.UserId)
+                    {
+                        <label for="MemberAssignment" class="form-label">
+                            Project Members
                         </label>
-                        <InputSelect @bind-Value="ManagerAssignment" class="form-select">
-                            <option value="">Assign a Manager to the project</option>
+                        <InputSelect @bind-Value="MemberAssignment" class="form-select">
+                            <option value="">Assign Members to Project</option>
                             @if (Employees is not null)
                             {
                                 @foreach (UserDTO user in Employees)
                                 {
-                                    if (user.Role == Roles.ProjectManager.ToString())
+                                    bool shouldNotDisplay = Members.Any(m => m.UserId == user.UserId);
+
+                                    if (shouldNotDisplay == false)
                                     {
-                                        <option value="@user.UserId">
-                                            @user.FullName: @user.Role
-                                        </option>
+                                        if (user.Role == Roles.Developer.ToString() || user.Role == Roles.Submitter.ToString())
+                                        {
+                                            <option value="@user.UserId">
+                                                @user.FullName: @user.Role
+                                            </option>
+
+                                        }
 
                                     }
                                 }
@@ -67,63 +34,89 @@
                             }
                         </InputSelect>
                         <div class="col">
-                            <button class="btn btn-primary mt-3" @onclick="AssignManager">Assign Manager</button>
+                            <button class="btn btn-primary mt-3" @onclick="AssignMember">Assign Members</button>
 
                         </div>
-                    </AuthorizeView>
-                </div>
+                    }
+                </AuthorizeView>
+            </div>
+            <div class="col text-center">
+                <AuthorizeView Roles="Admin">
 
-                <div class="col text-center mt-3">
-                    <AuthorizeView Context="RemoveProjectMembers">
-                        @if (Members.Count() > 0)
+                    <label for="managerAssignment" class="form-label">
+                        Project Manager
+                    </label>
+                    <InputSelect @bind-Value="ManagerAssignment" class="form-select">
+                        <option value="">Assign a Manager to the project</option>
+                        @if (Employees is not null)
                         {
-                            @if (RemoveProjectMembers.User.IsInRole("Admin") || userInfo!.UserId == ProjectManager!.UserId)
+                            @foreach (UserDTO user in Employees)
                             {
-                                <label for="MemberAssignment" class="form-label">
-                                    Project Members
-                                </label>
-                                <InputSelect @bind-Value="MemberRemoval" class="form-select">
-                                    <option value="">Remove Member</option>
-                                    @if (Members is not null)
-                                    {
-                                        @foreach (UserDTO user in Members)
-                                        {
-                                            if (user.Role == Roles.Developer.ToString() || user.Role == Roles.Submitter.ToString())
-                                            {
-                                                <option value="@user.UserId">
-                                                    @user.FullName: @user.Role
-                                                </option>
+                                if (user.Role == Roles.ProjectManager.ToString())
+                                {
+                                    <option value="@user.UserId">
+                                        @user.FullName: @user.Role
+                                    </option>
 
-                                            }
-                                        }
-
-                                    }
-                                </InputSelect>
-                                <div class="col">
-                                    <button class="btn btn-danger mt-3" @onclick="RemoveMember">Remove Member</button>
-
-                                </div>
+                                }
                             }
 
                         }
-                    </AuthorizeView>
-                </div>
-                <div class="col text-center">
-                    <AuthorizeView Roles="Admin">
-                        @if (ProjectManager is not null)
-                        {
-                            <button class="btn btn-danger mt-5" @onclick="RemoveManager">Remove Manager </button>
+                    </InputSelect>
+                    <div class="col">
+                        <button class="btn btn-primary mt-3" @onclick="AssignManager">Assign Manager</button>
 
-                        }
-                    </AuthorizeView>
-                </div>
+                    </div>
+                </AuthorizeView>
             </div>
 
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">End Changes</button>
+            <div class="col text-center mt-3">
+                <AuthorizeView Context="RemoveProjectMembers">
+                    @if (Members.Count() > 0)
+                    {
+                        @if (RemoveProjectMembers.User.IsInRole("Admin") || userInfo!.UserId == ProjectManager!.UserId)
+                        {
+                            <label for="MemberAssignment" class="form-label">
+                                Project Members
+                            </label>
+                            <InputSelect @bind-Value="MemberRemoval" class="form-select">
+                                <option value="">Remove Member</option>
+                                @if (Members is not null)
+                                {
+                                    @foreach (UserDTO user in Members)
+                                    {
+                                        if (user.Role == Roles.Developer.ToString() || user.Role == Roles.Submitter.ToString())
+                                        {
+                                            <option value="@user.UserId">
+                                                @user.FullName: @user.Role
+                                            </option>
+
+                                        }
+                                    }
+
+                                }
+                            </InputSelect>
+                            <div class="col">
+                                <button class="btn btn-danger mt-3" @onclick="RemoveMember">Remove Member</button>
+
+                            </div>
+                        }
+
+                    }
+                </AuthorizeView>
+            </div>
+            <div class="col text-center">
+                <AuthorizeView Roles="Admin">
+                    @if (ProjectManager is not null)
+                    {
+                        <button class="btn btn-danger mt-5" @onclick="RemoveManager">Remove Manager </button>
+
+                    }
+                </AuthorizeView>
+            </div>
         </div>
     </div>
+    <div class="card-footer fs-sm text-muted">Welcome @userInfo!.FullName</div>
 </div>
 
 

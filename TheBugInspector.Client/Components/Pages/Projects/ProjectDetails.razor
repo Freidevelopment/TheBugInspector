@@ -6,7 +6,7 @@
 @using TheBugInspector.Client.Services
 @using TheBugInspector.Client.Services.Interfaces
 
-@rendermode InteractiveAuto
+@rendermode InteractiveServer
 
 @inject ICompanyDTOService CompanyService
 @inject IProjectDTOService ProjectService
@@ -43,14 +43,35 @@
 
         <AuthorizeView Roles="Admin, ProjectManager">
 
-            <div class="text-end">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MemberAssignmentmodal">
+            <!-- Button with data-bs-target -->
+            <div class="text-end mt-3">
+                <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#MemberAssignmentmodal" aria-expanded="false" aria-controls="collapseExample">
                     Adjust members on Project?
                 </button>
 
             </div>
+
+            <!-- Collapse -->
+            <div class="collapse" id="MemberAssignmentmodal">
+                <div class="card card-body mt-3">
+                    <ProjectMemberManagementModal ProjectManager="projectManager"
+                                                  userInfo="userInfo"
+                                                  Employees="companyMembers"
+                                                  OnSubmit="AssignProjectMembers"
+                                                  OnManagerSubmit="AssignProjectManager"
+                                                  OnManagerRemoval="RemoveProjectManager"
+                                                  OnMemberRemoval="RemoveProjectMember"
+                                                  Members="projectMembers" />
+                </div>
+            </div>
+
         </AuthorizeView>
+
+
+        <div class="text-end mt-3">
+            <a href="/projects/Index" class="text-primary mt-3">Go to Active Projects</a>
+        </div>
+
 
         <table class="table table-striped-columns table-info mt-5">
             <thead>
@@ -62,17 +83,30 @@
                     <th scope="col">Ticket Priority</th>
                     <th scope="col">Ticket Status</th>
                     <th scope="col">Ticket Submitter</th>
+                    <th scope="col">Ticket Developer</th>
                     <th scope="col">Number of Comments</th>
-                    <th scope="col">Archive Ticket?</th>
-                    <th scope="col">Edit Ticket?</th>
+                    <th scope="col">Archive Ticket</th>
+                    <AuthorizeView Context="TicketAssignment">
+                        @if (TicketAssignment.User.IsInRole("Admin") ||
+                       TicketAssignment.User.IsInRole("ProjectManager") && userInfo!.UserId == projectManager!.UserId)
+                        {
+                            <th scope="col">Assign Developer</th>
+
+
+                        }
+                    </AuthorizeView>
                 </tr>
             </thead>
             <tbody>
-                @foreach (TicketDTO ticket in project.Tickets)
+                @foreach (TicketDTO ticket in project.Tickets.OrderByDescending(p => p.Created))
                 {
-                    <TicketCards Ticket="ticket"
-                                 OnArchive="HandleArchive"
-                                 OnRestore="HandleRestore" />
+                    <TicketProjectDetailsTable Ticket="ticket"
+                                               UserInfo="userInfo"
+                                               ProjectManager="projectManager"
+                                               Members="projectMembers"
+                                               OnArchive="HandleArchive"
+                                               OnRestore="HandleRestore"
+                                               OnAssignDeveloper="AssignDeveloper"/>
                 }
 
             </tbody>
@@ -84,21 +118,6 @@
     }
 </div>
 
-@if (project is not null)
-{
-    <!-- Modal -->
-    <div class="modal fade" id="MemberAssignmentmodal" tabindex="-1" aria-labelledby="MemberAssignmentmodal" aria-hidden="true">
-        <ProjectMemberManagementModal ProjectManager="projectManager"
-                                      userInfo="userInfo"
-                                      Employees="companyMembers"
-                                      OnSubmit="AssignProjectMembers"
-                                      OnManagerSubmit="AssignProjectManager"
-                                      OnManagerRemoval="RemoveProjectManager"
-                                      OnMemberRemoval="RemoveProjectMember"
-                                      Members="projectMembers" />
-
-    </div>
-}
 
 @code {
     #region Parameters
@@ -226,7 +245,9 @@
         {
             await ProjectService.RemoveProjectManagerAsync(Id, userInfo!.UserId);
 
-            projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo!.CompanyId);
+            projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo!.CompanyId);
+
+
         }
         catch (Exception ex)
         {
@@ -241,12 +262,26 @@
         {
             await ProjectService.RemoveMemberFromProjectAsync(Id, memberId, userInfo!.UserId);
 
-            projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo!.CompanyId);
+            projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo!.CompanyId);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
 
+        }
+    }
+
+    private async Task AssignDeveloper(TicketDTO ticket)
+    {
+        try
+        {
+            await TicketService.UpdateTicketAsync(ticket, userInfo!.CompanyId, userInfo.UserId);
+
+            project = await ProjectService.GetProjectByIdAsync(Id, userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
         }
     }
     #endregion

@@ -1,4 +1,5 @@
-﻿using TheBugInspector.Models;
+﻿using TheBugInspector.Data;
+using TheBugInspector.Models;
 
 namespace TheBugInspector.Services.Interfaces
 {
@@ -40,5 +41,6 @@ namespace TheBugInspector.Services.Interfaces
         Task<TicketAttachment> AddTicketAttachment(TicketAttachment attachment, int companyId);
         Task DeleteTicketAttachment(int attachmentId, int companyId);
         #endregion
+        
     }
 }

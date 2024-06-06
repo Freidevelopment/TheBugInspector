@@ -41,5 +41,6 @@ namespace TheBugInspector.Client.Services.Interfaces
         Task<TicketAttachmentDTO> AddTicketAttachment(TicketAttachmentDTO attachment, byte[] uploadData, string contentType, int companyId);
         Task DeleteTicketAttachment(int attachmentId, int companyId);
         #endregion
+
     }
 }

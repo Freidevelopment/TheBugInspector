@@ -10,10 +10,8 @@
         <div class="col-lg-4 gap-2">
             <div class="mb-2">
                 <label class="form-label">
-                    Ticket Name
+                    @Ticket.Title
                 </label>
-                <InputText class="form-control" @bind-Value="Ticket.Title" />
-                <ValidationMessage For="() => Ticket.Title" />
             </div>
             @* Project *@
             @if (IsNew == true)
@@ -34,6 +32,11 @@
                     <ValidationMessage For="() => Ticket.Priority" />
                 </div>
             }
+            <div class="mb-2">
+                <label for="priority" class="form-label">
+                    @Ticket.Project.Name
+                </label>
+            </div>
             @* Type *@
             <div class="mb-2">
                 <label for="priority" class="form-label">
@@ -56,7 +59,7 @@
                     Ticket Priority
                 </label>
                 <InputSelect @bind-Value="Ticket.Priority" class="form-select">
-                    <option value="">Select a Ticket Priority</option>
+                    <option value="">Select a ticket Priority</option>
                     @foreach (TicketPriority priority in Enum.GetValues<TicketPriority>())
                     {
                         <option value="@priority">
@@ -90,9 +93,10 @@
         @* Description *@
         <div class="col-lg-8">
             <div class="mb-2">
-                <label class="form-label">Project Description</label>
-                <InputTextArea class="form-control" rows="10" @bind-Value="Ticket.Description" />
-                <ValidationMessage For="() => Ticket.Description" />
+                <label class="form-label">Ticket Description</label>
+                <div class="mt-2">
+                    @Ticket.Description
+                </div>
             </div>
         </div>
 

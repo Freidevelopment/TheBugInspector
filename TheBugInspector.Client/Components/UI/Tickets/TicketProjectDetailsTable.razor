@@ -1,0 +1,146 @@
+﻿@if (Ticket is not null)
+{
+
+    <tr>
+        <th scope="row"><a class="nav-link text-primary" href="/tickets/Index/@Ticket.Id"><u>@Ticket.Title</u></a></th>
+        <td>@Ticket.Created.ToString("g")</td>
+        @if (Ticket.Updated is not null)
+        {
+            <td>@Ticket.Updated.Value.ToString("D")</td>
+
+        }
+        else
+        {
+            <td>This Ticket has not been updated</td>
+        }
+        <td>@Ticket.Type.GetDisplayName()</td>
+        <td>@Ticket.Priority.GetDisplayName()</td>
+        <td>@Ticket.Status.GetDisplayName()</td>
+        <td>@Ticket.SubmitterUser!.FullName</td>
+        @if (!string.IsNullOrEmpty(Ticket.DeveloperUserId))
+        {
+            <td>@Ticket!.DeveloperUser.FullName</td>
+        }
+        else
+        {
+            <td>No developer assigned to Ticket</td>
+        }
+        <td>@Ticket.Comments.Count()</td>
+        @if (Ticket.IsArchived is false)
+        {
+            <td><button class="btn btn-success" @onclick="HandleArchive">Archive</button></td>
+
+        }
+        else if (Ticket.IsArchived is true)
+        {
+            <td><button class="btn btn-success" @onclick="HandleRestore">Restore</button></td>
+        }
+
+        <AuthorizeView Context="TicketUpdateAssignment">
+            @if (TicketUpdateAssignment.User.IsInRole("Admin") ||
+           TicketUpdateAssignment.User.IsInRole("ProjectManager") && UserInfo!.UserId == ProjectManager!.UserId)
+            {
+                @if (AssignDeveloper == false)
+                {
+                    <td><button class="btn btn-warning" @onclick="() => AssignDeveloper = true">Assign Developer</button></td>
+
+                }
+                else if (AssignDeveloper == true)
+                {
+                    <label for="DeveloperAssignment" class="form-label">
+                        Available Developers
+                    </label>
+                    <InputSelect @bind-Value="Ticket.DeveloperUserId" class="form-select">
+                        <option value="">Assign Developer to Ticket</option>
+                        @if (Members is not null)
+                        {
+                            @foreach (UserDTO user in Members)
+                            {
+                                bool shouldNotDisplay = Members.Any(m => m.UserId == Ticket.DeveloperUserId);
+
+                                @if (shouldNotDisplay == false)
+                                {
+
+                                    if (user.Role == Roles.Developer.ToString())
+                                    {
+                                        <option value="@user.UserId">
+                                            @user.FullName: @user.Role
+                                        </option>
+
+                                    }
+                                }
+
+
+                            }
+
+                        }
+                    </InputSelect>
+                    <div class="col">
+                        <button class="btn btn-primary mt-3" @onclick="AssignMember">Assign Developer</button>
+
+                    </div>
+                }
+            }
+        </AuthorizeView>
+    </tr>
+
+}
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public TicketDTO? Ticket { get; set; }
+
+    [Parameter, EditorRequired]
+    public UserDTO? ProjectManager { get; set; }
+
+    [Parameter, EditorRequired]
+    public UserInfo? UserInfo { get; set; }
+
+    [Parameter, EditorRequired]
+    public IEnumerable<UserDTO?> Members { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnRestore { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnArchive { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<TicketDTO> OnAssignDeveloper { get; set; }
+    #endregion
+
+    #region State
+    private string? backgroundColor = string.Empty;
+    private bool AssignDeveloper = false;
+    private string? DeveloperAssignment;
+    #endregion
+
+    #region Methods
+    private async Task HandleArchive()
+    {
+        await OnArchive.InvokeAsync(Ticket!.Id);
+    }
+    private async Task HandleRestore()
+    {
+        await OnRestore.InvokeAsync(Ticket!.Id);
+    }
+
+    private async Task AssignMember()
+    {
+        try
+        {
+
+            await OnAssignDeveloper.InvokeAsync(Ticket);
+
+            AssignDeveloper = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    #endregion
+}

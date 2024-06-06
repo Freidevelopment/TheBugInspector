@@ -2,7 +2,7 @@
 {
 
     <tr>
-        <th scope="row"><a class="nav-link" href="/tickets/Index/@Ticket.Id">@Ticket.Title</a></th>
+        <th scope="row"><a class="nav-link text-primary" href="/tickets/Index/@Ticket.Id"><u>@Ticket.Title</u></a></th>
         <td>@Ticket.Created.ToString("g")</td>
         @if (Ticket.Updated is not null)
         {
@@ -13,9 +13,9 @@
         {
             <td>This Ticket has not been updated</td>
         }
-        <td>@Ticket.Type</td>
-        <td>@Ticket.Priority</td>
-        <td>@Ticket.Status</td>
+        <td>@Ticket.Type.GetDisplayName()</td>
+        <td>@Ticket.Priority.GetDisplayName()</td>
+        <td>@Ticket.Status.GetDisplayName()</td>
         <td>@Ticket.SubmitterUser!.FullName</td>
         <td>@Ticket.Comments.Count()</td>
         @if (Ticket.IsArchived is false)
@@ -27,7 +27,6 @@
         {
             <td><button class="btn btn-success" @onclick="HandleRestore">Restore</button></td>
         }
-        <td><a class="btn btn-warning" href="/tickets/edit/@Ticket.Id">Edit?</a></td>
     </tr>
 
 }

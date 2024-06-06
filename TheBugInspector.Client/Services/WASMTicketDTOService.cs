@@ -62,6 +62,11 @@ namespace TheBugInspector.Client.Services
             return addedAttachment!;
         }
 
+        public Task AddTicketDeveloperAsync(UserDTO user, int ticketId, string managerId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task ArchiveTicketAsync(int ticketId, int companyId)
         {
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/tickets/{ticketId}/active", ticketId);
@@ -142,6 +147,11 @@ namespace TheBugInspector.Client.Services
                 Console.WriteLine(ex);
                 return comments;
             }
+        }
+
+        public Task RemoveDeveloperFromTicketAsync(int ticketId, string managerId, int companyId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task RestoreTicketAsync(int ticketId, int companyId)

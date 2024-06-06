@@ -1,5 +1,6 @@
 ﻿using TheBugInspector.Client.Models;
 using TheBugInspector.Client.Services.Interfaces;
+using TheBugInspector.Data;
 using TheBugInspector.Models;
 using TheBugInspector.Services.Interfaces;
 
@@ -61,6 +62,7 @@ namespace TheBugInspector.Services
 
             return dbAttachment.ToDTO();
         }
+
 
         public async Task ArchiveTicketAsync(int ticketId, int companyId)
         {
@@ -150,7 +152,8 @@ namespace TheBugInspector.Services
                 ticketToUpdate.Priority = ticket.Priority;
                 ticketToUpdate.Type = ticket.Type;
                 ticketToUpdate.Description = ticket.Description;
-
+                ticketToUpdate.DeveloperUserId = ticket.DeveloperUserId;
+                ticketToUpdate.DeveloperUser = null;
 
                 await repository.UpdateTicketAsync(ticketToUpdate, companyId, userId);
 

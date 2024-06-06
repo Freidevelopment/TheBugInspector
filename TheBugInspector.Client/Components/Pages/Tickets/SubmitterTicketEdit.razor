@@ -1,0 +1,86 @@
+﻿@page "/Tickets/submitter/edit/{id:int}"
+
+@using TheBugInspector.Client.Components.UI.Projects
+@using TheBugInspector.Client.Components.UI.Tickets
+@using TheBugInspector.Client.Helpers
+@using TheBugInspector.Client.Services
+@using TheBugInspector.Client.Services.Interfaces
+
+@rendermode InteractiveAuto
+
+@inject IProjectDTOService ProjectService
+@inject ITicketDTOService TicketService
+
+@inject NavigationManager Nav
+
+
+<PageTitle>BugInspector | Edit Projects</PageTitle>
+
+
+<PageTitle>BugInspector | Create Ticket</PageTitle>
+
+
+<div class="container-xxl">
+
+    <h3>Ticket: @ticket.Title</h3>
+    <span class="text-danger">@ErrorMessage</span>
+    <div class="card-shadow">
+        <div class="card-body">
+            <TicketSubmitterForm Ticket="ticket"
+                        OnSubmit="HandleSubmit"
+                        IsNew="false" />
+
+        </div>
+    </div>
+</div>
+
+@code {
+    #region Parameters
+    [Parameter]
+    public int Id { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    #endregion
+
+    #region State
+    private TicketDTO? ticket;
+    private string? ErrorMessage = string.Empty;
+    private UserInfo? userInfo;
+    #endregion
+
+    #region Methods
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            ErrorMessage = string.Empty;
+
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+
+            ticket = await TicketService.GetTicketByIdAsync(Id, userInfo!.CompanyId);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            // Change this errormessage
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task HandleSubmit(TicketDTO ticket)
+    {
+        try
+        {
+            await TicketService.UpdateTicketAsync(ticket, userInfo!.CompanyId, userInfo.UserId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+        Nav.NavigateTo("/tickets/Index");
+    }
+    #endregion
+}

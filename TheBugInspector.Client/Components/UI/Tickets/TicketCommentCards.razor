@@ -20,6 +20,11 @@
                             <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
                             <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                         }
+                        else if (context.User.IsInRole("Admin") || 
+                                 context.User.IsInRole("ProjectManager") && userInfo!.UserId == ProjectManager.UserId)
+                        {
+                            <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
+                        }
                     </AuthorizeView>
                 </div>
 
@@ -56,7 +61,7 @@
     {
         <div class="border-bottom py-4 mt-2 mb-4">
             <div class="d-flex align-items-center pb-1 mb-3">
-                <img class="rounded-circle" src="@Comment.User!.ProfilePictureUrl" width="48" alt="@Comment.UserId">
+                <img class="rounded-circle" src="@Comment.User.ProfilePictureUrl" width="48" alt="@Comment.UserId">
                 <div class="ps-3">
                     <h6 class="mb-0">@Comment.User.FullName</h6>
                     <span class="fs-sm text-body-secondary">@Comment.Created.ToString("d")</span>
@@ -65,7 +70,7 @@
             <p class="pb-2 mb-0">@Comment.Content</p>
             <div class="col-12 text-end">
                 <div class="form-check mb-2">
-                    <span class="text-danger">Are you sure you wish to delete your comment?</span>
+                    <span class="text-danger">Are you sure you wish to delete this comment?</span>
                     <button class="btn btn-danger" @onclick="HandleDelete"><i class="bi bi-trash-fill"></i></button>
                     <button class="btn btn-info" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
                 </div>
@@ -78,6 +83,9 @@
     #region Parameters
     [Parameter, EditorRequired]
     public TicketCommentDTO? Comment { get; set; }
+
+    [Parameter, EditorRequired]
+    public UserDTO? ProjectManager { get; set; }
 
     [Parameter]
     public UserInfo? userInfo { get; set; }

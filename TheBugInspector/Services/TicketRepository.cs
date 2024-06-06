@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Sockets;
 using TheBugInspector.Data;
 using TheBugInspector.Models;
@@ -7,15 +9,10 @@ using TheBugInspector.Services.Interfaces;
 
 namespace TheBugInspector.Services
 {
-    public class TicketRepository : ITicketRepository
+    public class TicketRepository(IDbContextFactory<ApplicationDbContext> _dbContextFactory,
+                                   IServiceProvider serviceProvider) : ITicketRepository
     {
 
-        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-
-        public TicketRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
-        {
-            _dbContextFactory = dbContextFactory;
-        }
 
         public async Task AddCommentAsync(TicketComment comment, int companyId)
         {
@@ -74,6 +71,7 @@ namespace TheBugInspector.Services
             }
         }
 
+
         public async Task ArchiveTicketAsync(int ticketId, int companyId)
         {
             using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
@@ -94,6 +92,7 @@ namespace TheBugInspector.Services
 
             }
         }
+
 
         public async Task DeleteCommentAsync(int commentId, int ticketId)
         {
@@ -138,6 +137,7 @@ namespace TheBugInspector.Services
                                                                .Include(t => t.Attachments)
                                                                .Include(t => t.Comments)
                                                                .Include(t => t.SubmitterUser)
+                                                               .Include(t => t.DeveloperUser)
                                                                .OrderByDescending(t => t.Created)
                                                                .ToListAsync();
 
@@ -153,8 +153,8 @@ namespace TheBugInspector.Services
                                                   .Include(t => t.Project)
                                                   .Include(t => t.SubmitterUser)
                                                   .Include(t => t.Attachments)
-                                                  .Include(t => t.DeveloperUser)
                                                   .Include(t => t.Comments)
+                                                  .Include(t => t.DeveloperUser)
                                                   .FirstOrDefaultAsync(t => t.Id == ticketId);
 
             return ticket;
@@ -233,6 +233,7 @@ namespace TheBugInspector.Services
 
             if (shouldEdit && ticketEdit)
             {
+                
                 context.Tickets.Update(ticket);
                 await context.SaveChangesAsync();
 

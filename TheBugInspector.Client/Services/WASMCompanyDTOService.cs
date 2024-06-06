@@ -70,7 +70,7 @@ namespace TheBugInspector.Client.Services
 
         public async Task<IEnumerable<UserDTO>> GetUsersInRoleAsync(string roleName, int companyId)
         {
-            IEnumerable<UserDTO> UsersInRole= [];
+            IEnumerable<UserDTO> UsersInRole = [];
 
             try
             {

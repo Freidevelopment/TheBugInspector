@@ -4,82 +4,65 @@
 {
     @if (IsEdit is false)
     {
-        <li class="list-group-item">
-            <div class="row row-cols-3">
-                <div class="col">
-                    <div>
-                        <h5>Company Member: </h5>
-                    </div>
-                    <span>@User.FullName</span>
 
-                </div>
-                <div class="col">
-                    <div>
-                        <h5>Role in Company:</h5>
-                    </div>
-                    <span>@User.Role</span>
-                </div>
-                <div class="col">
-                    <AuthorizeView>
+        <!-- Team Style 2: Vertical -->
+        <div class="card card-body card-hover bg-light border-0 text-center">
+            <img src="@User.ProfilePictureUrl" class="d-block rounded-circle mx-auto mb-3" width="162" alt="@User.UserId">
+            <h5 class="fw-medium fs-lg mb-1">@User.FullName</h5>
+            <p class="fs-sm mb-3">@User.Role</p>
+            <div class="d-flex justify-content-center">
+                <AuthorizeView>
+                    <div class="card-footer">
                         @if (context.User.IsInRole("Admin"))
                         {
-                            <button class="btn btn-primary text-end" @onclick="() => IsEdit = true">
+                            <button class="btn btn-primary" @onclick="() => IsEdit = true">
                                 Assign Member Role
                             </button>
                         }
-                    </AuthorizeView>
-                </div>
-
+                    </div>
+                </AuthorizeView>
             </div>
-        </li>
+        </div>
+
     }
     else if (IsEdit is true)
     {
         <EditForm Model="User">
             <DataAnnotationsValidator />
-            <li class="list-group-item">
-                <div class="row row-cols-3">
-                    <div class="col">
-                        <div>
-                            <h5>Company Member: </h5>
-                        </div>
-                        <span>@User.FullName</span>
 
-                    </div>
-                    <div class="col">
-                        <div>
-                            <h5>Role in Company:</h5>
-                        </div>
-                        <span>@User.Role</span>
+            <!-- Team Style 2: Vertical -->
+            <div class="card card-body card-hover bg-light border-0 text-center">
+                <img src="@User.ProfilePictureUrl" class="d-block rounded-circle mx-auto mb-3" width="162" alt="@User.UserId">
+                <h5 class="fw-medium fs-lg mb-1">@User.FullName</h5>
+                <p class="fs-sm mb-3">@User.Role</p>
+                <label class="form-label">
+                    Roles
+                </label>
+                <InputSelect class="form-control" @bind-Value="User.Role">
+                    @foreach (Roles role in Enum.GetValues<Roles>())
+                    {
+                        @if (role != Roles.DemoUser)
+                        {
+                            <option value="@role">
+                                @role.ToString()
+                            </option>
 
-                    </div>
-                    <div class="col">
-                        <label class="form-label">
-                            Roles
-                        </label>
-                        <InputSelect class="form-control" @bind-Value="User.Role">
-                            @foreach (Roles role in Enum.GetValues<Roles>())
-                            {
-                                @if (role != Roles.DemoUser)
-                                {
-                                    <option value="@role">
-                                        @role.ToString()
-                                    </option>
-
-                                }
-                            }
-                        </InputSelect>
+                        }
+                    }
+                </InputSelect>
+                <div class="d-flex justify-content-center">
+                    <div class="card-footer">
+                        <button class="btn btn-info mb-2 btn-sm w-100" @onclick="HandleSubmit">Edit Role</button>
+                        <button class="btn btn-warning btn-sm w-100" @onclick="() => IsEdit = false">Cancel</button>
                     </div>
                 </div>
-                <div class="mt-2">
-                    <button class="btn btn-info" @onclick="HandleSubmit">Edit Role</button>
-                    <button class="btn btn-warning" @onclick="() => IsEdit = false">Cancel</button>
-                </div>
-            </li>
+            </div>
         </EditForm>
     }
 
 }
+
+
 
 @code {
     #region Parameters

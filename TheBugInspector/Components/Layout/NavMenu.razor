@@ -1,99 +1,119 @@
-﻿@implements IDisposable
+﻿@using TheBugInspector.Client.Helpers
+@implements IDisposable
 
 @inject NavigationManager NavigationManager
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">TheBugInspector</a>
+<!-- Menu with dropdown + Button -->
+<header class="navbar navbar-expand-lg bg-light shadow-sm">
+    <div class="container">
+        <!-- Navbar Logo-->
+        <a href="#" class="navbar-brand">
+            <img src="assets/img/logo.svg" width="47" alt="Silicon">
+            Silicon
+        </a>
+
+        <!-- Mobile menu toggler (Hanburger) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse1" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar collapse -->
+        <nav id="navbarCollapse1" class="collapse navbar-collapse">
+            <hr class="d-lg-none">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+                </li>
+                <AuthorizeView Context="NavbarMenu">
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/companies/Index">
+                                Company
+                            </NavLink>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <NavLink class="nav-link dropdown-toggle" href="author" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                Projects
+                            </NavLink>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="/projects/index">
+                                        Active Projects
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/archived/projects/Index">
+                                        Archived Projects
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/tickets/Index">
+                                Tickets Index
+                            </NavLink>
+                        </li>
+                        <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+                            <li class="nav-item dropdown ms-auto">
+                                <NavLink class="nav-link dropdown-toggle" href="Account/Manage" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    @(NavbarMenu.User?.Identity?.Name ?? "Account")
+                                </NavLink>
+                                <ul class="dropdown-menu dropdown-menu-end text-nowrap px-2 m-2">
+                                    <AuthorizeView Context="AccountManager">
+                                        <Authorized>
+                                            @{
+                                                UserInfo? userInfo = UserInfoHelper.GetUserInfo(AccountManager);
+                                            }
+
+                                            <li class="nav-item">
+                                                <NavLink class="nav-link" href="Account/Manage">
+                                                    <span>Manage Account: @userInfo?.FullName</span>
+                                                </NavLink>
+                                            </li>
+                                            <li class="nav-item">
+                                                <form action="Account/Logout" method="post">
+                                                    <AntiforgeryToken />
+                                                    <input type="hidden" name="ReturnUrl" value="" />
+                                                    <button type="submit" class="nav-link">
+                                                        <i class="bi bi-arrow-bar-left"></i>
+                                                        Logout
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </Authorized>
+                                        <NotAuthorized>
+                                            <li class="nav-iem">
+                                                <NavLink class="nav-link" href="Account/Register">
+                                                    <i class="bi bi-person"></i>
+                                                    <span>Register</span>
+                                                </NavLink>
+                                            </li>
+                                            <li class="nav-item">
+                                                <NavLink class="nav-link" href="Account/Login">
+                                                    <i class="bi bi-person-badge"></i>
+                                                    <span>Login</span>
+                                                </NavLink>
+                                            </li>
+                                        </NotAuthorized>
+                                    </AuthorizeView>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </Authorized>
+
+                    <NotAuthorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="Account/Login" Match="NavLinkMatch.All">Login / Register</NavLink>
+                        </li>
+                    </NotAuthorized>
+                </AuthorizeView>
+
+            </ul>
+
+        </nav>
     </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tasker">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Tasker
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auth">
-                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
-            </NavLink>
-        </div>
-
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/companies/Index">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Company
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/projects/index">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Active Projects
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/archived/projects/Index">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Archived Projects
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/tickets/Index">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Tickets Index
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-    </nav>
-</div>
+</header>
 
 @code {
     private string? currentUrl;
@@ -115,4 +135,3 @@
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }
-

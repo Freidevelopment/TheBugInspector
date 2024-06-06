@@ -17,23 +17,26 @@
             <h1>@company.Name</h1>
             <img src="@company.ImageUrl" class="img-fluid" />
             <div class="text-center">
-                
             </div>
             <div class="mt-4">
                 <h3>Description</h3>
                 @company.Description
             </div>
-            <div class="row row-cols-4 mt-5">
-                <div class="col">
-                    <a href="/projects/Index" class="btn btn-primary">Active Projects</a>
+            <div class="row mt-5">
+                <div class="col-md-1">
                 </div>
-                <div class="col">
-                    <a href="/archived/projects/Index" class="btn btn-primary">Archived Projects</a>
+                <div class="col-md-3">
+                    <a href="/projects/Index" class="text-primary"><u>Active Projects</u></a>
                 </div>
-                <div class="col">
-                    <a href="/tickets/Index" class="btn btn-primary">All Tickets</a>
+                <div class="col-md-4">
+                    <a href="/archived/projects/Index" class="text-primary"><u>Archived Projects</u></a>
                 </div>
-                <div class="col">
+                <div class="col-md-3">
+                    <a href="/tickets/Index" class="text-primary"><u>All Tickets</u></a>
+                </div>
+                <div class="col-md-1">
+                </div>
+                <div class="col mt-3">
                     <div>
                         <AuthorizeView Context="AdminCompanyControl">
                             @if (AdminCompanyControl.User.IsInRole("Admin"))
@@ -50,26 +53,23 @@
                 <div>
                     <h3>Company Members</h3>
                 </div>
-                <ul class="list-group">
+                <div class="row">
+
                     @foreach (UserDTO member in Members)
                     {
-                        <CompanyMembersDisplay @key="member.UserId"
-                                               User="member"
-                                               UserInfo="userInfo"
-                                               OnSubmit="UpdateRole" />
+                        <div class="col-md-6">
+                            <CompanyMembersDisplay @key="member.UserId"
+                                                   User="member"
+                                                   UserInfo="userInfo"
+                                                   OnSubmit="UpdateRole" />
+
+                        </div>
                     }
 
-                </ul>
+
+                </div>
             </div>
-            <div>
-                <ul class="list-group">
-                    @foreach(UserDTO manager in projectManagers)
-                    {
-                        <li class="text-primary list-group-item">@manager.FullName</li>
-                    }
-                </ul>
-            </div>
-            
+
         </div>
     </div>
 }
