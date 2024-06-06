@@ -78,25 +78,35 @@
     private async Task OnFileChange(InputFileChangeEventArgs changeEvent)
     {
         imageError = null;
+        if (changeEvent is not null)
+        {
 
-        if (changeEvent.File is null)
-        {
-            Company!.ImageUrl = ImageHelper.DefaultBlogImage;
-        }
-        else if (changeEvent.File.Size > ImageHelper.MaxFileSize)
-        {
-            imageError = "Images must be less than 5MB";
-        }
-        else
-        {
-            try
+            if (changeEvent.File is null && Company is not null)
             {
-                Company!.ImageUrl = await ImageHelper.GetDataUrl(changeEvent.File);
+                Company.ImageUrl = ImageHelper.DefaultBlogImage;
             }
-            catch (Exception ex)
+            else if (changeEvent.File?.Size > ImageHelper.MaxFileSize)
             {
-                Console.WriteLine(ex);
-                imageError = "Could not read the selected file. Please select a different image.";
+                imageError = "Images must be less than 5MB";
+            }
+            else
+            {
+                try
+                {
+                    if (Company is not null)
+                    {
+                        if (changeEvent.File is not null)
+                        {
+                            Company.ImageUrl = await ImageHelper.GetDataUrl(changeEvent.File);
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    imageError = "Could not read the selected file. Please select a different image.";
+                }
             }
         }
 

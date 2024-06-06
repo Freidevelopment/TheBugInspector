@@ -85,8 +85,10 @@
             ErrorMessage = string.Empty;
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
-
-            activeProjects = await ProjectService.GetAllProjectsAsync(userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {
@@ -100,9 +102,12 @@
     {
         try
         {
-            await ProjectService.ArchiveProjectAsync(projectId, userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                await ProjectService.ArchiveProjectAsync(projectId, userInfo.CompanyId);
 
-            activeProjects = await ProjectService.GetAllProjectsAsync(userInfo!.CompanyId);
+                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {

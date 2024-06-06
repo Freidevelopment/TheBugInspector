@@ -32,11 +32,15 @@
                     <ValidationMessage For="() => Ticket.Priority" />
                 </div>
             }
-            <div class="mb-2">
-                <label for="priority" class="form-label">
-                    @Ticket.Project.Name
-                </label>
-            </div>
+            @if (Ticket.Project is not null)
+            {
+                <div class="mb-2">
+                    <label for="priority" class="form-label">
+
+                        @Ticket.Project.Name
+                    </label>
+                </div>
+            }
             @* Type *@
             <div class="mb-2">
                 <label for="priority" class="form-label">
@@ -141,8 +145,11 @@
         {
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+            if (userInfo is not null)
+            {
+                projects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
 
-            projects = await ProjectService.GetAllProjectsAsync(userInfo!.CompanyId);
+            }
 
 
         }

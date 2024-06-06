@@ -81,8 +81,11 @@
     {
         if (IsNew == true)
         {
-            Project!.StartDate = DateTime.Today;
-            Project!.EndDate = DateTime.Today.AddDays(7);
+            if (Project is not null)
+            {
+                Project.StartDate = DateTime.Today;
+                Project.EndDate = DateTime.Today.AddDays(7);
+            }
 
         }
 

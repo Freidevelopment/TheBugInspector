@@ -50,7 +50,10 @@
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
 
-            project = await ProjectService.GetProjectByIdAsync(Id, userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                project = await ProjectService.GetProjectByIdAsync(Id, userInfo.CompanyId);
+            }
 
         }
         catch (Exception ex)
@@ -65,7 +68,10 @@
     {
         try
         {
-            await ProjectService.UpdateProjectAsync(project, userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                await ProjectService.UpdateProjectAsync(project, userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {

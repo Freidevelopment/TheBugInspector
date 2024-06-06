@@ -14,7 +14,7 @@
             <td><button class="btn btn-success" @onclick="HandleSubmit">Archive</button></td>
 
         }
-        else if(Project.IsArchived is true)
+        else if (Project.IsArchived is true)
         {
             <td><button class="btn btn-success" @onclick="HandleSubmit">Restore</button></td>
         }
@@ -39,7 +39,10 @@
     #region Method
     private async Task HandleSubmit()
     {
-        await OnSubmit.InvokeAsync(Project!.Id);
+        if (Project is not null)
+        {
+            await OnSubmit.InvokeAsync(Project.Id);
+        }
     }
 
     #endregion

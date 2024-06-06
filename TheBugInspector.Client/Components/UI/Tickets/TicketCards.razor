@@ -16,7 +16,11 @@
         <td>@Ticket.Type.GetDisplayName()</td>
         <td>@Ticket.Priority.GetDisplayName()</td>
         <td>@Ticket.Status.GetDisplayName()</td>
-        <td>@Ticket.SubmitterUser!.FullName</td>
+        @if (Ticket.SubmitterUser is not null)
+        {
+            <td>@Ticket.SubmitterUser.FullName</td>
+
+        }
         <td>@Ticket.Comments.Count()</td>
         @if (Ticket.IsArchived is false)
         {
@@ -51,11 +55,19 @@
     #region Methods
     private async Task HandleArchive()
     {
-        await OnArchive.InvokeAsync(Ticket!.Id);
+        if (Ticket is not null)
+        {
+            await OnArchive.InvokeAsync(Ticket.Id);
+
+        }
     }
     private async Task HandleRestore()
     {
-        await OnRestore.InvokeAsync(Ticket!.Id);
+        if (Ticket is not null)
+        {
+            await OnRestore.InvokeAsync(Ticket.Id);
+
+        }
     }
     #endregion
 }

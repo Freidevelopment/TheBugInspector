@@ -1,5 +1,5 @@
 ﻿@inject ITicketDTOService TicketService
-@if (Attachment is not null)
+@if (Attachment is not null && userInfo is not null && ProjectManager is not null)
 {
     @if (status == Status.Viewing)
     {
@@ -18,17 +18,17 @@
                     }
                 </div>
                 <p class="card-text">@Attachment.Created.ToString("f")</p>
-                <p class="card-text">Submitted By: @userInfo!.FullName</p>
+                <p class="card-text">Submitted By: @userInfo.FullName</p>
                 <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" class="img-fluid" /></a>
 
                 <AuthorizeView>
-                    @if (Attachment.UserId == userInfo!.UserId)
+                    @if (Attachment.UserId == userInfo.UserId)
                     {
                         <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
                         <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                     }
                     else if (context.User.IsInRole("Admin") ||
-                    context.User.IsInRole("ProjectManager") && userInfo!.UserId == ProjectManager.UserId)
+                    context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
                     {
                         <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                     }
@@ -60,7 +60,7 @@
                         }
                     </div>
                     <p class="card-text">@Attachment.Created.ToString("f")</p>
-                    <p class="card-text">Submitted By: @userInfo!.FullName</p>
+                    <p class="card-text">Submitted By: @userInfo.FullName</p>
                     <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" class="img-fluid" /></a>
                 </EditForm>
                 <div class="card-footer">
@@ -81,10 +81,14 @@
                 <h6 class="card-subtitle mb-2 text-body-secondary">Description of Attachment</h6>
                 <p class="card-text">@Attachment.Description</p>
                 <p class="card-text">@Attachment.Created.ToString("f")</p>
-                <p class="card-text">Submitted By: @Attachment.User.FullName</p>
+                @if (Attachment.User is not null)
+                {
+                    <p class="card-text">Submitted By: @Attachment.User.FullName</p>
+
+                }
                 <a href="#" class="card-link">@Attachment.UploadUrl</a>
 
-                @if (Attachment.UserId == userInfo!.UserId)
+                @if (Attachment.UserId == userInfo.UserId)
                 {
                     <span class="text-danger">do you want to delete this Attachment?</span>
                     <button class="btn btn-danger" @onclick="HandleDelete">Delete Attachment</button>
@@ -132,14 +136,18 @@
 
     private async Task HandleDelete()
     {
-        await OnSubmit.InvokeAsync(Attachment!.Id);
+        if (Attachment is not null)
+        {
+        await OnSubmit.InvokeAsync(Attachment.Id);
+
+        }
 
         status = Status.Viewing;
     }
 
     private async Task HandleSubmit()
     {
-        if (newFile is not null)
+        if (newFile is not null && Attachment is not null && userInfo is not null)
         {
             ErrorMessage = string.Empty;
 
@@ -158,7 +166,7 @@
                 await TicketService.AddTicketAttachment(Attachment,
                                                         fileData,
                                                         fileType,
-                                                        userInfo!.CompanyId);
+                                                        userInfo.CompanyId);
             }
             catch (Exception ex)
             {
@@ -172,8 +180,8 @@
             newFile = null;
             Attachment = new()
                 {
-                    UserId = userInfo!.UserId,
-                    TicketId = Attachment.TicketId!,
+                    UserId = userInfo.UserId,
+                    TicketId = Attachment.TicketId,
                     Created = DateTime.Now
                 };
 

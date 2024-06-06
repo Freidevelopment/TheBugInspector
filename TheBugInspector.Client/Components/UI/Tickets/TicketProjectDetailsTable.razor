@@ -16,14 +16,18 @@
         <td>@Ticket.Type.GetDisplayName()</td>
         <td>@Ticket.Priority.GetDisplayName()</td>
         <td>@Ticket.Status.GetDisplayName()</td>
-        <td>@Ticket.SubmitterUser!.FullName</td>
-        @if (!string.IsNullOrEmpty(Ticket.DeveloperUserId))
+        @if (Ticket.SubmitterUser is not null && Ticket.DeveloperUser is not null)
         {
-            <td>@Ticket!.DeveloperUser.FullName</td>
-        }
-        else
-        {
-            <td>No developer assigned to Ticket</td>
+            <td>@Ticket.SubmitterUser.FullName</td>
+            @if (string.IsNullOrEmpty(Ticket.DeveloperUserId))
+            {
+                <td>@Ticket.DeveloperUser.FullName</td>
+            }
+            else
+            {
+                <td>No developer assigned to Ticket</td>
+            }
+
         }
         <td>@Ticket.Comments.Count()</td>
         @if (Ticket.IsArchived is false)
@@ -37,48 +41,57 @@
         }
 
         <AuthorizeView Context="TicketUpdateAssignment">
-            @if (TicketUpdateAssignment.User.IsInRole("Admin") ||
-           TicketUpdateAssignment.User.IsInRole("ProjectManager") && UserInfo!.UserId == ProjectManager!.UserId)
+            @if (UserInfo is not null && ProjectManager is not null)
             {
-                @if (AssignDeveloper == false)
-                {
-                    <td><button class="btn btn-warning" @onclick="() => AssignDeveloper = true">Assign Developer</button></td>
 
-                }
-                else if (AssignDeveloper == true)
+                @if (TicketUpdateAssignment.User.IsInRole("Admin") ||
+               TicketUpdateAssignment.User.IsInRole("ProjectManager") && UserInfo.UserId == ProjectManager.UserId)
                 {
-                    <label for="DeveloperAssignment" class="form-label">
-                        Available Developers
-                    </label>
-                    <InputSelect @bind-Value="Ticket.DeveloperUserId" class="form-select">
-                        <option value="">Assign Developer to Ticket</option>
-                        @if (Members is not null)
-                        {
-                            @foreach (UserDTO user in Members)
+                    @if (AssignDeveloper == false)
+                    {
+                        <td><button class="btn btn-warning" @onclick="() => AssignDeveloper = true">Assign Developer</button></td>
+
+                    }
+                    else if (AssignDeveloper == true)
+                    {
+                        <label for="DeveloperAssignment" class="form-label">
+                            Available Developers
+                        </label>
+                        <InputSelect @bind-Value="Ticket.DeveloperUserId" class="form-select">
+                            <option value="">Assign Developer to Ticket</option>
+                            @if (Members is not null)
                             {
-                                bool shouldNotDisplay = Members.Any(m => m.UserId == Ticket.DeveloperUserId);
-
-                                @if (shouldNotDisplay == false)
+                                @foreach (UserDTO? user in Members)
                                 {
-
-                                    if (user.Role == Roles.Developer.ToString())
+                                    @if (user is not null)
                                     {
-                                        <option value="@user.UserId">
-                                            @user.FullName: @user.Role
-                                        </option>
 
+                                        bool shouldNotDisplay = Members.Any(m => m?.UserId == Ticket.DeveloperUserId);
+
+                                        @if (shouldNotDisplay == false)
+                                        {
+
+                                            if (user.Role == Roles.Developer.ToString())
+                                            {
+                                                <option value="@user.UserId">
+                                                    @user.FullName: @user.Role
+                                                </option>
+
+
+                                            }
+                                        }
                                     }
+
+
                                 }
 
-
                             }
+                        </InputSelect>
+                        <div class="col">
+                            <button class="btn btn-primary mt-3" @onclick="AssignMember">Assign Developer</button>
 
-                        }
-                    </InputSelect>
-                    <div class="col">
-                        <button class="btn btn-primary mt-3" @onclick="AssignMember">Assign Developer</button>
-
-                    </div>
+                        </div>
+                    }
                 }
             }
         </AuthorizeView>
@@ -120,11 +133,19 @@
     #region Methods
     private async Task HandleArchive()
     {
-        await OnArchive.InvokeAsync(Ticket!.Id);
+        if (Ticket is not null)
+        {
+            await OnArchive.InvokeAsync(Ticket.Id);
+
+        }
     }
     private async Task HandleRestore()
     {
-        await OnRestore.InvokeAsync(Ticket!.Id);
+        if (Ticket is not null)
+        {
+            await OnRestore.InvokeAsync(Ticket.Id);
+
+        }
     }
 
     private async Task AssignMember()

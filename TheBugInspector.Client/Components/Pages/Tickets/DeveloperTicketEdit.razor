@@ -24,8 +24,8 @@
     <div class="card-shadow">
         <div class="card-body">
             <DeveloperTicketEdit Ticket="ticket"
-                        OnSubmit="HandleSubmit"
-                        IsNew="false" />
+                                 OnSubmit="HandleSubmit"
+                                 IsNew="false" />
 
         </div>
     </div>
@@ -54,8 +54,10 @@
             ErrorMessage = string.Empty;
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
-
-            ticket = await TicketService.GetTicketByIdAsync(Id, userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
+            }
 
         }
         catch (Exception ex)
@@ -70,7 +72,10 @@
     {
         try
         {
-            await TicketService.UpdateTicketAsync(ticket, userInfo!.CompanyId, userInfo.UserId);
+            if (userInfo is not null)
+            {
+                await TicketService.UpdateTicketAsync(ticket, userInfo.CompanyId, userInfo.UserId);
+            }
         }
         catch (Exception ex)
         {

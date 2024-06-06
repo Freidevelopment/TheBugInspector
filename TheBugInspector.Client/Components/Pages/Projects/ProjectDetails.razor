@@ -24,9 +24,13 @@
         </div>
         <div class="col text-end">
             <AuthorizeView Context="ProjectDetailsAuthor">
-                @if (ProjectDetailsAuthor.User.IsInRole("Admin") || ProjectDetailsAuthor.User.IsInRole("ProjectManager") && userInfo!.UserId == projectManager!.UserId)
+                @if (userInfo is not null && projectManager is not null)
                 {
-                    <a href="/projects/edit/@Id" class="btn btn-warning">Edit?</a>
+                    @if (ProjectDetailsAuthor.User.IsInRole("Admin") || ProjectDetailsAuthor.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                    {
+                        <a href="/projects/edit/@Id" class="btn btn-warning">Edit?</a>
+
+                    }
 
                 }
 
@@ -34,7 +38,7 @@
         </div>
     </div>
     <span class="text-danger">@ErrorMessage</span>
-    @if (project is not null)
+    @if (project is not null && projectMembers is not null && projectManager is not null)
     {
         <ProjectDetailsCard Project="project"
                             ProjectManager="projectManager"
@@ -43,7 +47,6 @@
 
         <AuthorizeView Roles="Admin, ProjectManager">
 
-            <!-- Button with data-bs-target -->
             <div class="text-end mt-3">
                 <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#MemberAssignmentmodal" aria-expanded="false" aria-controls="collapseExample">
                     Adjust members on Project?
@@ -51,17 +54,16 @@
 
             </div>
 
-            <!-- Collapse -->
             <div class="collapse" id="MemberAssignmentmodal">
                 <div class="card card-body mt-3">
                     <ProjectMemberManagementModal ProjectManager="projectManager"
                                                   userInfo="userInfo"
                                                   Employees="companyMembers"
+                                                  Members="projectMembers" 
                                                   OnSubmit="AssignProjectMembers"
                                                   OnManagerSubmit="AssignProjectManager"
                                                   OnManagerRemoval="RemoveProjectManager"
-                                                  OnMemberRemoval="RemoveProjectMember"
-                                                  Members="projectMembers" />
+                                                  OnMemberRemoval="RemoveProjectMember" />
                 </div>
             </div>
 
@@ -87,17 +89,24 @@
                     <th scope="col">Number of Comments</th>
                     <th scope="col">Archive Ticket</th>
                     <AuthorizeView Context="TicketAssignment">
-                        @if (TicketAssignment.User.IsInRole("Admin") ||
-                       TicketAssignment.User.IsInRole("ProjectManager") && userInfo!.UserId == projectManager!.UserId)
+                        @if (projectManager is not null && userInfo is not null)
                         {
-                            <th scope="col">Assign Developer</th>
+                            @if (TicketAssignment.User.IsInRole("Admin") ||
+                           TicketAssignment.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                            {
+                                <th scope="col">Assign Developer</th>
 
+
+                            }
 
                         }
                     </AuthorizeView>
                 </tr>
             </thead>
             <tbody>
+                @if (userInfo is not null && projectManager is not null && projectMembers is not null)
+                {
+                    
                 @foreach (TicketDTO ticket in project.Tickets.OrderByDescending(p => p.Created))
                 {
                     <TicketProjectDetailsTable Ticket="ticket"
@@ -106,9 +115,10 @@
                                                Members="projectMembers"
                                                OnArchive="HandleArchive"
                                                OnRestore="HandleRestore"
-                                               OnAssignDeveloper="AssignDeveloper"/>
+                                               OnAssignDeveloper="AssignDeveloper" />
                 }
 
+                }
             </tbody>
 
         </table>
@@ -147,14 +157,16 @@
             ErrorMessage = string.Empty;
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+            if (userInfo is not null)
+            {
+                project = await ProjectService.GetProjectByIdAsync(Id, userInfo.CompanyId);
 
-            project = await ProjectService.GetProjectByIdAsync(Id, userInfo!.CompanyId);
+                projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo.CompanyId);
 
-            projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo!.CompanyId);
+                projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo.CompanyId);
 
-            projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo!.CompanyId);
-
-            companyMembers = await CompanyService.GetCompanyMembersAsync(userInfo!.CompanyId);
+                companyMembers = await CompanyService.GetCompanyMembersAsync(userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {
@@ -168,7 +180,10 @@
     {
         try
         {
-            await ProjectService.UpdateProjectAsync(project, userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                await ProjectService.UpdateProjectAsync(project, userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {
@@ -181,9 +196,12 @@
     {
         try
         {
-            await TicketService.ArchiveTicketAsync(ticketId, userInfo!.CompanyId);
+            if (userInfo is not null && project is not null)
+            {
+                await TicketService.ArchiveTicketAsync(ticketId, userInfo.CompanyId);
 
-            project!.Tickets = [.. await TicketService.GetAllTicketsAsync(userInfo!.CompanyId)];
+                project.Tickets = [.. await TicketService.GetAllTicketsAsync(userInfo.CompanyId)];
+            }
         }
         catch (Exception ex)
         {
@@ -196,9 +214,12 @@
     {
         try
         {
-            await TicketService.RestoreTicketAsync(ticketId, userInfo!.CompanyId);
+            if (userInfo is not null && project is not null)
+            {
+                await TicketService.RestoreTicketAsync(ticketId, userInfo.CompanyId);
 
-            project!.Tickets = [.. await TicketService.GetAllTicketsAsync(userInfo!.CompanyId)];
+                project.Tickets = [.. await TicketService.GetAllTicketsAsync(userInfo.CompanyId)];
+            }
         }
         catch (Exception ex)
         {
@@ -211,10 +232,12 @@
     {
         try
         {
+            if (userInfo is not null)
+            {
+                await ProjectService.AddMemberToProjectAsync(Id, memberId, userInfo.UserId);
 
-            await ProjectService.AddMemberToProjectAsync(Id, memberId, userInfo!.UserId);
-
-            projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo!.CompanyId);
+                projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo.CompanyId);
+            }
 
         }
         catch (Exception ex)
@@ -228,9 +251,12 @@
     {
         try
         {
-            await ProjectService.AssignProjectManagerAsync(Id, memberId, userInfo!.UserId);
+            if (userInfo is not null)
+            {
+                await ProjectService.AssignProjectManagerAsync(Id, memberId, userInfo.UserId);
 
-            projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo!.CompanyId);
+                projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {
@@ -243,9 +269,12 @@
     {
         try
         {
-            await ProjectService.RemoveProjectManagerAsync(Id, userInfo!.UserId);
+            if (userInfo is not null)
+            {
+                await ProjectService.RemoveProjectManagerAsync(Id, userInfo.UserId);
 
-            projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo!.CompanyId);
+                projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo.CompanyId);
+            }
 
 
         }
@@ -260,9 +289,12 @@
     {
         try
         {
-            await ProjectService.RemoveMemberFromProjectAsync(Id, memberId, userInfo!.UserId);
+            if (userInfo is not null)
+            {
+                await ProjectService.RemoveMemberFromProjectAsync(Id, memberId, userInfo.UserId);
 
-            projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo!.CompanyId);
+                projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {
@@ -275,9 +307,12 @@
     {
         try
         {
-            await TicketService.UpdateTicketAsync(ticket, userInfo!.CompanyId, userInfo.UserId);
+            if (userInfo is not null)
+            {
+                await TicketService.UpdateTicketAsync(ticket, userInfo.CompanyId, userInfo.UserId);
 
-            project = await ProjectService.GetProjectByIdAsync(Id, userInfo!.CompanyId);
+                project = await ProjectService.GetProjectByIdAsync(Id, userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {

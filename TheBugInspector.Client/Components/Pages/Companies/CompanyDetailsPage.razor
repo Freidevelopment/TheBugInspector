@@ -97,12 +97,14 @@
         try
         {
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+            if (userInfo is not null)
+            {
+                company = await CompanyService.GetCompanyByIdAsync(userInfo.CompanyId);
+                Members = await CompanyService.GetCompanyMembersAsync(userInfo.CompanyId);
+                projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
 
-            company = await CompanyService.GetCompanyByIdAsync(userInfo!.CompanyId);
+            }
 
-            Members = await CompanyService.GetCompanyMembersAsync(company!.Id);
-
-            projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo!.CompanyId);
         }
         catch (Exception ex)
         {
@@ -115,11 +117,14 @@
     {
         try
         {
-            await CompanyService.UpdateUserRoleAsync(user, userInfo!.UserId);
+            if (userInfo is not null && company is not null)
+            {
+                await CompanyService.UpdateUserRoleAsync(user, userInfo.UserId);
 
-            Members = await CompanyService.GetCompanyMembersAsync(company!.Id);
+                Members = await CompanyService.GetCompanyMembersAsync(company.Id);
 
-            projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo!.CompanyId);
+                projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {

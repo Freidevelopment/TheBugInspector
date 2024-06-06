@@ -23,7 +23,7 @@
         <div class="card-body">
             <TicketForm Ticket="Ticket"
                         OnSubmit="HandleSubmit"
-                        IsNew="true"/>
+                        IsNew="true" />
 
         </div>
     </div>
@@ -51,7 +51,10 @@
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
 
-            Ticket!.SubmitterUserId = userInfo!.UserId;
+            if (userInfo is not null && Ticket is not null)
+            {
+                Ticket.SubmitterUserId = userInfo.UserId;
+            }
         }
         catch (Exception ex)
         {
@@ -65,8 +68,11 @@
     {
         try
         {
-            ticket.SubmitterUserId = userInfo!.UserId;
-            await TicketService.AddTicketAsync(ticket, userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                ticket.SubmitterUserId = userInfo.UserId;
+                await TicketService.AddTicketAsync(ticket, userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {

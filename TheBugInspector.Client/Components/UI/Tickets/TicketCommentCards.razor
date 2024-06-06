@@ -1,29 +1,37 @@
-﻿@if (Comment is not null)
+﻿@if (Comment is not null && userInfo is not null)
 {
 
     @if (status == Status.Viewing)
     {
         <div class="border-bottom py-4 mt-2 mb-4">
             <div class="d-flex align-items-center pb-1 mb-3">
-                <img class="rounded-circle" src="@Comment.User!.ProfilePictureUrl" width="48" alt="@Comment.UserId">
-                <div class="ps-3">
-                    <h6 class="mb-0">@Comment.User.FullName</h6>
-                    <span class="fs-sm text-body-secondary">@Comment.Created.ToString("f")</span>
-                </div>
+                @if (Comment.User is not null)
+                {
+                    <img class="rounded-circle" src="@Comment.User.ProfilePictureUrl" width="48" alt="@Comment.UserId">
+
+                    <div class="ps-3">
+                        <h6 class="mb-0">@Comment.User.FullName</h6>
+                        <span class="fs-sm text-body-secondary">@Comment.Created.ToString("f")</span>
+                    </div>
+                }
             </div>
             <p class="pb-2 mb-0">@Comment.Content</p>
             <div class="col-12 text-end">
                 <div class="form-check mb-2">
                     <AuthorizeView>
-                        @if (Comment.UserId == userInfo!.UserId)
+                        @if (ProjectManager is not null)
                         {
-                            <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
-                        }
-                        else if (context.User.IsInRole("Admin") || 
-                                 context.User.IsInRole("ProjectManager") && userInfo!.UserId == ProjectManager.UserId)
-                        {
-                            <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
+
+                            @if (Comment.UserId == userInfo.UserId)
+                            {
+                                <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
+                                <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
+                            }
+                            else if (context.User.IsInRole("Admin") ||
+                            context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
+                            {
+                                <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
+                            }
                         }
                     </AuthorizeView>
                 </div>
@@ -38,12 +46,16 @@
             <DataAnnotationsValidator />
             <div class="border-bottom py-4 mt-2 mb-4">
                 <div class="d-flex align-items-center pb-1 mb-3">
-                    <img class="rounded-circle" src="@Comment.User!.ProfilePictureUrl" width="48" alt="@Comment.UserId">
-                    <div class="ps-3">
-                        <h6 class="mb-0">@Comment.User.FullName</h6>
+                    @if (Comment.User is not null)
+                    {
+                        <img class="rounded-circle" src="@Comment.User.ProfilePictureUrl" width="48" alt="@Comment.UserId">
+                        <div class="ps-3">
+                            <h6 class="mb-0">@Comment.User.FullName</h6>
 
-                        <span class="fs-sm text-body-secondary">@Comment.Created.ToString("d")</span>
-                    </div>
+                            <span class="fs-sm text-body-secondary">@Comment.Created.ToString("d")</span>
+                        </div>
+
+                    }
                 </div>
                 <InputTextArea class="form-control" rows="3" @bind-Value="Comment.Content" />
                 <ValidationMessage For="() => Comment.Content" />
@@ -61,11 +73,15 @@
     {
         <div class="border-bottom py-4 mt-2 mb-4">
             <div class="d-flex align-items-center pb-1 mb-3">
-                <img class="rounded-circle" src="@Comment.User.ProfilePictureUrl" width="48" alt="@Comment.UserId">
-                <div class="ps-3">
-                    <h6 class="mb-0">@Comment.User.FullName</h6>
-                    <span class="fs-sm text-body-secondary">@Comment.Created.ToString("d")</span>
-                </div>
+                @if (Comment.User is not null)
+                {
+                    <img class="rounded-circle" src="@Comment.User.ProfilePictureUrl" width="48" alt="@Comment.UserId">
+                    <div class="ps-3">
+                        <h6 class="mb-0">@Comment.User.FullName</h6>
+                        <span class="fs-sm text-body-secondary">@Comment.Created.ToString("d")</span>
+                    </div>
+
+                }
             </div>
             <p class="pb-2 mb-0">@Comment.Content</p>
             <div class="col-12 text-end">
@@ -120,7 +136,11 @@
 
     private async Task HandleDelete()
     {
-        await OnDelete.InvokeAsync(Comment!.Id);
+        if (Comment is not null)
+        {
+            await OnDelete.InvokeAsync(Comment.Id);
+
+        }
 
         status = Status.Viewing;
     }

@@ -1,9 +1,8 @@
-﻿
-@if(ticketComment is not null)
+﻿@if (ticketComment is not null && userInfo is not null)
 {
-    
 
-<EditForm Model="ticketComment" OnValidSubmit="HandleSubmit">
+
+    <EditForm Model="ticketComment" OnValidSubmit="HandleSubmit">
         <DataAnnotationsValidator />
         <div class="card border-0 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-n3 mt-md-0">
             <div class="card-body">
@@ -17,7 +16,7 @@
                 <div class="col-12 mt-2 text-end">
                     <button class="btn btn-primary" type="submit">Post Comment</button>
                     <div>
-                        @userInfo!.FullName
+                        @userInfo.FullName
                     </div>
                 </div>
 
@@ -46,13 +45,16 @@
 
     #region Methods
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         try
         {
-            
-            ticketComment!.TicketId = Id;
-            ticketComment!.UserId = userInfo!.UserId;
+            if (userInfo is not null && ticketComment is not null)
+            {
+                ticketComment.TicketId = Id;
+                ticketComment.UserId = userInfo.UserId;
+
+            }
 
         }
         catch (Exception ex)
@@ -71,7 +73,7 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            
+
         }
     }
     #endregion

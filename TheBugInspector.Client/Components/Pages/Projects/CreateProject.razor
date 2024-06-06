@@ -61,7 +61,10 @@
     {
         try
         {
-            await ProjectService.AddProjectAsync(project, userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                await ProjectService.AddProjectAsync(project, userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {

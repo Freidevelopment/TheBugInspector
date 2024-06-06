@@ -45,11 +45,14 @@
     {
         // get the current user's information
         userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+        if (userInfo is not null)
+        {
+            // fill out the fields we know about already
+            newAttachment.UserId = userInfo.UserId;
+            newAttachment.TicketId = TicketId;
+            newAttachment.Created = DateTime.Now;
 
-        // fill out the fields we know about already
-        newAttachment.UserId = userInfo!.UserId;
-        newAttachment.TicketId = TicketId!;
-        newAttachment.Created = DateTime.Now;
+        }
     }
 
     private async Task HandleSubmit()
@@ -69,11 +72,15 @@
 
             try
             {
-                // send the model and file data to the service
-                await TicketService.AddTicketAttachment(newAttachment,
-                                                        fileData,
-                                                        fileType,
-                                                        userInfo!.CompanyId);
+                if (userInfo is not null)
+                {
+                    // send the model and file data to the service
+                    await TicketService.AddTicketAttachment(newAttachment,
+                                                            fileData,
+                                                            fileType,
+                                                            userInfo.CompanyId);
+
+                }
             }
             catch (Exception ex)
             {
@@ -82,15 +89,19 @@
                 ErrorMessage = "The File is either too large to send or there was an error or there was and error uploading the file";
                 Console.WriteLine(ex);
             }
+            if (userInfo is not null)
+            {
+                // reset the form after this was successful
+                newFile = null;
+                newAttachment = new()
+                    {
 
-            // reset the form after this was successful
-            newFile = null;
-            newAttachment = new()
-                {
-                    UserId = userInfo!.UserId,
-                    TicketId = TicketId!,
-                    Created = DateTime.Now
-                };
+                        UserId = userInfo.UserId,
+                        TicketId = TicketId,
+                        Created = DateTime.Now
+                    };
+
+            }
 
             // this can be replaced with however you want to update the page
             // after a file was saved

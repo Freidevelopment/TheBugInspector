@@ -1,6 +1,6 @@
 ﻿@if (Ticket is not null)
 {
-    @if (Ticket!.IsArchived == true)
+    @if (Ticket.IsArchived == true)
     {
         backgroundColor = "bg-success-subtle";
     }
@@ -28,7 +28,7 @@
                     @if (Ticket.Updated.HasValue)
                     {
                         <h2>Last Updated</h2>
-                        <span>@Ticket.Updated!.Value.ToString("g")</span>
+                        <span>@Ticket.Updated.Value.ToString("g")</span>
                     }
                     else
                     {

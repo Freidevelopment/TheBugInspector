@@ -33,18 +33,22 @@ else
             </div>
             <div class="col text-end">
                 <AuthorizeView>
-                    @if (context.User.IsInRole("Admin") ||
-                   context.User.IsInRole("ProjectManager") && userInfo!.UserId == projectManager!.UserId)
+                    @if (projectManager is not null && userInfo is not null)
                     {
-                        <a class="btn btn-warning" href="Tickets/edit/@ticket.Id">Edit?</a>
-                    }
-                    else if (userInfo!.UserId == ticket.SubmitterUserId)
-                    {
-                        <a class="btn btn-warning" href="Tickets/submitter/edit/@ticket.Id">Edit?</a>
-                    }
-                    else if (userInfo!.UserId == ticket.DeveloperUserId)
-                    {
-                        <a class="btn btn-warning" href="Tickets/developer/edit/@ticket.Id">Edit?</a>
+                        @if (context.User.IsInRole("Admin") ||
+                       context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                        {
+                            <a class="btn btn-warning" href="Tickets/edit/@ticket.Id">Edit?</a>
+                        }
+                        else if (userInfo.UserId == ticket.SubmitterUserId)
+                        {
+                            <a class="btn btn-warning" href="Tickets/submitter/edit/@ticket.Id">Edit?</a>
+                        }
+                        else if (userInfo.UserId == ticket.DeveloperUserId)
+                        {
+                            <a class="btn btn-warning" href="Tickets/developer/edit/@ticket.Id">Edit?</a>
+                        }
+
                     }
                 </AuthorizeView>
             </div>
@@ -55,30 +59,34 @@ else
 
 
         <AuthorizeView>
-            @if (context.User.IsInRole("Admin") ||
-           context.User.IsInRole("ProjectManager") && userInfo!.UserId == projectManager!.UserId)
+            @if (projectManager is not null && userInfo is not null)
             {
-                <p class="text-end mt-3">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
-                        add a comment?
-                    </button>
-                </p>
-            }
-            else if (userInfo!.UserId == ticket.SubmitterUserId)
-            {
-                <p class="text-end mt-3">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
-                        add a comment?
-                    </button>
-                </p>
-            }
-            else if (userInfo!.UserId == ticket.DeveloperUserId)
-            {
-                <p class="text-end mt-3">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
-                        add a comment?
-                    </button>
-                </p>
+                @if (context.User.IsInRole("Admin") ||
+               context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                {
+                    <p class="text-end mt-3">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
+                            add a comment?
+                        </button>
+                    </p>
+                }
+                else if (userInfo.UserId == ticket.SubmitterUserId)
+                {
+                    <p class="text-end mt-3">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
+                            add a comment?
+                        </button>
+                    </p>
+                }
+                else if (userInfo.UserId == ticket.DeveloperUserId)
+                {
+                    <p class="text-end mt-3">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
+                            add a comment?
+                        </button>
+                    </p>
+                }
+
             }
         </AuthorizeView>
 
@@ -92,33 +100,37 @@ else
         </div>
 
         <AuthorizeView>
-            @if (context.User.IsInRole("Admin") ||
-           context.User.IsInRole("ProjectManager") && userInfo!.UserId == projectManager!.UserId)
+            @if (projectManager is not null && userInfo is not null)
             {
-                <div class="text-end">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
-                        Add Attachment?
-                    </button>
-                </div>
-            }
-            else if (context.User.IsInRole("Developer") && userInfo!.UserId == ticket.DeveloperUserId)
-            {
-                <div class="text-end">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
-                        Add Attachment?
-                    </button>
-                </div>
-            }
-            else if (userInfo!.UserId == ticket.SubmitterUserId)
-            {
-                <div class="text-end">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
-                        Add Attachment?
-                    </button>
-                </div>
+                @if (context.User.IsInRole("Admin") ||
+               context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                {
+                    <div class="text-end">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
+                            Add Attachment?
+                        </button>
+                    </div>
+                }
+                else if (context.User.IsInRole("Developer") && userInfo.UserId == ticket.DeveloperUserId)
+                {
+                    <div class="text-end">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
+                            Add Attachment?
+                        </button>
+                    </div>
+                }
+                else if (userInfo.UserId == ticket.SubmitterUserId)
+                {
+                    <div class="text-end">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
+                            Add Attachment?
+                        </button>
+                    </div>
+                }
+
             }
         </AuthorizeView>
 
@@ -189,21 +201,31 @@ else
             ErrorMessage = string.Empty;
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+            if (userInfo is not null)
+            {
+                ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
 
-            ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
+                ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo.CompanyId);
 
-            ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo.CompanyId);
-
-            project = await ProjectService.GetProjectByIdAsync(ticket.ProjectId, userInfo.CompanyId);
-
-            projectManager = await ProjectService.GetProjectManagerAsync(project.Id, userInfo.CompanyId);
-
-            userComment = new TicketCommentDTO()
+                if (ticket is not null)
                 {
-                    TicketId = ticket.Id,
-                    UserId = userInfo.UserId,
+                    project = await ProjectService.GetProjectByIdAsync(ticket.ProjectId, userInfo.CompanyId);
 
-                };
+                    if (project is not null)
+                    {
+                        projectManager = await ProjectService.GetProjectManagerAsync(project.Id, userInfo.CompanyId);
+
+                    }
+
+
+                    userComment = new TicketCommentDTO()
+                        {
+                            TicketId = ticket.Id,
+                            UserId = userInfo.UserId,
+
+                        };
+                }
+            }
 
         }
         catch (Exception ex)
@@ -218,18 +240,21 @@ else
     {
         try
         {
-            await TicketService.AddCommentAsync(comment, userInfo.CompanyId);
+            if (userInfo is not null && ticket is not null)
+            {
+                await TicketService.AddCommentAsync(comment, userInfo.CompanyId);
+                ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo.CompanyId);
 
-            ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo.CompanyId);
-            // ticket = await TicketService.GetTicketByIdAsync(Id, userInfo!.CompanyId);
+                // ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
 
-            userComment = new TicketCommentDTO()
-                {
-                    TicketId = ticket.Id,
-                    UserId = userInfo.UserId,
+                userComment = new TicketCommentDTO()
+                    {
+                        TicketId = ticket.Id,
+                        UserId = userInfo.UserId,
 
-                };
+                    };
 
+            }
         }
         catch (Exception ex)
         {
@@ -242,9 +267,12 @@ else
     {
         try
         {
-            await TicketService.UpdateCommentAsync(comment, userInfo.CompanyId);
+            if (userInfo is not null)
+            {
+                await TicketService.UpdateCommentAsync(comment, userInfo.CompanyId);
 
-            ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo.CompanyId);
+                ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo.CompanyId);
+            }
 
         }
         catch (Exception ex)
@@ -258,9 +286,12 @@ else
     {
         try
         {
-            await TicketService.DeleteCommentAsync(commentId, ticket.Id);
+            if (userInfo is not null && ticket is not null)
+            {
+                await TicketService.DeleteCommentAsync(commentId, ticket.Id);
 
-            ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo.CompanyId);
+                ticketComments = await TicketService.GetTicketCommentsAsync(Id, userInfo.CompanyId);
+            }
 
         }
         catch (Exception ex)
@@ -274,9 +305,12 @@ else
     {
         try
         {
-            await TicketService.DeleteTicketAttachment(AttachmentId, userInfo.CompanyId);
+            if (userInfo is not null)
+            {
+                await TicketService.DeleteTicketAttachment(AttachmentId, userInfo.CompanyId);
 
-            ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
+                ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {

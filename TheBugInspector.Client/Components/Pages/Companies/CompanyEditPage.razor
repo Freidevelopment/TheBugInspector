@@ -61,7 +61,10 @@
     {
         try
         {
-            await CompanyService.UpdateCompanyAsync(company, userInfo!.UserId);
+            if (userInfo is not null)
+            {
+                await CompanyService.UpdateCompanyAsync(company, userInfo.UserId);
+            }
         }
         catch (Exception ex)
         {

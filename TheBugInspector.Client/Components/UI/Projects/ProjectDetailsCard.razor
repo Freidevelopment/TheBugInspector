@@ -2,15 +2,6 @@
 
 @if (Project is not null && Members is not null)
 {
-    @if (Project!.IsArchived == true)
-    {
-        backgroundColor = "bg-success-subtle";
-    }
-    else
-    {
-        backgroundColor = "bg-info-subtle";
-    }
-
 
     <div class="card @backgroundColor">
         <div class="card-header">
@@ -55,9 +46,17 @@
                             Developers assigned to Project
                         </button>
                         <div class="dropdown-menu my-1">
-                            @foreach (UserDTO developer in Members.Where(r => r.Role == nameof(Roles.Developer)))
+                            @if (Members is not null)
                             {
-                                <a class="dropdown-item">@developer.FullName</a>
+                                @foreach (UserDTO? developer in Members.Where(r => r?.Role == nameof(Roles.Developer)))
+                                {
+                                    if (developer is not null)
+                                    {
+                                        <a class="dropdown-item">@developer.FullName</a>
+
+                                    }
+                                }
+
                             }
                         </div>
                     </div>
@@ -69,14 +68,22 @@
                             Submitters assigned to Project
                         </button>
                         <div class="dropdown-menu my-1">
-                            @foreach (UserDTO submitter in Members.Where(r => r.Role == nameof(Roles.Submitter)))
+                            @if (Members is not null)
                             {
-                                <a class="dropdown-item">@submitter.FullName</a>
+                                @foreach (UserDTO? submitter in Members.Where(r => r?.Role == nameof(Roles.Submitter)))
+                                {
+                                    if (submitter is not null)
+                                    {
+                                        <a class="dropdown-item">@submitter.FullName</a>
+
+                                    }
+                                }
+
                             }
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -94,10 +101,6 @@
     [Parameter, EditorRequired]
     public IEnumerable<UserDTO?> Members { get; set; }
 
-    
-
-
-
     #endregion
 
     #region State
@@ -110,6 +113,6 @@
     #region Methods
 
 
-    
+
     #endregion
 }

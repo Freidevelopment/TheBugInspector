@@ -78,8 +78,10 @@
             ErrorMessage = string.Empty;
 
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
-
-            archivedProjects = await ProjectService.GetArchivedProjectsAsync(userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                archivedProjects = await ProjectService.GetArchivedProjectsAsync(userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {
@@ -93,9 +95,12 @@
     {
         try
         {
-            await ProjectService.RestoreProjectAsync(projectId, userInfo!.CompanyId);
+            if (userInfo is not null)
+            {
+                await ProjectService.RestoreProjectAsync(projectId, userInfo.CompanyId);
 
-            archivedProjects = await ProjectService.GetArchivedProjectsAsync(userInfo!.CompanyId);
+                archivedProjects = await ProjectService.GetArchivedProjectsAsync(userInfo.CompanyId);
+            }
         }
         catch (Exception ex)
         {
