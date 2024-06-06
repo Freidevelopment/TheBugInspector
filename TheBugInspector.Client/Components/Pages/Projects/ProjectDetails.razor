@@ -8,6 +8,7 @@
 
 @rendermode InteractiveAuto
 
+@inject ICompanyDTOService CompanyService
 @inject IProjectDTOService ProjectService
 @inject ITicketDTOService TicketService
 
@@ -17,12 +18,39 @@
 
 <div class="container-xxl">
 
-    <h3>Project Details</h3>
+    <div class="row row-cols-2">
+        <div class="col">
+            <h3>Project Details</h3>
+        </div>
+        <div class="col text-end">
+            <AuthorizeView Context="ProjectDetailsAuthor">
+                @if (ProjectDetailsAuthor.User.IsInRole("Admin") || ProjectDetailsAuthor.User.IsInRole("ProjectManager") && userInfo!.UserId == projectManager!.UserId)
+                {
+                    <a href="/projects/edit/@Id" class="btn btn-warning">Edit?</a>
+
+                }
+
+            </AuthorizeView>
+        </div>
+    </div>
     <span class="text-danger">@ErrorMessage</span>
     @if (project is not null)
     {
-        <ProjectDetailsCard Project="project" />
+        <ProjectDetailsCard Project="project"
+                            ProjectManager="projectManager"
+                            Members="projectMembers" />
 
+
+        <AuthorizeView Roles="Admin, ProjectManager">
+
+            <div class="text-end">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MemberAssignmentmodal">
+                    Adjust members on Project?
+                </button>
+
+            </div>
+        </AuthorizeView>
 
         <table class="table table-striped-columns table-info mt-5">
             <thead>
@@ -51,8 +79,26 @@
 
         </table>
 
+
+
     }
 </div>
+
+@if (project is not null)
+{
+    <!-- Modal -->
+    <div class="modal fade" id="MemberAssignmentmodal" tabindex="-1" aria-labelledby="MemberAssignmentmodal" aria-hidden="true">
+        <ProjectMemberManagementModal ProjectManager="projectManager"
+                                      userInfo="userInfo"
+                                      Employees="companyMembers"
+                                      OnSubmit="AssignProjectMembers"
+                                      OnManagerSubmit="AssignProjectManager"
+                                      OnManagerRemoval="RemoveProjectManager"
+                                      OnMemberRemoval="RemoveProjectMember"
+                                      Members="projectMembers" />
+
+    </div>
+}
 
 @code {
     #region Parameters
@@ -67,6 +113,11 @@
     private ProjectDTO? project;
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
+    private UserDTO? projectManager;
+    private string? managerAssignment;
+    private IEnumerable<UserDTO?> projectMembers = [];
+    private IEnumerable<UserDTO?> companyMembers = [];
+
     #endregion
 
     #region Methods
@@ -80,6 +131,11 @@
 
             project = await ProjectService.GetProjectByIdAsync(Id, userInfo!.CompanyId);
 
+            projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo!.CompanyId);
+
+            projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo!.CompanyId);
+
+            companyMembers = await CompanyService.GetCompanyMembersAsync(userInfo!.CompanyId);
         }
         catch (Exception ex)
         {
@@ -124,6 +180,68 @@
             await TicketService.RestoreTicketAsync(ticketId, userInfo!.CompanyId);
 
             project!.Tickets = [.. await TicketService.GetAllTicketsAsync(userInfo!.CompanyId)];
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+
+    private async Task AssignProjectMembers(string memberId)
+    {
+        try
+        {
+
+            await ProjectService.AddMemberToProjectAsync(Id, memberId, userInfo!.UserId);
+
+            projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo!.CompanyId);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+
+    private async Task AssignProjectManager(string memberId)
+    {
+        try
+        {
+            await ProjectService.AssignProjectManagerAsync(Id, memberId, userInfo!.UserId);
+
+            projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+
+    private async Task RemoveProjectManager(string memberId)
+    {
+        try
+        {
+            await ProjectService.RemoveProjectManagerAsync(Id, userInfo!.UserId);
+
+            projectMembers = await ProjectService.GetProjectMembersAsync(Id, userInfo!.CompanyId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+
+    private async Task RemoveProjectMember(string memberId)
+    {
+        try
+        {
+            await ProjectService.RemoveMemberFromProjectAsync(Id, memberId, userInfo!.UserId);
+
+            projectManager = await ProjectService.GetProjectManagerAsync(Id, userInfo!.CompanyId);
         }
         catch (Exception ex)
         {

@@ -1,4 +1,6 @@
-﻿@if (Project is not null)
+﻿@inject ICompanyDTOService CompanyService
+
+@if (Project is not null && Members is not null)
 {
     @if (Project!.IsArchived == true)
     {
@@ -12,26 +14,71 @@
 
     <div class="card @backgroundColor">
         <div class="card-header">
-            @Project.Name
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Project Description</h5>
-            <p class="card-text">@Project.Description</p>
-            <div class="row row-cols-3">
-                <div class="col">
-                    <h2>Created</h2>
-                    <span>@Project.Created.ToString("g")</span>
+            <div class="row">
+                <div class="col-8 text-start">
+                    <h3>@Project.Name</h3>
                 </div>
-                <div class="col">
-                    <h2>Start Date</h2>
-                    <span>@Project.StartDate.ToString("D")</span>
-                </div>
-                <div class="col">
-                    <h2>End Date</h2>
-                    <span>@Project.EndDate.ToString("D")</span>
+                <div class="col-4">
+                    @if (ProjectManager is not null)
+                    {
+                        <span>Project Manager: @ProjectManager.FullName</span>
+                    }
+                    else
+                    {
+                        <span>Project Manager: No Manager Assigned to this project</span>
+                    }
                 </div>
             </div>
-            <a href="/projects/edit/@Project.Id" class="btn btn-warning">Edit?</a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-10">
+                    <h5 class="card-title">Project Description</h5>
+                    <p class="card-text">@Project.Description</p>
+                </div>
+                <div class="col-2 vstack">
+                    <div>
+                        <h2>Created</h2>
+                        <span>@Project.Created.ToString("g")</span>
+                        <h2>Start Date</h2>
+                        <span>@Project.StartDate.ToString("D")</span>
+                        <h2>End Date</h2>
+                        <span>@Project.EndDate.ToString("D")</span>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-6 text-center">
+                    <!-- Dropdown -->
+                    <div class="btn-group dropdown">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Developers assigned to Project
+                        </button>
+                        <div class="dropdown-menu my-1">
+                            @foreach (UserDTO developer in Members.Where(r => r.Role == nameof(Roles.Developer)))
+                            {
+                                <a class="dropdown-item">@developer.FullName</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 text-center">
+                    <!-- Dropdown -->
+                    <div class="btn-group dropdown">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Submitters assigned to Project
+                        </button>
+                        <div class="dropdown-menu my-1">
+                            @foreach (UserDTO submitter in Members.Where(r => r.Role == nameof(Roles.Submitter)))
+                            {
+                                <a class="dropdown-item">@submitter.FullName</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
         </div>
     </div>
 }
@@ -42,13 +89,28 @@
     [Parameter, EditorRequired]
     public ProjectDTO? Project { get; set; }
 
+    [Parameter, EditorRequired]
+    public UserDTO? ProjectManager { get; set; }
+
+    [Parameter, EditorRequired]
+    public IEnumerable<UserDTO?> Members { get; set; }
+
+    
+
+
+
     #endregion
 
     #region State
     private string? backgroundColor = string.Empty;
+    public string? MemberAssignment;
+    public string? ManagerAssignment;
+    public string? MemberRemoval;
     #endregion
 
     #region Methods
 
+
+    
     #endregion
 }

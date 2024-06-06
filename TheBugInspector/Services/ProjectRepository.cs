@@ -33,7 +33,7 @@ namespace TheBugInspector.Services
             if (userToAdd is null) return;
 
             bool userIsProjectManager = await userManager.IsInRoleAsync(userToAdd, nameof(Roles.ProjectManager));
-            if (userIsProjectManager == false) return;
+            if (userIsProjectManager) return;
 
             bool userIsAdmin = await userManager.IsInRoleAsync(userToAdd, nameof(Roles.Admin));
             if (userIsAdmin == true) return;
@@ -121,7 +121,8 @@ namespace TheBugInspector.Services
                                                               .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == admin.CompanyId);
 
                     if (project is not null) 
-                    { 
+                    {
+                        context.Users.Update(projectManager);
                         project.CompanyMembers.Add(projectManager);
                         await context.SaveChangesAsync();
                     }
