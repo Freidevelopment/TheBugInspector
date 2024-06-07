@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TheBugInspector.Client.Models;
 using TheBugInspector.Data;
 using TheBugInspector.Models;
 using TheBugInspector.Services.Interfaces;
@@ -144,6 +145,22 @@ namespace TheBugInspector.Services
             return projects;
         }
 
+        public async Task<IEnumerable<Project>> GetMyProjectsAsync(int companyId, string userId)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            IEnumerable<Project> projects = await context.Projects
+                                                         .Where(p => p.IsArchived == false && p.CompanyId == companyId && p.CompanyMembers.Any(c => c.Id == userId))
+                                                         .Include(p => p.Tickets)
+                                                         .Include(p => p.CompanyMembers)
+                                                         .OrderByDescending(p => p.Created)
+                                                         .ToListAsync();
+
+            
+
+            return projects;
+        }
+
         // this has been tested and works
         public async Task<IEnumerable<Project>> GetArchivedProjectsAsync(int companyId)
         {
@@ -274,5 +291,7 @@ namespace TheBugInspector.Services
                 await context.SaveChangesAsync();
             }
         }
+
+        
     }
 }

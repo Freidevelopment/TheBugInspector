@@ -101,6 +101,23 @@ namespace TheBugInspector.Client.Services
             }
         }
 
+        public async Task<IEnumerable<TicketDTO>> GetUserTicketsAsync(int companyId, string userId)
+        {
+            IEnumerable<TicketDTO> tickets = [];
+
+            try
+            {
+                tickets = await _httpClient.GetFromJsonAsync<IEnumerable<TicketDTO>>($"api/tickets/personal") ?? [];
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return tickets;
+            }
+        }
+
+
         public async Task<TicketDTO?> GetTicketByIdAsync(int ticketId, int companyId)
         {
             TicketDTO? ticket = new();

@@ -19,6 +19,7 @@ namespace TheBugInspector.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private int? _companyId => User.FindFirst("CompanyId") != null ? int.Parse(User.FindFirst("CompanyId")!.Value) : null;
 
+        private string UserId => _userManager.GetUserId(User)!;
         public TicketsController(ITicketDTOService ticketService, UserManager<ApplicationUser> userManager)
         {
             _ticketService = ticketService;
@@ -33,6 +34,23 @@ namespace TheBugInspector.Controllers
             try
             {
                 IEnumerable<TicketDTO> tickets = await _ticketService.GetAllTicketsAsync(companyId);
+                return Ok(tickets);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("personal")]
+        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetUserTicketsAsync()
+        {
+            int companyId = _companyId ?? 0;
+            
+            try
+            {
+                IEnumerable<TicketDTO> tickets = await _ticketService.GetUserTicketsAsync(companyId, UserId);
                 return Ok(tickets);
             }
             catch (Exception ex)

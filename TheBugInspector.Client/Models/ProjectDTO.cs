@@ -41,7 +41,7 @@ namespace TheBugInspector.Client.Models
         public bool IsArchived { get; set; }
 
 
-        public virtual ICollection<UserDTO> CompanyMembers { get; set; } = new HashSet<UserDTO>();
+        public virtual ICollection<UserDTO> CompanyMembers { get; set; } = new HashSet<UserDTO>(); // Project Members
 
         public virtual ICollection<TicketDTO> Tickets { get; set; } = new HashSet<TicketDTO>();
     }

@@ -19,7 +19,7 @@
         @if (Ticket.SubmitterUser is not null && Ticket.DeveloperUser is not null)
         {
             <td>@Ticket.SubmitterUser.FullName</td>
-            @if (string.IsNullOrEmpty(Ticket.DeveloperUserId))
+            @if (!string.IsNullOrEmpty(Ticket.DeveloperUserId))
             {
                 <td>@Ticket.DeveloperUser.FullName</td>
             }

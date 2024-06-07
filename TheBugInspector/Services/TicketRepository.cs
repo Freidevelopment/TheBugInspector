@@ -144,6 +144,70 @@ namespace TheBugInspector.Services
             return tickets;
         }
 
+        public async Task<IEnumerable<Ticket>> GetUserTicketsAsync(int companyId, string userId)
+        {
+            using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
+            using IServiceScope scope = serviceProvider.CreateScope();
+            UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            IEnumerable<Ticket> tickets = [];
+
+            ApplicationUser? user = await userManager.FindByIdAsync(userId);
+            if (user is null) return tickets;
+
+            bool isPM = user is not null && await userManager.IsInRoleAsync(user, nameof(Roles.ProjectManager));
+
+            if (isPM)
+            {
+                //ApplicationUser? projectManager = userId == userId ? user : await userManager.FindByIdAsync(userId);
+
+                tickets = await context.Tickets
+                                               .Where(t => t.Project.CompanyId == companyId && t.Project.CompanyMembers.Any(c => c.Id == userId) || t.SubmitterUserId == userId)
+                                               .Include(t => t.Project)
+                                               .Include(t => t.Attachments)
+                                               .Include(t => t.Comments)
+                                               .Include(t => t.SubmitterUser)
+                                               .Include(t => t.DeveloperUser)
+                                               .OrderByDescending(t => t.Created)
+                                               .ToListAsync();
+                return tickets;
+            }
+
+            bool isDeveloper = user is not null && await userManager.IsInRoleAsync(user, nameof(Roles.Developer));
+
+            if (isDeveloper == true)
+            {
+                tickets = await context.Tickets
+                                               .Where(t => t.Project.CompanyId == companyId && t.DeveloperUserId == userId || t.SubmitterUserId == userId)
+                                               .Include(t => t.Project)
+                                               .Include(t => t.Attachments)
+                                               .Include(t => t.Comments)
+                                               .Include(t => t.SubmitterUser)
+                                               .Include(t => t.DeveloperUser)
+                                               .OrderByDescending(t => t.Created)
+                                               .ToListAsync();
+                return tickets;
+            }
+
+            bool isSubmitter = user is not null && await userManager.IsInRoleAsync(user, nameof(Roles.Submitter));
+
+            if (isSubmitter)
+            {
+                tickets = await context.Tickets
+                                               .Where(t => t.Project.CompanyId == companyId && t.SubmitterUserId == userId)
+                                               .Include(t => t.Project)
+                                               .Include(t => t.Attachments)
+                                               .Include(t => t.Comments)
+                                               .Include(t => t.SubmitterUser)
+                                               .Include(t => t.DeveloperUser)
+                                               .OrderByDescending(t => t.Created)
+                                               .ToListAsync();
+                return tickets;
+            }
+
+            return tickets;
+        }
+
         public async Task<Ticket?> GetTicketByIdAsync(int ticketId, int companyId)
         {
             using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
@@ -165,7 +229,7 @@ namespace TheBugInspector.Services
             using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
 
             TicketComment? comment = await context.TicketComments
-                                                                 
+
                                                                  .Include(c => c.User)
                                                                  .FirstOrDefaultAsync(c => c.TicketId == ticketId);
             return comment;
@@ -183,6 +247,8 @@ namespace TheBugInspector.Services
 
             return comments;
         }
+
+
 
         public async Task RestoreTicketAsync(int ticketId, int companyId)
         {
@@ -210,14 +276,14 @@ namespace TheBugInspector.Services
         {
             using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
 
-            bool shouldEdit = await context.Companies.AnyAsync (c => c.Id == companyId);
+            bool shouldEdit = await context.Companies.AnyAsync(c => c.Id == companyId);
 
             bool ticketEdit = await context.Tickets.AnyAsync(t => t.Id == comment.TicketId);
 
             bool commentEdit = await context.TicketComments.AnyAsync(c => c.Id == comment.Id);
 
-            if (shouldEdit && ticketEdit && commentEdit) 
-            { 
+            if (shouldEdit && ticketEdit && commentEdit)
+            {
                 context.TicketComments.Update(comment);
                 await context.SaveChangesAsync();
             }
@@ -233,7 +299,7 @@ namespace TheBugInspector.Services
 
             if (shouldEdit && ticketEdit)
             {
-                
+
                 context.Tickets.Update(ticket);
                 await context.SaveChangesAsync();
 

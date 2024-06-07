@@ -93,6 +93,15 @@ namespace TheBugInspector.Services
             return results;
         }
 
+        public async Task<IEnumerable<TicketDTO>> GetUserTicketsAsync(int companyId, string userId)
+        {
+            IEnumerable<Ticket> tickets = await repository.GetUserTicketsAsync(companyId, userId);
+
+            IEnumerable<TicketDTO> results = tickets.Select(t => t.ToDTO());
+
+            return results;
+        }
+
         public async Task<TicketDTO?> GetTicketByIdAsync(int ticketId, int companyId)
         {
             Ticket? ticket = await repository.GetTicketByIdAsync(ticketId, companyId);
@@ -116,6 +125,7 @@ namespace TheBugInspector.Services
 
             return results;
         }
+
 
         public async Task RestoreTicketAsync(int ticketId, int companyId)
         {

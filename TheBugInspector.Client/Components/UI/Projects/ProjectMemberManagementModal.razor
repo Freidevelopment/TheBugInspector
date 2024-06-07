@@ -61,7 +61,7 @@
                                 {
                                     if (user is not null)
                                     {
-                                        if (user.Role == Roles.ProjectManager.ToString())
+                                        if (user.Role == Roles.ProjectManager.ToString() && ProjectManager.UserId != user.UserId)
                                         {
                                             <option value="@user.UserId">
                                                 @user.FullName: @user.Role

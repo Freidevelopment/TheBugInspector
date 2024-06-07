@@ -56,6 +56,22 @@ namespace TheBugInspector.Client.Services
             }
         }
 
+        public async Task<IEnumerable<ProjectDTO>> GetMyProjectsAsync(int companyId, string userId)
+        {
+            IEnumerable<ProjectDTO> projects = [];
+
+            try
+            {
+                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/personal") ?? [];
+                return projects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return projects;
+            }
+        }
+
         public async Task<IEnumerable<ProjectDTO>> GetArchivedProjectsAsync(int companyId)
         {
             IEnumerable<ProjectDTO> projects = [];
@@ -143,5 +159,7 @@ namespace TheBugInspector.Client.Services
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/projects/{project.Id}", project);
             response.EnsureSuccessStatusCode();
         }
+
+        
     }
 }

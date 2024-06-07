@@ -11,6 +11,7 @@ namespace TheBugInspector.Services.Interfaces
 
         #region Retrieve
         Task<IEnumerable<Project>> GetAllProjectsAsync(int companyId);
+        Task<IEnumerable<Project>> GetMyProjectsAsync(int companyId, string userId);
         Task<IEnumerable<Project>> GetArchivedProjectsAsync(int companyId);
         Task<Project?> GetProjectByIdAsync(int projectId, int companyId);
         #endregion

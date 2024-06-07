@@ -1,0 +1,126 @@
+﻿@page "/projects/personal/Index"
+
+@using TheBugInspector.Client.Components.UI.Projects
+@using TheBugInspector.Client.Helpers
+@using TheBugInspector.Client.Services
+@using TheBugInspector.Client.Services.Interfaces
+
+@rendermode InteractiveWebAssembly
+
+@inject IProjectDTOService ProjectService
+@inject ICompanyDTOService CompanyService
+
+
+<PageTitle>BugInspector | MyProjects</PageTitle>
+
+
+<div class="container-xxl background-primary">
+
+    <div class="row row-cols-2">
+        <div class="col">
+            <h1>My Projects</h1>
+
+        </div>
+    </div>
+
+    @if (userInfo is not null)
+    {
+        @if (myProjects is not null)
+        {
+
+
+            <table class="table table-hover table-bordered border-primary bg-info">
+                <thead>
+                    <tr>
+                        <th scope="col">Project Name</th>
+                        <th scope="col">Project Created on</th>
+                        <th scope="col">Project Start Date</th>
+                        <th scope="col">Project End Date</th>
+                        <th scope="col">Project Priority</th>
+                        <th scope="col">Number of Tickets</th>
+                        <th scope="col">Archive Project?</th>
+                        <th scope="col">Edit Project?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ProjectDTO project in myProjects)
+                    {
+
+                        <ProjectEditIndex Project="project"
+                                          OnSubmit="HandleArchive" />
+
+                    }
+
+                </tbody>
+
+            </table>
+
+            <div class="text-end">
+                <a href="/archived/projects/Index" class="text-primary">Go to Archived Projects</a>
+            </div>
+
+
+        }
+        else
+        {
+            <span class="text-danger">@ErrorMessage</span>
+        }
+    }
+
+
+</div>
+
+@code {
+    #region Parameters
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    #endregion
+
+    #region State
+    private IEnumerable<ProjectDTO> myProjects = [];
+    private IEnumerable<UserDTO> ProjectMembers = [];
+    private string? ErrorMessage = string.Empty;
+    private UserInfo? userInfo;
+    #endregion
+
+    #region Methods
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            ErrorMessage = string.Empty;
+
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+            if (userInfo is not null)
+            {
+                myProjects = await ProjectService.GetMyProjectsAsync(userInfo.CompanyId, userInfo.UserId);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            // Change this errormessage
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task HandleArchive(int projectId)
+    {
+        try
+        {
+            if (userInfo is not null)
+            {
+                await ProjectService.ArchiveProjectAsync(projectId, userInfo.CompanyId);
+
+                myProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    #endregion
+}

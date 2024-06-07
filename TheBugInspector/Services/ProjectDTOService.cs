@@ -64,6 +64,16 @@ namespace TheBugInspector.Services
             return result;
         }
 
+        public async Task<IEnumerable<ProjectDTO>> GetMyProjectsAsync(int companyId, string userId)
+        {
+
+            IEnumerable<Project> projects = await _projectRepository.GetMyProjectsAsync(companyId, userId);
+
+            IEnumerable<ProjectDTO> result = projects.Select(p => p.ToDTO());
+
+            return result;
+        }
+
         public async Task<IEnumerable<ProjectDTO>> GetArchivedProjectsAsync(int companyId)
         {
             IEnumerable<Project> projects = await _projectRepository.GetArchivedProjectsAsync(companyId);
@@ -144,5 +154,7 @@ namespace TheBugInspector.Services
                 await _projectRepository.UpdateProjectAsync(projectToUpdate, companyId);
             }
         }
+
+        
     }
 }

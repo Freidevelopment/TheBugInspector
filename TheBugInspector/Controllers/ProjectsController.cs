@@ -45,6 +45,24 @@ namespace TheBugInspector.Controllers
             }
         }
 
+        [HttpGet("personal")] // api/projects/personal
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjectsAsync()
+        {
+            // ensuring that the companyId is the correct users company Id
+            int companyId = _companyId ?? 0;
+
+            try
+            {
+                IEnumerable<ProjectDTO> projects = await _projectService.GetMyProjectsAsync(companyId, UserId);
+                return Ok(projects);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("archived")] // api/projects/1/archived
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetArchivedProjectsAsync()
         {
