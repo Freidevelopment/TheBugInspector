@@ -1,0 +1,75 @@
+﻿
+
+
+@* <!-- Forms inside dropdown -->
+<div class="collapse" id="AssignManager">
+    <div class="mt-2">
+        <label for="AssignProjectManager" class="form-label mt-2">Manage Project Manager</label>
+        <InputSelect @bind-Value="ManagerAssignment" class="form-select">
+
+            <option value=""> Assign a Project Manager</option>
+            @if (ProjectManagers is not null)
+            {
+                @foreach (UserDTO? user in ProjectManagers)
+                {
+                    if (user is not null && ProjectManager is not null)
+                    {
+                        if (ProjectManager.UserId != user.UserId)
+                        {
+                            <option value="@user.UserId">
+                                @user.FullName
+                            </option>
+
+                        }
+
+                    }
+                }
+
+            }
+
+        </InputSelect>
+        <div>
+            <button class="btn btn-primary mt-3" @onclick="AssignManager">Assign Project Manager</button>
+        </div>
+    </div>
+</div> *@
+
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<UserDTO>? ProjectManagers { get; set; }
+
+    [Parameter, EditorRequired]
+    public UserDTO? ProjectManager { get; set; }
+
+    [Parameter, EditorRequired]
+    public ProjectDTO? Project { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<string?> OnManagerSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnProjectIdSubmit { get; set; }
+
+    private string? ManagerAssignment;
+    private int projectId;
+
+
+    private async Task AssignManager()
+    {
+        try
+        {
+            if (Project is not null)
+            {
+                
+                projectId = Project.Id;
+                await OnProjectIdSubmit.InvokeAsync(projectId);
+                await OnManagerSubmit.InvokeAsync(ManagerAssignment);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+}

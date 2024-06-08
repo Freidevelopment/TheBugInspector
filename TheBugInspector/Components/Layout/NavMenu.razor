@@ -36,11 +36,22 @@
                                 Projects
                             </NavLink>
                             <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="/projects/index">
-                                        Active Projects
-                                    </a>
-                                </li>
+                                @if (NavbarMenu.User.IsInRole("Admin"))
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="/projects/index">
+                                            Active Projects
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="/projects/personal/Index">
+                                            My Projects
+                                        </a>
+                                    </li>
+                                }
                                 <li>
                                     <a class="dropdown-item" href="/archived/projects/Index">
                                         Archived Projects
@@ -48,11 +59,23 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <NavLink class="nav-link" href="/tickets/Index">
-                                Tickets Index
-                            </NavLink>
-                        </li>
+                        @if (NavbarMenu.User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <NavLink class="nav-link" href="/tickets/Index">
+                                    Tickets Index
+                                </NavLink>
+                            </li>
+
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <NavLink class="nav-link" href="/tickets/Personal/Index">
+                                    My Tickets
+                                </NavLink>
+                            </li>
+                        }
                         <ul class="navbar-nav ms-auto mb-2 mb-md-0">
                             <li class="nav-item dropdown ms-auto">
                                 <NavLink class="nav-link dropdown-toggle" href="Account/Manage" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">

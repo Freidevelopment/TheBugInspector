@@ -1,0 +1,75 @@
+﻿@inject IProjectDTOService ProjectService
+@inject ICompanyDTOService CompanyService
+@if (Project is not null)
+{
+
+    <tr>
+        <th scope="row"><a class="nav-link text-primary" href="/projects/details/@Project.Id"><u>@Project.Name</u></a></th>
+        @if (projectManager is not null)
+        {
+            <td>@projectManager.FullName</td>
+
+        }
+        else
+        {
+            <td>No Project Manager assigned to Project</td>
+        }
+        <td>@Project.Created.ToString("g")</td>
+        <td>@Project.StartDate.ToString("D")</td>
+        <td>@Project.EndDate.ToString("D")</td>
+        <td>@Project.Priority.GetDisplayName()</td>
+        <td>@Project.Tickets.Count()</td>
+
+        @if (Project.IsArchived is false)
+        {
+            <td><button class="btn btn-success" @onclick="HandleSubmit">Archive</button></td>
+
+        }
+        else if (Project.IsArchived is true)
+        {
+            <td><button class="btn btn-success" @onclick="HandleSubmit">Restore</button></td>
+        }
+        <td><a class="btn btn-warning" href="/projects/edit/@Project.Id">Edit?</a></td>
+    </tr>
+
+}
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public ProjectDTO? Project { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public UserInfo? userInfo { get; set; }
+    #endregion
+
+    #region State
+    private string? assignManager;
+    private UserDTO? projectManager;
+    private IEnumerable<UserDTO> projectManagers = [];
+    #endregion
+
+    #region Method
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Project is not null && userInfo is not null)
+        {
+            projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
+            projectManager = await ProjectService.GetProjectManagerAsync(Project.Id, userInfo.CompanyId);
+
+        }
+    }
+    private async Task HandleSubmit()
+    {
+        if (Project is not null)
+        {
+            await OnSubmit.InvokeAsync(Project.Id);
+        }
+    }
+
+    #endregion
+}

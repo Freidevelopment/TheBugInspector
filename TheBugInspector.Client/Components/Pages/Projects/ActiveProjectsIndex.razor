@@ -8,12 +8,13 @@
 @rendermode InteractiveAuto
 
 @inject IProjectDTOService ProjectService
-
+@inject ICompanyDTOService CompanyService
+@attribute [Authorize(Roles = $"{nameof(Roles.Admin)}")]
 
 <PageTitle>BugInspector | ActiveProjects</PageTitle>
 
 
-<div class="container-xxl background-primary">
+<div class="container-xxl">
 
     <div class="row row-cols-2">
         <div class="col">
@@ -27,36 +28,30 @@
 
     @if (activeProjects is not null)
     {
+        <div class="row row-cols-lg-3 row-cols-md-2 g-2">
 
 
-        <table class="table table-hover table-bordered border-primary bg-info">
-            <thead>
-                <tr>
-                    <th scope="col">Project Name</th>
-                    <th scope="col">Project Created on</th>
-                    <th scope="col">Project Start Date</th>
-                    <th scope="col">Project End Date</th>
-                    <th scope="col">Project Priority</th>
-                    <th scope="col">Number of Tickets</th>
-                    <th scope="col">Archive Project?</th>
-                    <th scope="col">Edit Project?</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (ProjectDTO project in activeProjects)
-                {
-                    <ProjectEditIndex Project="project"
-                                      OnSubmit="HandleArchive" />
-                }
+            @foreach (ProjectDTO project in activeProjects)
+            {
+                <div class="col">
+                    <AdminProjectCards @key="project.Id"
+                                       Project="project"
+                                       userInfo="userInfo"
+                                       ProjectManagers="projectManagers"
+                                       OnProjectIdSubmit="AssignProjectIdAsync"
+                                       OnManagerSubmit="AssignProjectManager" />
 
-            </tbody>
+                </div>
 
-        </table>
+
+
+            }
+
+        </div>
 
         <div class="text-end">
             <a href="/archived/projects/Index" class="text-primary">Go to Archived Projects</a>
         </div>
-
 
     }
     else
@@ -64,7 +59,6 @@
         <span class="text-danger">@ErrorMessage</span>
     }
 </div>
-
 @code {
     #region Parameters
     [CascadingParameter]
@@ -73,8 +67,10 @@
 
     #region State
     private IEnumerable<ProjectDTO> activeProjects = [];
+    private IEnumerable<UserDTO> projectManagers = [];
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
+    private ProjectDTO? project;
     #endregion
 
     #region Methods
@@ -88,6 +84,7 @@
             if (userInfo is not null)
             {
                 activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
             }
         }
         catch (Exception ex)
@@ -115,5 +112,31 @@
 
         }
     }
+    private async Task AssignProjectIdAsync(int projectId)
+    {
+        if (userInfo is not null)
+        {
+            project = await ProjectService.GetProjectByIdAsync(projectId, userInfo.CompanyId);
+
+        }
+    }
+    private async Task AssignProjectManager(string memberId)
+    {
+        try
+        {
+            if (userInfo is not null && project is not null)
+            {
+                await ProjectService.AssignProjectManagerAsync(project.Id, memberId, userInfo.UserId);
+
+                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
     #endregion
 }
+

@@ -1,0 +1,144 @@
+﻿@inject IProjectDTOService ProjectService
+
+@if (Project is not null)
+{
+    <!-- Header and footer -->
+    <div class="card cad-hover text-center h-100 w-100">
+        <div class="card-header">
+            <div class="vstack text-start">
+                <div>
+                    Title:
+                </div>
+                <a href="/projects/details/@Project.Id" class="text-primary">
+                    <u>@Project.Name</u>
+                </a>
+                <div class="mt-2">
+                    @if (projectManager is not null)
+                    {
+                        <span>Project Manager: @projectManager.FullName</span>
+
+                    }
+                    else
+                    {
+                        <span>Project Manager: There is no assigned Project Manager</span>
+                    }
+                </div>
+                <div class="mt-2">
+                    Priority: @Project.Priority.GetDisplayName()
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="vstack text-start">
+                <div class="mt-2">
+                    Created: @Project.Created.ToString("g")
+                </div>
+                <div class="mt-2">
+                    StartDate: @Project.StartDate.ToString("D")
+                </div>
+                <div class="mt-2">
+                    EndDate: @Project.EndDate.ToString("D")
+                </div>
+            </div>
+            <div class="text-start mt-2">
+                Assigned Project Members:
+            </div>
+            @foreach (UserDTO user in Project.CompanyMembers)
+            {
+                @if (projectManager is not null)
+                {
+
+                    @if (user.UserId != projectManager.UserId)
+                    {
+                        <div class="text-start mt-2">@user.FullName</div>
+
+                    }
+
+                }
+            }
+            <div class="mt-2 text-start">
+                <span>Number of Tickets: @Project.Tickets.Count()</span>
+            </div>
+        </div>
+        <div class="card-footer fs-sm">
+            <div class="btn-group dropdown">
+
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-controls="assignManagerdropdown" aria-expanded="false">
+                    Assign Project Manager
+                </button>
+                <div class="dropdown-menu my-1">
+                    @if (ProjectManagers is not null)
+                    {
+
+
+
+                        @foreach (UserDTO? user in ProjectManagers)
+                        {
+                            <a class="dropdown-item"
+                               @onclick="AssignManager">
+                                @user.FullName
+                            </a>
+
+                        }
+
+                    }
+                </div>
+                @*             <AdminProjectCardCollapse Project="Project"
+            ProjectManager="projectManager"
+            ProjectManagers="ProjectManagers"
+            OnManagerSubmit="AssignManager"
+            OnProjectIdSubmit="AssignManager"/> *@
+            </div>
+        </div>
+    </div>
+
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public ProjectDTO? Project { get; set; }
+
+    [Parameter, EditorRequired]
+    public UserInfo? userInfo { get; set; }
+
+    [Parameter, EditorRequired]
+    public IEnumerable<UserDTO>? ProjectManagers { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<string?> OnManagerSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnProjectIdSubmit { get; set; }
+
+    private UserDTO? projectManager;
+    private string? ManagerAssignment;
+    private int projectId;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Project is not null && userInfo is not null)
+        {
+            projectManager = await ProjectService.GetProjectManagerAsync(Project.Id, userInfo.CompanyId);
+
+        }
+    }
+
+    private async Task AssignManager()
+    {
+        try
+        {
+            if (Project is not null)
+            {
+                
+                projectId = Project.Id;
+                await OnProjectIdSubmit.InvokeAsync(projectId);
+                await OnManagerSubmit.InvokeAsync(ManagerAssignment);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+}

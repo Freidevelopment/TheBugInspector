@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Components.QuickGrid
+
+@if (Project is not null)
+{
+    @* <div class="grid">
+
+    </div>
+    <QuickGrid TGridItem="Project">
+        <PropertyColumn Property="@Project.Name"/>
+        <PropertyColumn Property="@Project.Created" Format="MM-dd-yyyy"/>
+        <PropertyColumn Property="@Project.StartDate" Format="MM-dd-yyyy" />
+        <PropertyColumn Property="@Project.EndDate" Format="MM-dd-yyyy" />
+        <PropertyColumn Property="@Project.Priority.GetDisplayName()" />
+    </QuickGrid> *@
+
+    <tr>
+        <th scope="row"><a class="nav-link text-primary" href="/projects/details/@Project.Id"><u>@Project.Name</u></a></th>
+        <td>@Project.Created.ToString("g")</td>
+        <td>@Project.StartDate.ToString("D")</td>
+        <td>@Project.EndDate.ToString("D")</td>
+        <td>@Project.Priority.GetDisplayName()</td>
+        <td>@Project.Tickets.Count()</td>
+
+        @if (Project.IsArchived is false)
+        {
+            <td><button class="btn btn-success" @onclick="HandleSubmit">Archive</button></td>
+
+        }
+        else if (Project.IsArchived is true)
+        {
+            <td><button class="btn btn-success" @onclick="HandleSubmit">Restore</button></td>
+        }
+        <td><a class="btn btn-warning" href="/projects/edit/@Project.Id">Edit?</a></td>
+    </tr>
+
+}
+
+
+@code {
+    #region Parameters
+    [Parameter, EditorRequired]
+    public ProjectDTO? Project { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnSubmit { get; set; }
+    #endregion
+
+    #region State
+
+    #endregion
+
+    #region Method
+    private async Task HandleSubmit()
+    {
+        if (Project is not null)
+        {
+            await OnSubmit.InvokeAsync(Project.Id);
+        }
+    }
+
+    #endregion
+}

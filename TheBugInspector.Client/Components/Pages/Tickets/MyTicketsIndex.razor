@@ -52,7 +52,7 @@
             <tbody>
                 @foreach (TicketDTO ticket in tickets)
                 {
-                    <TicketCards Ticket="ticket"
+                    <TicketTable Ticket="ticket"
                                  OnArchive="HandleArchive"
                                  OnRestore="HandleRestore" />
                 }

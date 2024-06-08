@@ -5,12 +5,12 @@
 @using TheBugInspector.Client.Services
 @using TheBugInspector.Client.Services.Interfaces
 
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveAuto
 
 @inject IProjectDTOService ProjectService
 @inject ICompanyDTOService CompanyService
 
-
+@attribute [Authorize(Roles = $"{nameof(Roles.ProjectManager)}, {nameof(Roles.Submitter)}, {nameof(Roles.Developer)}")]
 <PageTitle>BugInspector | MyProjects</PageTitle>
 
 

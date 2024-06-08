@@ -1,0 +1,103 @@
+﻿@inject IProjectDTOService ProjectService
+@inject ICompanyDTOService CompanyService
+
+
+<div class="card">
+    <div class="card-header">
+        <h3>Edit a Project Manager</h3>
+    </div>
+    <div class="card-body">
+
+        <label for="project">
+            Choose a Project to manage
+        </label>
+        <InputSelect @bind-Value="projectId" class="form-select">
+            <option value="">Choose a Project</option>
+            @if (projects is not null)
+            {
+                @foreach (ProjectDTO? project in projects)
+                {
+                    <option value="@project.Id">
+                        @project.Name
+                    </option>
+                }
+
+            }
+        </InputSelect>
+        <button class="btn-btn-primary" @onclick="GetManager">Select chosen Project</button>
+        <hr />
+        @if (projectManager is not null)
+        {
+
+            <label>
+                Choose a project Manager to assign
+            </label>
+            <InputSelect @bind-Value="projectManagerId" class="form-select">
+                <option value="">Choose a Project Manager</option>
+                @if (projectManagers is not null)
+                {
+                    @foreach (UserDTO? manager in projectManagers)
+                    {
+                        <option value="@manager.UserId">
+                            @manager.FullName
+                        </option>
+                    }
+
+                }
+            </InputSelect>
+            <button class="btn-btn-primary" @onclick="AssignManager">Assign Manager</button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<ProjectDTO>? projects { get; set; }
+
+    [Parameter, EditorRequired]
+    public UserInfo? userInfo { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<string?> OnManagerSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnProjectIdSubmit { get; set; }
+
+    private UserDTO? projectManager;
+    private IEnumerable<UserDTO>? projectManagers;
+
+    private int projectId;
+    private string? projectManagerId;
+
+    private async Task GetManager()
+    {
+        try
+        {
+            if (userInfo is not null)
+            {
+                projectManager = await ProjectService.GetProjectManagerAsync(projectId, userInfo.CompanyId);
+                projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+
+    private async Task AssignManager()
+    {
+        try
+        {
+            await OnProjectIdSubmit.InvokeAsync(projectId);
+            await OnManagerSubmit.InvokeAsync(projectManagerId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+}
