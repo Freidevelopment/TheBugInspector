@@ -24,12 +24,13 @@
                 <AuthorizeView>
                     @if (Attachment.UserId == userInfo.UserId)
                     {
-                        <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
-                        <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
+                        <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
+                        <button class="btn btn-danger mt-3" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                     }
                     else if (context.User.IsInRole("Admin") ||
                     context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
                     {
+                        <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
                         <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                     }
                 </AuthorizeView>
@@ -65,8 +66,8 @@
                 </EditForm>
                 <div class="card-footer">
                     <span class="text-info">Do you wish to edit your Attachment?</span>
-                    <button class="btn btn-info" @onclick="HandleSubmit"><i class="bi bi-pencil-fill"></i></button>
-                    <button class="btn btn-danger" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
+                    <button class="btn btn-info mt-3" @onclick="HandleSubmit"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="btn btn-danger mt-3" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
 
                 </div>
 
@@ -75,7 +76,7 @@
     }
     @if (status == Status.Deleting)
     {
-        <div class="card" style="width: 18rem;">
+        <div class="card w-100 h-100">
             <div class="card-body">
                 <h5 class="card-title">@Attachment.FileName</h5>
                 <h6 class="card-subtitle mb-2 text-body-secondary">Description of Attachment</h6>
@@ -86,13 +87,20 @@
                     <p class="card-text">Submitted By: @Attachment.User.FullName</p>
 
                 }
-                <a href="#" class="card-link">@Attachment.UploadUrl</a>
+                <div>
+                    @{
+                        string? extension = Path.GetExtension(Attachment.FileName)?.Trim('.') ?? "default";
+                    }
+                </div>
+                <p class="card-text">@Attachment.Created.ToString("f")</p>
+                <p class="card-text">Submitted By: @userInfo.FullName</p>
+                <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" class="img-fluid" /></a>
 
                 @if (Attachment.UserId == userInfo.UserId)
                 {
                     <span class="text-danger">do you want to delete this Attachment?</span>
-                    <button class="btn btn-danger" @onclick="HandleDelete">Delete Attachment</button>
-                    <button class="btn btn-info" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
+                    <button class="btn btn-danger mt-3" @onclick="HandleDelete">Delete Attachment</button>
+                    <button class="btn btn-info mt-3" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
                 }
             </div>
         </div>

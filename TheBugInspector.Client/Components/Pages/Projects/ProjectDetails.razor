@@ -77,12 +77,21 @@
 
         </AuthorizeView>
 
+        <AuthorizeView Context="TicketCreation">
+            @if (userInfo is not null)
+            {
+                @if (project.CompanyMembers.Any(c => c.UserId == userInfo.UserId) || TicketCreation.User.IsInRole("Admin"))
+                {
+                    <div class="text-end mt-3">
+                        <a class="btn btn-primay bg-info" href="/tickets/create/@project.Id">Create Ticket?</a>
+                    </div>
 
-        <div class="text-end mt-3">
-            <a href="/projects/Index" class="text-primary mt-3">Go to Active Projects</a>
-        </div>
+                }
 
+            }
+        </AuthorizeView>
 
+        <h1 class="mt-3">Active Project Tickets</h1>
         <table class="table table-striped-columns table-info mt-5">
             <thead>
                 <tr>
@@ -95,13 +104,13 @@
                     <th scope="col">Ticket Submitter</th>
                     <th scope="col">Ticket Developer</th>
                     <th scope="col">Number of Comments</th>
-                    <th scope="col">Archive Ticket</th>
                     <AuthorizeView Context="TicketAssignment">
                         @if (projectManager is not null && userInfo is not null)
                         {
                             @if (TicketAssignment.User.IsInRole("Admin") ||
                            TicketAssignment.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
                             {
+                                <th scope="col">Archive Ticket</th>
                                 <th scope="col">Assign Developer</th>
 
 
@@ -115,7 +124,7 @@
                 @if (userInfo is not null && projectManager is not null && projectMembers is not null)
                 {
 
-                    @foreach (TicketDTO ticket in project.Tickets.OrderByDescending(p => p.Created))
+                    @foreach (TicketDTO ticket in project.Tickets.Where(p => p.IsArchived == false).OrderByDescending(p => p.Created))
                     {
                         <TicketProjectDetailsTable Ticket="ticket"
                                                    UserInfo="userInfo"
@@ -130,6 +139,58 @@
             </tbody>
 
         </table>
+        @if(project.Tickets.Any(t => t.IsArchived == true))
+        {
+            
+        <h1 class="mt-3">Archived Project Tickets</h1>
+        <table class="table table-striped-columns table-info mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">Ticket Name</th>
+                    <th scope="col">Ticket Created on</th>
+                    <th scope="col">Ticket Updated on</th>
+                    <th scope="col">Ticket Type</th>
+                    <th scope="col">Ticket Priority</th>
+                    <th scope="col">Ticket Status</th>
+                    <th scope="col">Ticket Submitter</th>
+                    <th scope="col">Ticket Developer</th>
+                    <th scope="col">Number of Comments</th>
+                    <AuthorizeView Context="TicketAssignment">
+                        @if (projectManager is not null && userInfo is not null)
+                        {
+                            @if (TicketAssignment.User.IsInRole("Admin") ||
+                           TicketAssignment.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                            {
+                                <th scope="col">Archive Ticket</th>
+                                <th scope="col">Assign Developer</th>
+
+
+                            }
+
+                        }
+                    </AuthorizeView>
+                </tr>
+            </thead>
+            <tbody>
+                @if (userInfo is not null && projectManager is not null && projectMembers is not null)
+                {
+
+                    @foreach (TicketDTO ticket in project.Tickets.Where(p => p.IsArchived == true).OrderByDescending(p => p.Created))
+                    {
+                        <TicketProjectDetailsTable Ticket="ticket"
+                                                   UserInfo="userInfo"
+                                                   ProjectManager="projectManager"
+                                                   Members="projectMembers"
+                                                   OnArchive="HandleArchive"
+                                                   OnRestore="HandleRestore"
+                                                   OnAssignDeveloper="AssignDeveloper" />
+                    }
+
+                }
+            </tbody>
+
+        </table>
+        }
 
 
 
@@ -207,7 +268,7 @@
             {
                 await TicketService.ArchiveTicketAsync(ticketId, userInfo.CompanyId);
 
-                project.Tickets = [.. await TicketService.GetAllTicketsAsync(userInfo.CompanyId)];
+                project = await ProjectService.GetProjectByIdAsync(Id, userInfo.CompanyId);
             }
         }
         catch (Exception ex)
@@ -225,7 +286,7 @@
             {
                 await TicketService.RestoreTicketAsync(ticketId, userInfo.CompanyId);
 
-                project.Tickets = [.. await TicketService.GetAllTicketsAsync(userInfo.CompanyId)];
+                project = await ProjectService.GetProjectByIdAsync(Id, userInfo.CompanyId);
             }
         }
         catch (Exception ex)

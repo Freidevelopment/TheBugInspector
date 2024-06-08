@@ -1,13 +1,13 @@
-﻿@page "/companies/Index"
+﻿@page "/companies/manageRoles"
 @using TheBugInspector.Client.Components.UI.Companies
 @using TheBugInspector.Client.Helpers
 
 @inject ICompanyDTOService CompanyService
 
 @rendermode InteractiveWebAssembly
-@attribute [Authorize]
 
-<PageTitle>BugInspector | Company</PageTitle>
+@attribute [Authorize(Roles =$"{nameof(Roles.Admin)}")]
+<PageTitle>BugInspector | Manage Employee roles</PageTitle>
 
 @if (company is not null)
 {
@@ -16,43 +16,10 @@
     <div class="container">
         <div class="text-center">
             <h1>@company.Name</h1>
-            <img src="@company.ImageUrl" class="img-fluid" />
-            <div class="text-center">
-            </div>
-            <div class="mt-4">
-                <h3>Description</h3>
-                @company.Description
-            </div>
-            <div class="row mt-5">
-                <div class="col-md-1">
-                </div>
-                <div class="col-md-3">
-                    <a href="/projects/Index" class="text-primary"><u>Active Projects</u></a>
-                </div>
-                <div class="col-md-4">
-                    <a href="/archived/projects/Index" class="text-primary"><u>Archived Projects</u></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="/tickets/Index" class="text-primary"><u>All Tickets</u></a>
-                </div>
-                <div class="col-md-1">
-                </div>
-                <div class="col mt-3">
-                    <div>
-                        <AuthorizeView Context="AdminCompanyControl">
-                            @if (AdminCompanyControl.User.IsInRole("Admin") && Members.Any(m => m.UserId == userInfo.UserId) && company.Id == userInfo.CompanyId)
-                            {
-                                <a href="/Company/Edit/@company.Id" class="btn btn-primary text-end">
-                                    Edit Company Page
-                                </a>
-                            }
-                        </AuthorizeView>
-                    </div>
-                </div>
-            </div>
+           
             <div class="mt-5 mb-5">
                 <div>
-                    <h3>Company Members</h3>
+                    <h2>Company Members</h2>
                 </div>
                 <div class="row">
 

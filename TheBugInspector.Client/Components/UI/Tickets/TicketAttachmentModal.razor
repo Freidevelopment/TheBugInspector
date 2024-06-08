@@ -5,6 +5,7 @@
 <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
         <EditForm Model="newAttachment" OnSubmit="HandleSubmit" class="vstack gap-1">
+            <DataAnnotationsValidator />
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="AttachmentLabel">Add File to Ticket</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -15,6 +16,7 @@
                            class="form-control"
                            placeholder="Description (optional)">
                 </InputText>
+                <ValidationMessage For="() => newAttachment" />
                 <span class="text-danger">@ErrorMessage</span>
             </div>
             <div class="modal-footer">
@@ -45,14 +47,13 @@
     {
         // get the current user's information
         userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
-        if (userInfo is not null)
-        {
-            // fill out the fields we know about already
-            newAttachment.UserId = userInfo.UserId;
-            newAttachment.TicketId = TicketId;
-            newAttachment.Created = DateTime.Now;
 
-        }
+        // fill out the fields we know about already
+        newAttachment.UserId = userInfo.UserId;
+        newAttachment.TicketId = TicketId;
+        newAttachment.Created = DateTime.Now;
+
+
     }
 
     private async Task HandleSubmit()
@@ -72,15 +73,14 @@
 
             try
             {
-                if (userInfo is not null)
-                {
-                    // send the model and file data to the service
-                    await TicketService.AddTicketAttachment(newAttachment,
-                                                            fileData,
-                                                            fileType,
-                                                            userInfo.CompanyId);
 
-                }
+                // send the model and file data to the service
+                await TicketService.AddTicketAttachment(newAttachment,
+                                                        fileData,
+                                                        fileType,
+                                                        userInfo.CompanyId);
+
+
             }
             catch (Exception ex)
             {
@@ -89,19 +89,18 @@
                 ErrorMessage = "The File is either too large to send or there was an error or there was and error uploading the file";
                 Console.WriteLine(ex);
             }
-            if (userInfo is not null)
-            {
-                // reset the form after this was successful
-                newFile = null;
-                newAttachment = new()
-                    {
 
-                        UserId = userInfo.UserId,
-                        TicketId = TicketId,
-                        Created = DateTime.Now
-                    };
+            // reset the form after this was successful
+            newFile = null;
+            newAttachment = new()
+                {
 
-            }
+                    UserId = userInfo.UserId,
+                    TicketId = TicketId,
+                    Created = DateTime.Now
+                };
+
+
 
             // this can be replaced with however you want to update the page
             // after a file was saved

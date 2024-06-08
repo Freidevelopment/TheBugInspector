@@ -6,6 +6,8 @@
 @inject NavigationManager Nav
 
 @rendermode InteractiveWebAssembly
+@attribute [Authorize(Roles = $"{nameof(Roles.Admin)}")]
+
 
 <PageTitle>BugInspector | Edit Company</PageTitle>
 

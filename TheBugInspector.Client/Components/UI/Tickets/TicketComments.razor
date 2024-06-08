@@ -30,6 +30,7 @@
                             else if (context.User.IsInRole("Admin") ||
                             context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
                             {
+                                <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
                                 <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                             }
                         }

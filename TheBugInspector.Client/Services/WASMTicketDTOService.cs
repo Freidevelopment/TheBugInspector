@@ -62,10 +62,6 @@ namespace TheBugInspector.Client.Services
             return addedAttachment!;
         }
 
-        public Task AddTicketDeveloperAsync(UserDTO user, int ticketId, string managerId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task ArchiveTicketAsync(int ticketId, int companyId)
         {
@@ -166,10 +162,6 @@ namespace TheBugInspector.Client.Services
             }
         }
 
-        public Task RemoveDeveloperFromTicketAsync(int ticketId, string managerId, int companyId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task RestoreTicketAsync(int ticketId, int companyId)
         {
@@ -187,6 +179,38 @@ namespace TheBugInspector.Client.Services
         {
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/tickets/{ticket.Id}", ticket);
             response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetAllArchivedTicketsAsync(int companyId)
+        {
+            IEnumerable<TicketDTO> tickets = [];
+
+            try
+            {
+                tickets = await _httpClient.GetFromJsonAsync<IEnumerable<TicketDTO>>($"api/tickets/archived") ?? [];
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return tickets;
+            }
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetArchivedUserTicketsAsync(int companyId, string userId)
+        {
+            IEnumerable<TicketDTO> tickets = [];
+
+            try
+            {
+                tickets = await _httpClient.GetFromJsonAsync<IEnumerable<TicketDTO>>($"api/tickets/personal/archived") ?? [];
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return tickets;
+            }
         }
     }
 }

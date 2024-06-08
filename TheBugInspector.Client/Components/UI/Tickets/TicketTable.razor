@@ -1,4 +1,6 @@
-﻿@if (Ticket is not null)
+﻿@inject IProjectDTOService ProjectService
+
+@if (Ticket is not null)
 {
 
     <tr>
@@ -13,7 +15,11 @@
         {
             <td>This Ticket has not been updated</td>
         }
-        <td>@Ticket.Type.GetDisplayName()</td>
+        @if (project is not null)
+        {
+            <td>@project.Name</td>
+
+        }
         <td>@Ticket.Priority.GetDisplayName()</td>
         <td>@Ticket.Status.GetDisplayName()</td>
         @if (Ticket.SubmitterUser is not null)
@@ -22,15 +28,25 @@
 
         }
         <td>@Ticket.Comments.Count()</td>
-        @if (Ticket.IsArchived is false)
-        {
-            <td><button class="btn btn-success" @onclick="HandleArchive">Archive</button></td>
+        <AuthorizeView>
+            @if (project is not null && UserInfo is not null)
+            {
 
-        }
-        else if (Ticket.IsArchived is true)
-        {
-            <td><button class="btn btn-success" @onclick="HandleRestore">Restore</button></td>
-        }
+                @if (context.User.IsInRole("Admin") || project.CompanyMembers.Any(c => c.UserId == UserInfo.UserId) && context.User.IsInRole("ProjectManager"))
+                {
+                    @if (Ticket.IsArchived is false)
+                    {
+                        <td><button class="btn btn-success" @onclick="HandleArchive">Archive</button></td>
+
+                    }
+                    else if (Ticket.IsArchived is true)
+                    {
+                        <td><button class="btn btn-success" @onclick="HandleRestore">Restore</button></td>
+                    }
+
+                }
+            }
+        </AuthorizeView>
     </tr>
 
 }
@@ -42,6 +58,9 @@
     public TicketDTO? Ticket { get; set; }
 
     [Parameter, EditorRequired]
+    public UserInfo? UserInfo { get; set; }
+
+    [Parameter, EditorRequired]
     public EventCallback<int> OnRestore { get; set; }
 
     [Parameter, EditorRequired]
@@ -50,9 +69,18 @@
 
     #region State
     private string? backgroundColor = string.Empty;
+    private ProjectDTO? project;
     #endregion
 
     #region Methods
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Ticket is not null && UserInfo is not null)
+        {
+            project = await ProjectService.GetProjectByIdAsync(Ticket.ProjectId, UserInfo.CompanyId);
+
+        }
+    }
     private async Task HandleArchive()
     {
         if (Ticket is not null)

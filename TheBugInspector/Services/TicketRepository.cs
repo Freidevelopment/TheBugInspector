@@ -132,8 +132,9 @@ namespace TheBugInspector.Services
 
 
             IEnumerable<Ticket> tickets = await context.Tickets
-                                                               .Where(t => t.Project!.CompanyId == companyId)
+                                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false)
                                                                .Include(t => t.Project)
+                                                                    .ThenInclude(t => t.CompanyMembers)
                                                                .Include(t => t.Attachments)
                                                                .Include(t => t.Comments)
                                                                .Include(t => t.SubmitterUser)
@@ -162,7 +163,7 @@ namespace TheBugInspector.Services
                 //ApplicationUser? projectManager = userId == userId ? user : await userManager.FindByIdAsync(userId);
 
                 tickets = await context.Tickets
-                                               .Where(t => t.Project.CompanyId == companyId && t.Project.CompanyMembers.Any(c => c.Id == userId) || t.SubmitterUserId == userId)
+                                               .Where(t => t.Project.CompanyId == companyId && t.IsArchived == false && t.Project.CompanyMembers.Any(c => c.Id == userId) || t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
@@ -178,7 +179,7 @@ namespace TheBugInspector.Services
             if (isDeveloper == true)
             {
                 tickets = await context.Tickets
-                                               .Where(t => t.Project.CompanyId == companyId && t.DeveloperUserId == userId || t.SubmitterUserId == userId)
+                                               .Where(t => t.Project.CompanyId == companyId && t.IsArchived == false && t.DeveloperUserId == userId || t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
@@ -194,7 +195,7 @@ namespace TheBugInspector.Services
             if (isSubmitter)
             {
                 tickets = await context.Tickets
-                                               .Where(t => t.Project.CompanyId == companyId && t.SubmitterUserId == userId)
+                                               .Where(t => t.Project.CompanyId == companyId && t.IsArchived == false && t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
@@ -215,6 +216,7 @@ namespace TheBugInspector.Services
             Ticket? ticket = await context.Tickets
                                                   .Where(t => t.Project!.CompanyId == companyId)
                                                   .Include(t => t.Project)
+                                                        .ThenInclude(t => t.CompanyMembers)
                                                   .Include(t => t.SubmitterUser)
                                                   .Include(t => t.Attachments)
                                                   .Include(t => t.Comments)
@@ -305,6 +307,90 @@ namespace TheBugInspector.Services
 
             }
 
+        }
+
+        public async Task<IEnumerable<Ticket>> GetAllArchivedTicketsAsync(int companyId)
+        {
+            using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
+
+
+
+            IEnumerable<Ticket> tickets = await context.Tickets
+                                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true)
+                                                               .Include(t => t.Project)
+                                                                    .ThenInclude(t => t.CompanyMembers)
+                                                               .Include(t => t.Attachments)
+                                                               .Include(t => t.Comments)
+                                                               .Include(t => t.SubmitterUser)
+                                                               .Include(t => t.DeveloperUser)
+                                                               .OrderByDescending(t => t.Created)
+                                                               .ToListAsync();
+
+            return tickets;
+        }
+
+        public async Task<IEnumerable<Ticket>> GetArchivedUserTicketsAsync(int companyId, string userId)
+        {
+            using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
+            using IServiceScope scope = serviceProvider.CreateScope();
+            UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            IEnumerable<Ticket> tickets = [];
+
+            ApplicationUser? user = await userManager.FindByIdAsync(userId);
+            if (user is null) return tickets;
+
+            bool isPM = user is not null && await userManager.IsInRoleAsync(user, nameof(Roles.ProjectManager));
+
+            if (isPM)
+            {
+                //ApplicationUser? projectManager = userId == userId ? user : await userManager.FindByIdAsync(userId);
+
+                tickets = await context.Tickets
+                                               .Where(t => t.Project.CompanyId == companyId && t.IsArchived == true && t.Project.CompanyMembers.Any(c => c.Id == userId) || t.SubmitterUserId == userId)
+                                               .Include(t => t.Project)
+                                               .Include(t => t.Attachments)
+                                               .Include(t => t.Comments)
+                                               .Include(t => t.SubmitterUser)
+                                               .Include(t => t.DeveloperUser)
+                                               .OrderByDescending(t => t.Created)
+                                               .ToListAsync();
+                return tickets;
+            }
+
+            bool isDeveloper = user is not null && await userManager.IsInRoleAsync(user, nameof(Roles.Developer));
+
+            if (isDeveloper == true)
+            {
+                tickets = await context.Tickets
+                                               .Where(t => t.Project.CompanyId == companyId && t.IsArchived == true && t.DeveloperUserId == userId || t.SubmitterUserId == userId)
+                                               .Include(t => t.Project)
+                                               .Include(t => t.Attachments)
+                                               .Include(t => t.Comments)
+                                               .Include(t => t.SubmitterUser)
+                                               .Include(t => t.DeveloperUser)
+                                               .OrderByDescending(t => t.Created)
+                                               .ToListAsync();
+                return tickets;
+            }
+
+            bool isSubmitter = user is not null && await userManager.IsInRoleAsync(user, nameof(Roles.Submitter));
+
+            if (isSubmitter)
+            {
+                tickets = await context.Tickets
+                                               .Where(t => t.Project.CompanyId == companyId && t.IsArchived == true && t.SubmitterUserId == userId)
+                                               .Include(t => t.Project)
+                                               .Include(t => t.Attachments)
+                                               .Include(t => t.Comments)
+                                               .Include(t => t.SubmitterUser)
+                                               .Include(t => t.DeveloperUser)
+                                               .OrderByDescending(t => t.Created)
+                                               .ToListAsync();
+                return tickets;
+            }
+
+            return tickets;
         }
     }
 }

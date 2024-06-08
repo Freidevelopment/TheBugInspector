@@ -43,6 +43,23 @@ namespace TheBugInspector.Controllers
             }
         }
 
+        [HttpGet("archived")]
+        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetAllArchivedTicketsAsync()
+        {
+            int companyId = _companyId ?? 0;
+
+            try
+            {
+                IEnumerable<TicketDTO> tickets = await _ticketService.GetAllArchivedTicketsAsync(companyId);
+                return Ok(tickets);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("personal")]
         public async Task<ActionResult<IEnumerable<TicketDTO>>> GetUserTicketsAsync()
         {
@@ -51,6 +68,23 @@ namespace TheBugInspector.Controllers
             try
             {
                 IEnumerable<TicketDTO> tickets = await _ticketService.GetUserTicketsAsync(companyId, UserId);
+                return Ok(tickets);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("personal/archived")]
+        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetUserArchivedTicketsAsync()
+        {
+            int companyId = _companyId ?? 0;
+
+            try
+            {
+                IEnumerable<TicketDTO> tickets = await _ticketService.GetArchivedUserTicketsAsync(companyId, UserId);
                 return Ok(tickets);
             }
             catch (Exception ex)

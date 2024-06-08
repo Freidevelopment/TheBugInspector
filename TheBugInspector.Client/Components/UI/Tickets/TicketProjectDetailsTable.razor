@@ -13,10 +13,10 @@
         {
             <td>This Ticket has not been updated</td>
         }
-        <td>@Ticket.Type.GetDisplayName()</td>
+        <td>@Ticket.Project.Name</td>
         <td>@Ticket.Priority.GetDisplayName()</td>
         <td>@Ticket.Status.GetDisplayName()</td>
-        @if (Ticket.SubmitterUser is not null && Ticket.DeveloperUser is not null)
+        @if (Ticket.SubmitterUser is not null)
         {
             <td>@Ticket.SubmitterUser.FullName</td>
             @if (!string.IsNullOrEmpty(Ticket.DeveloperUserId))
@@ -30,16 +30,6 @@
 
         }
         <td>@Ticket.Comments.Count()</td>
-        @if (Ticket.IsArchived is false)
-        {
-            <td><button class="btn btn-success" @onclick="HandleArchive">Archive</button></td>
-
-        }
-        else if (Ticket.IsArchived is true)
-        {
-            <td><button class="btn btn-success" @onclick="HandleRestore">Restore</button></td>
-        }
-
         <AuthorizeView Context="TicketUpdateAssignment">
             @if (UserInfo is not null && ProjectManager is not null)
             {
@@ -47,6 +37,16 @@
                 @if (TicketUpdateAssignment.User.IsInRole("Admin") ||
                TicketUpdateAssignment.User.IsInRole("ProjectManager") && UserInfo.UserId == ProjectManager.UserId)
                 {
+                    @if (Ticket.IsArchived is false)
+                    {
+                        <td><button class="btn btn-success" @onclick="HandleArchive">Archive</button></td>
+
+                    }
+                    else if (Ticket.IsArchived is true)
+                    {
+                        <td><button class="btn btn-success" @onclick="HandleRestore">Restore</button></td>
+                    }
+
                     @if (AssignDeveloper == false)
                     {
                         <td><button class="btn btn-warning" @onclick="() => AssignDeveloper = true">Assign Developer</button></td>

@@ -13,25 +13,27 @@
 
 @inject NavigationManager Nav
 
+@attribute [Authorize(Roles = $"{nameof(Roles.ProjectManager)}, {nameof(Roles.Admin)}, {nameof(Roles.Developer)}")]
 
-<PageTitle>BugInspector | Edit Projects</PageTitle>
+<PageTitle>BugInspector | Edit Ticket</PageTitle>
 
-
-<PageTitle>BugInspector | Create Ticket</PageTitle>
 
 
 <div class="container-xxl">
+    @if (ticket is not null)
+    {
 
-    <h3>New Ticket</h3>
-    <span class="text-danger">@ErrorMessage</span>
-    <div class="card-shadow">
-        <div class="card-body">
-            <TicketForm Ticket="ticket"
-                        OnSubmit="HandleSubmit"
-                        IsNew="false" />
+        <h3>Edit Ticket</h3>
+        <span class="text-danger">@ErrorMessage</span>
+        <div class="card-shadow">
+            <div class="card-body">
+                <TicketForm Ticket="ticket"
+                            OnSubmit="HandleSubmit"
+                            IsNew="false" />
 
+            </div>
         </div>
-    </div>
+    }
 </div>
 
 @code {

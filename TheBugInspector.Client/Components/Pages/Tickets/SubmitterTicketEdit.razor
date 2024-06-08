@@ -10,14 +10,12 @@
 
 @inject IProjectDTOService ProjectService
 @inject ITicketDTOService TicketService
-
+@attribute [Authorize(Roles = $"{nameof(Roles.Submitter)}")]
 @inject NavigationManager Nav
 
 
-<PageTitle>BugInspector | Edit Projects</PageTitle>
 
-
-<PageTitle>BugInspector | Create Ticket</PageTitle>
+<PageTitle>BugInspector | Edit Ticket</PageTitle>
 
 
 <div class="container-xxl">

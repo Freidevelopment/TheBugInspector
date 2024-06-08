@@ -1,4 +1,4 @@
-﻿@page "/tickets/create"
+﻿@page "/tickets/create/{id:int}"
 
 @using TheBugInspector.Client.Components.UI.Projects
 @using TheBugInspector.Client.Components.UI.Tickets
@@ -14,7 +14,7 @@
 
 @attribute [Authorize]
 
-<PageTitle>BugInspector | Create Ticket</PageTitle>
+<PageTitle>BugInspector | Create Ticket for Project</PageTitle>
 
 
 <div class="container-xxl">
@@ -23,9 +23,10 @@
     <span class="text-danger">@ErrorMessage</span>
     <div class="card-shadow">
         <div class="card-body">
-            <TicketForm Ticket="Ticket"
-                        OnSubmit="HandleSubmit"
-                        IsNew="true" />
+            <ProjectTicketForm Ticket="Ticket"
+                               Project="project"
+                               OnSubmit="HandleSubmit"
+                               IsNew="true" />
 
         </div>
     </div>

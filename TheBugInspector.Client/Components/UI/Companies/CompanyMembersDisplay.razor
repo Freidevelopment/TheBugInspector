@@ -1,6 +1,6 @@
 ﻿@inject ICompanyDTOService CompanyService
 
-@if (User is not null)
+@if (User is not null && UserInfo is not null)
 {
     @if (IsEdit is false)
     {
@@ -13,7 +13,7 @@
             <div class="d-flex justify-content-center">
                 <AuthorizeView>
                     <div class="card-footer">
-                        @if (context.User.IsInRole("Admin"))
+                        @if (context.User.IsInRole("Admin") && User.UserId != UserInfo.UserId)
                         {
                             <button class="btn btn-primary" @onclick="() => IsEdit = true">
                                 Assign Member Role

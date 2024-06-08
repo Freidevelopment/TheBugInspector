@@ -10,6 +10,7 @@
 
 @inject ITicketDTOService TicketService
 @inject IProjectDTOService ProjectService
+@attribute [Authorize]
 
 @if (ticket is not null)
 {
@@ -40,6 +41,10 @@ else
                         {
                             <a class="btn btn-warning" href="Tickets/edit/@ticket.Id">Edit?</a>
                         }
+                        else if (userInfo.UserId == ticket.SubmitterUserId && userInfo.UserId == ticket.DeveloperUserId)
+                        {
+                            <a class="btn btn-warning" href="Tickets/edit/@ticket.Id">Edit?</a>
+                        }
                         else if (userInfo.UserId == ticket.SubmitterUserId)
                         {
                             <a class="btn btn-warning" href="Tickets/submitter/edit/@ticket.Id">Edit?</a>
@@ -65,7 +70,7 @@ else
                context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
                 {
                     <p class="text-end mt-3">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
                             add a comment?
                         </button>
                     </p>
@@ -73,7 +78,7 @@ else
                 else if (userInfo.UserId == ticket.SubmitterUserId)
                 {
                     <p class="text-end mt-3">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
                             add a comment?
                         </button>
                     </p>
@@ -81,7 +86,7 @@ else
                 else if (userInfo.UserId == ticket.DeveloperUserId)
                 {
                     <p class="text-end mt-3">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#TicketCreation" aria-expanded="false" aria-controls="TicketCreation">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
                             add a comment?
                         </button>
                     </p>
@@ -90,7 +95,7 @@ else
             }
         </AuthorizeView>
 
-        <div class="collapse" id="TicketCreation">
+        <div class="collapse" id="CommentCreation">
             <div class="card card-body">
                 <TicketCommentForm ticketComment="userComment"
                                    Id="ticket.Id"
@@ -136,7 +141,7 @@ else
 
         @foreach (TicketCommentDTO comment in ticketComments)
         {
-            <TicketCommentCards Comment="comment"
+            <TicketComments Comment="comment"
                                 ProjectManager="projectManager"
                                 userInfo="userInfo"
                                 OnDelete="DeleteComment"
@@ -318,6 +323,8 @@ else
             ErrorMessage = "Something went wrong, check the DevTools";
         }
     }
+
+    
 
 
     #endregion
