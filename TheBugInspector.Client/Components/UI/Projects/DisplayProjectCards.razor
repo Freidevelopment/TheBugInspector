@@ -7,7 +7,7 @@
         <div class="card-header">
             <div class="vstack text-start">
                 <div>
-                    Title:
+                    Project Title:
                 </div>
                 <a href="/projects/details/@Project.Id" class="text-primary">
                     <u>@Project.Name</u>
@@ -61,34 +61,61 @@
             </div>
         </div>
         <div class="card-footer fs-sm">
-            <div class="btn-group dropdown">
 
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-controls="assignManagerdropdown" aria-expanded="false">
-                    Assign Project Manager
-                </button>
-                <div class="dropdown-menu my-1">
-                    @if (ProjectManagers is not null)
+            <AuthorizeView Context="AdminView">
+                @if (userInfo is not null && projectManager is not null)
+                {
+
+                    @if (AdminView.User.IsInRole("Admin") && Project.IsArchived == false)
                     {
 
+                        <div class="btn-group dropdown">
 
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-controls="assignManagerdropdown" aria-expanded="false">
+                                Assign Project Manager
+                            </button>
+                            <div class="dropdown-menu my-1">
+                                @if (ProjectManagers is not null)
+                                {
+                                    @foreach (UserDTO? user in ProjectManagers)
+                                    {
 
-                        @foreach (UserDTO? user in ProjectManagers)
+                                        <a class="dropdown-item"
+                                           @onclick="AssignManager">
+                                            @user.FullName
+                                        </a>
+
+                                    }
+
+                                }
+                            </div>
+                        </div>
+
+                        @if (Project.IsArchived is false)
                         {
-                            <a class="dropdown-item"
-                               @onclick="AssignManager">
-                                @user.FullName
-                            </a>
-
+                            <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Archive</button>
+                        }
+                        else if (Project.IsArchived is true)
+                        {
+                            <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Restore</button>
                         }
 
+
                     }
-                </div>
-                @*             <AdminProjectCardCollapse Project="Project"
-            ProjectManager="projectManager"
-            ProjectManagers="ProjectManagers"
-            OnManagerSubmit="AssignManager"
-            OnProjectIdSubmit="AssignManager"/> *@
-            </div>
+                    else if (AdminView.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId || AdminView.User.IsInRole("Admin"))
+                    {
+                        @if (Project.IsArchived is false)
+                        {
+                            <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Archive</button>
+
+                        }
+                        else if (Project.IsArchived is true)
+                        {
+                            <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Restore</button>
+                        }
+                    }
+                }
+            </AuthorizeView>
         </div>
     </div>
 
@@ -103,6 +130,9 @@
 
     [Parameter, EditorRequired]
     public IEnumerable<UserDTO>? ProjectManagers { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnSubmit { get; set; }
 
     [Parameter, EditorRequired]
     public EventCallback<string?> OnManagerSubmit { get; set; }
@@ -129,7 +159,7 @@
         {
             if (Project is not null)
             {
-                
+
                 projectId = Project.Id;
                 await OnProjectIdSubmit.InvokeAsync(projectId);
                 await OnManagerSubmit.InvokeAsync(ManagerAssignment);
@@ -139,6 +169,14 @@
         {
             Console.WriteLine(ex);
 
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Project is not null)
+        {
+            await OnSubmit.InvokeAsync(Project.Id);
         }
     }
 }

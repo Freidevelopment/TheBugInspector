@@ -5,7 +5,7 @@ namespace TheBugInspector.Client.Services.Interfaces
     public interface IProjectDTOService
     {
         #region Create
-        Task<ProjectDTO> AddProjectAsync(ProjectDTO project, int companyId);
+        Task<ProjectDTO> AddProjectAsync(ProjectDTO project, int companyId, string userId);
         #endregion
 
         #region Retrieve

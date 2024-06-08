@@ -6,7 +6,7 @@ namespace TheBugInspector.Services.Interfaces
     public interface IProjectRepository
     {
         #region Create
-        Task<Project> AddProjectAsync(Project project, int companyId);
+        Task<Project> AddProjectAsync(Project project, int companyId, string userId);
         #endregion
 
         #region Retrieve

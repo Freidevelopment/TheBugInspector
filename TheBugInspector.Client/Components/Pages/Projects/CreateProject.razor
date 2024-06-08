@@ -9,7 +9,7 @@
 
 @inject IProjectDTOService ProjectService
 @inject NavigationManager Nav
-
+@attribute [Authorize(Roles = $"{nameof(Roles.ProjectManager)}, {nameof(Roles.Admin)}")]
 
 <PageTitle>BugInspector | Create Projects</PageTitle>
 
@@ -21,6 +21,7 @@
     <div class="card-shadow">
         <div class="card-body">
             <ProjectForm Project="new ProjectDTO()"
+                         UserInfo="userInfo"
                          OnSubmit="HandleSubmit"
                          IsNew="true" />
         </div>
@@ -37,6 +38,7 @@
 
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
+    private UserDTO? ProjectManager;
     #endregion
 
     #region Methods
@@ -63,7 +65,8 @@
         {
             if (userInfo is not null)
             {
-                await ProjectService.AddProjectAsync(project, userInfo.CompanyId);
+                await ProjectService.AddProjectAsync(project, userInfo.CompanyId, userInfo.UserId);
+
             }
         }
         catch (Exception ex)
@@ -71,7 +74,15 @@
             Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
-        Nav.NavigateTo($"/projects/index");
+        if (userInfo.Roles.Contains(Roles.Admin.ToString()))
+        {
+            Nav.NavigateTo($"/projects/index");
+
+        }
+        else
+        {
+            Nav.NavigateTo($"/projects/personal/Index");
+        }
     }
     #endregion
 }

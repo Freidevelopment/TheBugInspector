@@ -19,7 +19,7 @@ namespace TheBugInspector.Client.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<ProjectDTO> AddProjectAsync(ProjectDTO project, int companyId)
+        public async Task<ProjectDTO> AddProjectAsync(ProjectDTO project, int companyId, string userId)
         {
             HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/projects", project);
             response.EnsureSuccessStatusCode();

@@ -21,6 +21,16 @@
             <h1>My Projects</h1>
 
         </div>
+        <AuthorizeView Context="ProjectManagerView">
+            @if(ProjectManagerView.User.IsInRole(Roles.ProjectManager.ToString()))
+            {
+            <div class="col text-end">
+                <a href="/projects/create" class="btn btn-primary">Create a Project?</a>
+            </div>
+                
+            }
+
+        </AuthorizeView>
     </div>
 
     @if (userInfo is not null)

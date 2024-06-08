@@ -137,7 +137,7 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             try
             {
-                ProjectDTO createdProject = await _projectService.AddProjectAsync(project, companyId);
+                ProjectDTO createdProject = await _projectService.AddProjectAsync(project, companyId, UserId);
 
                 return Ok(createdProject);
             }

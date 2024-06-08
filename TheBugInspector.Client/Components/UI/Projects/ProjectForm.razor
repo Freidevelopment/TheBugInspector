@@ -70,6 +70,9 @@
     public EventCallback<ProjectDTO> OnSubmit { get; set; }
 
     [Parameter, EditorRequired]
+    public UserInfo? UserInfo { get; set; }
+
+    [Parameter, EditorRequired]
     public bool IsNew { get; set; }
     #endregion
 
@@ -95,6 +98,7 @@
     {
         try
         {
+
             await OnSubmit.InvokeAsync(Project);
         }
         catch (Exception ex)

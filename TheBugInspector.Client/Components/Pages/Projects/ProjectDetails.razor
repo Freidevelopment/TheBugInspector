@@ -6,12 +6,13 @@
 @using TheBugInspector.Client.Services
 @using TheBugInspector.Client.Services.Interfaces
 
-@rendermode InteractiveServer
+@rendermode InteractiveAuto
 
 @inject ICompanyDTOService CompanyService
 @inject IProjectDTOService ProjectService
 @inject ITicketDTOService TicketService
 
+@attribute [Authorize]
 
 <PageTitle>BugInspector | Project Details</PageTitle>
 
@@ -45,21 +46,28 @@
                             Members="projectMembers" />
 
 
-        <AuthorizeView Roles="Admin, ProjectManager">
+        <AuthorizeView Context="AdjustProjectMembers">
+            @if (userInfo is not null && projectManager is not null)
+            {
+                @if (AdjustProjectMembers.User.IsInRole("Admin") || AdjustProjectMembers.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                {
+                    <div class="text-end mt-3">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#MemberAssignmentmodal" aria-expanded="false" aria-controls="collapseExample">
+                            Adjust members on Project?
+                        </button>
 
-            <div class="text-end mt-3">
-                <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#MemberAssignmentmodal" aria-expanded="false" aria-controls="collapseExample">
-                    Adjust members on Project?
-                </button>
+                    </div>
 
-            </div>
+                }
+
+            }
 
             <div class="collapse" id="MemberAssignmentmodal">
                 <div class="card card-body mt-3">
                     <ProjectMemberManagementModal ProjectManager="projectManager"
                                                   userInfo="userInfo"
                                                   Employees="companyMembers"
-                                                  Members="projectMembers" 
+                                                  Members="projectMembers"
                                                   OnSubmit="AssignProjectMembers"
                                                   OnManagerSubmit="AssignProjectManager"
                                                   OnManagerRemoval="RemoveProjectManager"
@@ -106,17 +114,17 @@
             <tbody>
                 @if (userInfo is not null && projectManager is not null && projectMembers is not null)
                 {
-                    
-                @foreach (TicketDTO ticket in project.Tickets.OrderByDescending(p => p.Created))
-                {
-                    <TicketProjectDetailsTable Ticket="ticket"
-                                               UserInfo="userInfo"
-                                               ProjectManager="projectManager"
-                                               Members="projectMembers"
-                                               OnArchive="HandleArchive"
-                                               OnRestore="HandleRestore"
-                                               OnAssignDeveloper="AssignDeveloper" />
-                }
+
+                    @foreach (TicketDTO ticket in project.Tickets.OrderByDescending(p => p.Created))
+                    {
+                        <TicketProjectDetailsTable Ticket="ticket"
+                                                   UserInfo="userInfo"
+                                                   ProjectManager="projectManager"
+                                                   Members="projectMembers"
+                                                   OnArchive="HandleArchive"
+                                                   OnRestore="HandleRestore"
+                                                   OnAssignDeveloper="AssignDeveloper" />
+                    }
 
                 }
             </tbody>

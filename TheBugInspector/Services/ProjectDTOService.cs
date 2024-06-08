@@ -22,7 +22,7 @@ namespace TheBugInspector.Services
             await _projectRepository.AddMemberToProjectAsync(projectId, memberId, managerId);
         }
 
-        public async Task<ProjectDTO> AddProjectAsync(ProjectDTO project, int companyId)
+        public async Task<ProjectDTO> AddProjectAsync(ProjectDTO project, int companyId, string userId)
         {
             Project newProject = new Project()
             { 
@@ -34,7 +34,7 @@ namespace TheBugInspector.Services
                 CompanyId = companyId
             };
 
-            Project createdProject = await _projectRepository.AddProjectAsync(newProject, companyId);
+            Project createdProject = await _projectRepository.AddProjectAsync(newProject, companyId, userId);
 
             return createdProject.ToDTO();
 

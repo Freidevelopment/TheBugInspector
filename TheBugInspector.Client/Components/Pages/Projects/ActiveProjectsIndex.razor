@@ -9,7 +9,7 @@
 
 @inject IProjectDTOService ProjectService
 @inject ICompanyDTOService CompanyService
-@attribute [Authorize(Roles = $"{nameof(Roles.Admin)}")]
+@attribute [Authorize]
 
 <PageTitle>BugInspector | ActiveProjects</PageTitle>
 
@@ -28,16 +28,17 @@
 
     @if (activeProjects is not null)
     {
-        <div class="row row-cols-lg-3 row-cols-md-2 g-2">
+        <div class="row row-cols-lg-3 row-cols-md-2 g-3">
 
 
             @foreach (ProjectDTO project in activeProjects)
             {
                 <div class="col">
-                    <AdminProjectCards @key="project.Id"
+                    <DisplayProjectCards @key="project.Id"
                                        Project="project"
                                        userInfo="userInfo"
                                        ProjectManagers="projectManagers"
+                                       OnSubmit="HandleArchive"
                                        OnProjectIdSubmit="AssignProjectIdAsync"
                                        OnManagerSubmit="AssignProjectManager" />
 

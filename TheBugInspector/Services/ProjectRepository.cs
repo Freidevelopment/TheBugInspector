@@ -53,12 +53,15 @@ namespace TheBugInspector.Services
         }
 
         // this has been tested and works
-        public async Task<Project> AddProjectAsync(Project project, int companyId)
+        public async Task<Project> AddProjectAsync(Project project, int companyId, string userId)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
+            using IServiceScope scope = serviceProvider.CreateScope();
+            UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
+            ApplicationUser? user = await userManager.FindByIdAsync(userId);
 
-            bool shouldCreate = await context.Companies.AnyAsync(c => c.Id == companyId);
+            bool shouldCreate = await context.Companies.AnyAsync(c => c.Id == companyId && user.CompanyId == companyId);
 
             if (shouldCreate)
             {
@@ -66,6 +69,19 @@ namespace TheBugInspector.Services
                 project.Created = DateTimeOffset.Now;
                 context.Projects.Add(project);
                 await context.SaveChangesAsync();
+
+                bool isPM = user is not null && await userManager.IsInRoleAsync(user, nameof(Roles.ProjectManager));
+
+                if (isPM)
+                {
+                    int createdProjectId = project.Id;
+                    Project? newProject = await context.Projects.FirstOrDefaultAsync(p => p.Id == createdProjectId);
+                    if (newProject is not null)
+                    {
+                        await AssignProjectManagerAsync(createdProjectId, userId, user.Id);
+                    }
+
+                }
 
                 return project;
             }
