@@ -24,13 +24,13 @@
                 <AuthorizeView>
                     @if (Attachment.UserId == userInfo.UserId)
                     {
-                        <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
+                        @* <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button> *@
                         <button class="btn btn-danger mt-3" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                     }
                     else if (context.User.IsInRole("Admin") ||
                     context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
                     {
-                        <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
+                        @* <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button> *@
                         <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                     }
                 </AuthorizeView>
@@ -38,7 +38,7 @@
         </div>
 
     }
-    else if (status == Status.Updating)
+    @* else if (status == Status.Updating)
     {
         <div class="card w-100 h-100">
             <div class="card-body">
@@ -73,7 +73,7 @@
 
             </div>
         </div>
-    }
+    } *@
     @if (status == Status.Deleting)
     {
         <div class="card w-100 h-100">
@@ -95,13 +95,15 @@
                 <p class="card-text">@Attachment.Created.ToString("f")</p>
                 <p class="card-text">Submitted By: @userInfo.FullName</p>
                 <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" class="img-fluid" /></a>
-
-                @if (Attachment.UserId == userInfo.UserId)
-                {
-                    <span class="text-danger">do you want to delete this Attachment?</span>
-                    <button class="btn btn-danger mt-3" @onclick="HandleDelete">Delete Attachment</button>
-                    <button class="btn btn-info mt-3" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
-                }
+                <AuthorizeView Context="ManagementView">
+                    @if (ManagementView.User.IsInRole("Admin") ||
+                   ManagementView.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
+                    {
+                        <span class="text-danger">do you want to delete this Attachment?</span>
+                        <button class="btn btn-danger mt-3" @onclick="HandleDelete">Delete Attachment</button>
+                        <button class="btn btn-info mt-3" @onclick="() => status = Status.Viewing"><i class="bi bi-x-circle"></i></button>
+                    }
+                </AuthorizeView>
             </div>
         </div>
     }
@@ -146,7 +148,7 @@
     {
         if (Attachment is not null)
         {
-        await OnSubmit.InvokeAsync(Attachment.Id);
+            await OnSubmit.InvokeAsync(Attachment.Id);
 
         }
 

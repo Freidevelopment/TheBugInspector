@@ -18,18 +18,28 @@
 
 
 <div class="container-xxl">
+    <AuthorizeView>
+        @if (userInfo is not null && project is not null && project.CompanyMembers.Any(c => c.UserId == userInfo.UserId) || context.User.IsInRole("Admin"))
+        {
 
-    <h3>New Ticket</h3>
-    <span class="text-danger">@ErrorMessage</span>
-    <div class="card-shadow">
-        <div class="card-body">
-            <ProjectTicketForm Ticket="Ticket"
-                               Project="project"
-                               OnSubmit="HandleSubmit"
-                               IsNew="true" />
+            <h3>New Ticket</h3>
+            <span class="text-danger">@ErrorMessage</span>
+            <div class="card-shadow">
+                <div class="card-body">
+                    <ProjectTicketForm Ticket="Ticket"
+                                       Project="project"
+                                       OnSubmit="HandleSubmit"
+                                       IsNew="true" />
 
-        </div>
-    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <h1 class="text-danger">You are not able to create a ticket for this project</h1>
+        }
+    </AuthorizeView>
+    
 </div>
 
 @code {

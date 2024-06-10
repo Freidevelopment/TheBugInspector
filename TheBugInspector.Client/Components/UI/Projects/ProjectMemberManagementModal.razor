@@ -178,6 +178,7 @@
         {
 
             await OnSubmit.InvokeAsync(MemberAssignment);
+            MemberAssignment = string.Empty;
         }
         catch (Exception ex)
         {
@@ -192,6 +193,7 @@
         {
 
             await OnManagerSubmit.InvokeAsync(ManagerAssignment);
+            ManagerAssignment = string.Empty;
         }
         catch (Exception ex)
         {
@@ -205,6 +207,7 @@
         {
 
             await OnMemberRemoval.InvokeAsync(MemberRemoval);
+            MemberRemoval = string.Empty;
         }
         catch (Exception ex)
         {
@@ -219,7 +222,6 @@
             if (ProjectManager is not null)
             {
                 await OnManagerRemoval.InvokeAsync(ProjectManager.UserId);
-
             }
         }
         catch (Exception ex)

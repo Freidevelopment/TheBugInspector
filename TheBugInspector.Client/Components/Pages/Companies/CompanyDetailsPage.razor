@@ -4,7 +4,7 @@
 
 @inject ICompanyDTOService CompanyService
 
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveAuto
 @attribute [Authorize]
 
 <PageTitle>BugInspector | Company</PageTitle>
@@ -24,17 +24,14 @@
                 @company.Description
             </div>
             <div class="row mt-5">
-                <div class="col-md-1">
-                </div>
-                <div class="col-md-3">
+
+                <div class="col-md-6">
                     <a href="/projects/Index" class="text-primary"><u>Active Projects</u></a>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <a href="/archived/projects/Index" class="text-primary"><u>Archived Projects</u></a>
                 </div>
-                <div class="col-md-3">
-                    <a href="/tickets/Index" class="text-primary"><u>All Tickets</u></a>
-                </div>
+
                 <div class="col-md-1">
                 </div>
                 <div class="col mt-3">

@@ -212,5 +212,10 @@ namespace TheBugInspector.Client.Services
                 return tickets;
             }
         }
+
+        public Task<TicketAttachmentDTO?> GetTicketAttachmentById(int attachmentId, int companyId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

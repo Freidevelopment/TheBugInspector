@@ -151,6 +151,11 @@ namespace TheBugInspector.Services
 
                 projectToUpdate.Priority = project.Priority;
 
+                projectToUpdate.Tickets = [];
+                projectToUpdate.CompanyMembers = [];
+
+                projectToUpdate.Company = null;
+
                 await _projectRepository.UpdateProjectAsync(projectToUpdate, companyId);
             }
         }

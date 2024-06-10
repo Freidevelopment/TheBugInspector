@@ -63,7 +63,7 @@
         <div class="card-footer fs-sm">
 
             <AuthorizeView Context="AdminView">
-                @if (userInfo is not null && projectManager is not null)
+                @if (userInfo is not null)
                 {
 
                     @if (AdminView.User.IsInRole("Admin") && Project.IsArchived == false)
@@ -91,28 +91,34 @@
                             </div>
                         </div>
 
-                        @if (Project.IsArchived is false)
-                        {
-                            <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Archive</button>
-                        }
-                        else if (Project.IsArchived is true)
-                        {
-                            <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Restore</button>
-                        }
+                        <div>
+
+                            @if (Project.IsArchived is false)
+                            {
+                                <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Archive</button>
+                            }
+                            else if (Project.IsArchived is true)
+                            {
+                                <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Restore</button>
+                            }
+                        </div>
 
 
                     }
-                    else if (AdminView.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId || AdminView.User.IsInRole("Admin"))
+                    else if (projectManager is not null && AdminView.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId || AdminView.User.IsInRole("Admin"))
                     {
-                        @if (Project.IsArchived is false)
-                        {
-                            <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Archive</button>
+                        <div>
 
-                        }
-                        else if (Project.IsArchived is true)
-                        {
-                            <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Restore</button>
-                        }
+                            @if (Project.IsArchived is false)
+                            {
+                                <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Archive</button>
+
+                            }
+                            else if (Project.IsArchived is true)
+                            {
+                                <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Restore</button>
+                            }
+                        </div>
                     }
                 }
             </AuthorizeView>

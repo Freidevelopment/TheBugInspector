@@ -1,10 +1,10 @@
 ﻿@using TheBugInspector.Client.Helpers
 @inject IProjectDTOService ProjectService
 
-@if (Ticket is not null)
+@if (Ticket is not null && userInfo is not null)
 {
 
-    <EditForm Model="Ticket" OnValidSubmit="HandleSubmit" class="row">
+    <EditForm Model="Ticket" Context="ticketCreation" OnValidSubmit="HandleSubmit" class="row">
         <DataAnnotationsValidator />
         @* Name *@
         <div class="col-lg-4 gap-2">
@@ -24,12 +24,21 @@
                     </label>
                     <InputSelect @bind-Value="Ticket.ProjectId" class="form-select">
                         <option value="">Select a Project</option>
-                        @foreach (ProjectDTO project in projects)
-                        {
-                            <option value="@project.Id">
-                                @project.Name
-                            </option>
-                        }
+                        <AuthorizeView Context="ticketCreationView">
+
+
+                            @foreach (ProjectDTO project in projects)
+                            {
+                                if (ticketCreationView.User.IsInRole("Admin") || project.CompanyMembers.Any(c => c.UserId == userInfo.UserId))
+                                {
+
+                                    <option value="@project.Id">
+                                        @project.Name
+                                    </option>
+                                }
+                            }
+
+                        </AuthorizeView>
                     </InputSelect>
                     <ValidationMessage For="() => Ticket.Priority" />
                 </div>

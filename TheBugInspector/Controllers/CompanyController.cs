@@ -96,8 +96,9 @@ namespace TheBugInspector.Controllers
         public async Task<IActionResult> UpdateUserRole([FromBody]  UserDTO userDTO)
         {
             bool InAdminRole = User.IsInRole("Admin");
+            var user = await _userManager.GetUserAsync(User);
 
-            if(InAdminRole)
+            if (InAdminRole && user.CompanyId == CompanyId)
             {
 
             try
@@ -120,7 +121,7 @@ namespace TheBugInspector.Controllers
         {
             bool InAdminRole = User.IsInRole("Admin");
 
-            if (InAdminRole)
+            if (InAdminRole && companyDTO.Id == CompanyId)
             {
 
                 try

@@ -39,31 +39,27 @@
         {
 
 
-            <table class="table table-hover table-bordered border-primary bg-info">
-                <thead>
-                    <tr>
-                        <th scope="col">Project Name</th>
-                        <th scope="col">Project Created on</th>
-                        <th scope="col">Project Start Date</th>
-                        <th scope="col">Project End Date</th>
-                        <th scope="col">Project Priority</th>
-                        <th scope="col">Number of Tickets</th>
-                        <th scope="col">Archive Project?</th>
-                        <th scope="col">Edit Project?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (ProjectDTO project in myProjects)
-                    {
+            <div class="row row-cols-lg-3 row-cols-md-2 g-3">
 
-                        <ProjectEditIndex Project="project"
-                                          OnSubmit="HandleArchive" />
 
-                    }
+                @foreach (ProjectDTO project in myProjects)
+                {
+                    <div class="col">
+                        <DisplayProjectCards @key="project.Id"
+                                             Project="project"
+                                             userInfo="userInfo"
+                                             ProjectManagers="projectManagers"
+                                             OnSubmit="HandleArchive"
+                                             OnProjectIdSubmit="AssignProjectIdAsync"
+                                             OnManagerSubmit="AssignProjectManager" />
 
-                </tbody>
+                    </div>
 
-            </table>
+
+
+                }
+
+            </div>
 
             <div class="text-end">
                 <a href="/archived/projects/Index" class="text-primary">Go to Archived Projects</a>
@@ -89,8 +85,10 @@
     #region State
     private IEnumerable<ProjectDTO> myProjects = [];
     private IEnumerable<UserDTO> ProjectMembers = [];
+    private IEnumerable<UserDTO> projectManagers = [];
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
+    private ProjectDTO? project;
     #endregion
 
     #region Methods
@@ -104,7 +102,7 @@
             if (userInfo is not null)
             {
                 myProjects = await ProjectService.GetMyProjectsAsync(userInfo.CompanyId, userInfo.UserId);
-
+                projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
             }
         }
         catch (Exception ex)
@@ -122,6 +120,32 @@
             if (userInfo is not null)
             {
                 await ProjectService.ArchiveProjectAsync(projectId, userInfo.CompanyId);
+
+                myProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, check the DevTools";
+        }
+    }
+
+    private async Task AssignProjectIdAsync(int projectId)
+    {
+        if (userInfo is not null)
+        {
+            project = await ProjectService.GetProjectByIdAsync(projectId, userInfo.CompanyId);
+
+        }
+    }
+    private async Task AssignProjectManager(string memberId)
+    {
+        try
+        {
+            if (userInfo is not null && project is not null)
+            {
+                await ProjectService.AssignProjectManagerAsync(project.Id, memberId, userInfo.UserId);
 
                 myProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
             }

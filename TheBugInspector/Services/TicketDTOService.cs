@@ -164,6 +164,11 @@ namespace TheBugInspector.Services
                 ticketToUpdate.Description = ticket.Description;
                 ticketToUpdate.DeveloperUserId = ticket.DeveloperUserId;
                 ticketToUpdate.DeveloperUser = null;
+                ticketToUpdate.SubmitterUser = null;
+                ticketToUpdate.Project = null;
+
+                ticketToUpdate.Comments = [];
+                ticketToUpdate.Attachments = [];
 
                 await repository.UpdateTicketAsync(ticketToUpdate, companyId, userId);
 
@@ -188,6 +193,13 @@ namespace TheBugInspector.Services
             IEnumerable<TicketDTO> results = tickets.Select(t => t.ToDTO());
 
             return results;
+        }
+
+        public async Task<TicketAttachmentDTO?> GetTicketAttachmentById(int attachmentId, int companyId)
+        {
+            TicketAttachment? attachment = await repository.GetTicketAttachmentById(attachmentId, companyId);
+
+            return attachment?.ToDTO();
         }
     }
 }

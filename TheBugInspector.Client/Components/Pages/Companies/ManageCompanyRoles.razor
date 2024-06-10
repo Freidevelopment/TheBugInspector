@@ -26,7 +26,7 @@
                     @foreach (UserDTO member in Members)
                     {
                         <div class="col-md-6">
-                            <CompanyMembersDisplay @key="member.UserId"
+                            <ManageRolesCards @key="member.UserId"
                                                    User="member"
                                                    UserInfo="userInfo"
                                                    OnSubmit="UpdateRole" />

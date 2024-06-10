@@ -21,23 +21,32 @@
 
         <h1>Archived Projects</h1>
 
+        <div class="row row-cols-lg-3 row-cols-md-2 g-3">
+            @foreach (ProjectDTO project in archivedProjects)
+            {
+                <div class="col">
 
-        @foreach (ProjectDTO project in archivedProjects)
-        {
-            <DisplayProjectCards @key="project.Id"
-                                 Project="project"
-                                 userInfo="userInfo"
-                                 ProjectManagers="projectManagers"
-                                 OnSubmit="HandleArchive"
-                                 OnProjectIdSubmit="AssignProjectIdAsync"
-                                 OnManagerSubmit="AssignProjectManager" />
-        }
+                    <DisplayProjectCards @key="project.Id"
+                                         Project="project"
+                                         userInfo="userInfo"
+                                         ProjectManagers="projectManagers"
+                                         OnSubmit="HandleArchive"
+                                         OnProjectIdSubmit="AssignProjectIdAsync"
+                                         OnManagerSubmit="AssignProjectManager" />
+                </div>
+            }
 
-
-
-        <div class="text-end">
-            <a href="/projects/Index" class=" text-primary">Go to Active Projects</a>
         </div>
+
+        <AuthorizeView Context="AdminView">
+            @if (AdminView.User.IsInRole("Admin"))
+            {
+                <div class="text-end">
+                    <a href="/projects/Index" class=" text-primary">Go to Active Projects</a>
+                </div>
+
+            }
+        </AuthorizeView>
 
 
     }

@@ -19,7 +19,7 @@
         @if (Ticket.SubmitterUser is not null)
         {
             <td>@Ticket.SubmitterUser.FullName</td>
-            @if (!string.IsNullOrEmpty(Ticket.DeveloperUserId))
+            @if (!string.IsNullOrEmpty(Ticket.DeveloperUserId) && Ticket.DeveloperUser is not null)
             {
                 <td>@Ticket.DeveloperUser.FullName</td>
             }
@@ -54,6 +54,8 @@
                     }
                     else if (AssignDeveloper == true)
                     {
+                        @* Work on this button to look better on the app*@
+                        <button class="badge bg-warning text-end" @onclick="() => AssignDeveloper = false"><i class='bx bxs-x-square'></i></button>
                         <label for="DeveloperAssignment" class="form-label">
                             Available Developers
                         </label>
@@ -63,32 +65,25 @@
                             {
                                 @foreach (UserDTO? user in Members)
                                 {
-                                    @if (user is not null)
+
+
+                                    if (user.Role == Roles.Developer.ToString())
                                     {
-
-                                        bool shouldNotDisplay = Members.Any(m => m?.UserId == Ticket.DeveloperUserId);
-
-                                        @if (shouldNotDisplay == false)
-                                        {
-
-                                            if (user.Role == Roles.Developer.ToString())
-                                            {
-                                                <option value="@user.UserId">
-                                                    @user.FullName: @user.Role
-                                                </option>
+                                        <option value="@user.UserId">
+                                            @user.FullName: @user.Role
+                                        </option>
 
 
-                                            }
-                                        }
                                     }
-
 
                                 }
 
                             }
                         </InputSelect>
-                        <div class="col">
-                            <button class="btn btn-primary mt-3" @onclick="AssignMember">Assign Developer</button>
+                        <div class="row">
+                            <div class="col">
+                                <button class="badge bg-primary mt-3" @onclick="AssignMember">Assign Developer</button>
+                            </div>
 
                         </div>
                     }

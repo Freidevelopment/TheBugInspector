@@ -295,11 +295,11 @@ namespace TheBugInspector.Services
         {
             using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
 
-            bool shouldEdit = await context.Companies.AnyAsync(c => c.Id == companyId);
 
-            bool ticketEdit = await context.Tickets.AnyAsync(t => t.Id == ticket.Id);
+            bool ticketEdit = await context.Tickets
+                                                   .AnyAsync(t => t.Id == ticket.Id && t.Project.CompanyId == companyId);
 
-            if (shouldEdit && ticketEdit)
+            if (ticketEdit)
             {
 
                 context.Tickets.Update(ticket);
@@ -391,6 +391,15 @@ namespace TheBugInspector.Services
             }
 
             return tickets;
+        }
+
+        public async Task<TicketAttachment?> GetTicketAttachmentById(int attachmentId, int companyId)
+        {
+            using ApplicationDbContext context = _dbContextFactory.CreateDbContext();
+
+            TicketAttachment? ticketAttachment = await context.TicketAttachments.FirstOrDefaultAsync(t => t.Id == attachmentId && t.Ticket.Project.CompanyId == companyId);
+
+            return ticketAttachment;
         }
     }
 }

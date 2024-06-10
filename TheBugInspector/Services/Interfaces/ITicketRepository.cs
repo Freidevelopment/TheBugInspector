@@ -43,6 +43,7 @@ namespace TheBugInspector.Services.Interfaces
         #region Attachments
         Task<TicketAttachment> AddTicketAttachment(TicketAttachment attachment, int companyId);
         Task DeleteTicketAttachment(int attachmentId, int companyId);
+        Task<TicketAttachment?> GetTicketAttachmentById(int attachmentId, int companyId);
         #endregion
         
     }

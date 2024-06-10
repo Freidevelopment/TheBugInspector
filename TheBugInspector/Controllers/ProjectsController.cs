@@ -32,17 +32,23 @@ namespace TheBugInspector.Controllers
         {
             // ensuring that the companyId is the correct users company Id
             int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
 
-            try
+            if (user.CompanyId == companyId)
             {
-                IEnumerable<ProjectDTO> projects = await _projectService.GetAllProjectsAsync(companyId);
-                return Ok(projects);
+
+                try
+                {
+                    IEnumerable<ProjectDTO> projects = await _projectService.GetAllProjectsAsync(companyId);
+                    return Ok(projects);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return BadRequest(ex.Message);
-            }
+            return BadRequest();
         }
 
         [HttpGet("personal")] // api/projects/personal
@@ -50,169 +56,59 @@ namespace TheBugInspector.Controllers
         {
             // ensuring that the companyId is the correct users company Id
             int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
 
-            try
+            if (user.CompanyId == companyId)
             {
-                IEnumerable<ProjectDTO> projects = await _projectService.GetMyProjectsAsync(companyId, UserId);
-                return Ok(projects);
+
+                try
+                {
+                    IEnumerable<ProjectDTO> projects = await _projectService.GetMyProjectsAsync(companyId, UserId);
+                    return Ok(projects);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return BadRequest(ex.Message);
-            }
+            return BadRequest();
         }
 
         [HttpGet("archived")] // api/projects/1/archived
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetArchivedProjectsAsync()
         {
             int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            if (user.CompanyId == companyId)
+            {
 
-            try
-            {
-                IEnumerable<ProjectDTO> projects = await _projectService.GetArchivedProjectsAsync(companyId);
-                return Ok(projects);
+                try
+                {
+                    IEnumerable<ProjectDTO> projects = await _projectService.GetArchivedProjectsAsync(companyId);
+                    return Ok(projects);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return BadRequest(ex.Message);
-            }
+            return BadRequest();
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProjectDTO>> GetProjectById([FromRoute] int id)
         {
             int companyId = _companyId ?? 0;
-            try
-            {
-                ProjectDTO? project = await _projectService.GetProjectByIdAsync(id, companyId);
-                return Ok(project);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return Problem();
-            }
-
-        }
-
-        [HttpGet("{projectId:int}/manager")]
-        public async Task<ActionResult<UserDTO>> GetProjectManager([FromRoute] int projectId)
-        {
-            int companyId = _companyId ?? 0;
-            try
-            {
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
-                return Ok(manager);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return Problem();
-            }
-
-        }
-
-        [HttpGet("{projectId:int}/members")]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetProjectMembers([FromRoute] int projectId)
-        {
-            int companyId = _companyId ?? 0;
-            try
-            {
-                IEnumerable<UserDTO> members = await _projectService.GetProjectMembersAsync(projectId, companyId);
-                return Ok(members);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return Problem();
-            }
-
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ProjectDTO>> CreateProject([FromBody] ProjectDTO project)
-        {
-            int companyId = _companyId ?? 0;
-            try
-            {
-                ProjectDTO createdProject = await _projectService.AddProjectAsync(project, companyId, UserId);
-
-                return Ok(createdProject);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return BadRequest();
-            }
-        }
-
-        [HttpPut("{projectId:int}")] // api/projects/5
-        public async Task<IActionResult> UpdateProject([FromRoute] int projectId,
-                                                       [FromBody] ProjectDTO project)
-        {
-            int companyId = _companyId ?? 0;
-
-            try
-            {
-                await _projectService.UpdateProjectAsync(project, companyId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return Problem();
-            }
-        }
-
-        [HttpPut("{projectId:int}/archived")] // api/projects/5/archived
-        public async Task<IActionResult> RestoreProject([FromRoute] int projectId)
-        {
-            int companyId = _companyId ?? 0;
-
-            try
-            {
-                await _projectService.RestoreProjectAsync(projectId, companyId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return Problem();
-            }
-        }
-
-        [HttpPut("{projectId:int}/active")]
-        public async Task<IActionResult> ArchiveProject([FromRoute] int projectId)
-        {
-            int companyId = _companyId ?? 0;
-
-            try
-            {
-                await _projectService.ArchiveProjectAsync(projectId, companyId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return Problem();
-            }
-        }
-
-        [HttpPut("{projectId:int}/manager")]
-        public async Task<IActionResult> RemoveManagerFromProject([FromRoute] int projectId)
-        {
-            int companyId = _companyId ?? 0;
-            bool InAdminRole = User.IsInRole("Admin");
-
-            if (InAdminRole)
+            var user = await _userManager.GetUserAsync(User);
+            if (user.CompanyId == companyId)
             {
 
                 try
                 {
-                    await _projectService.RemoveProjectManagerAsync(projectId, UserId);
-                    return Ok();
+                    ProjectDTO? project = await _projectService.GetProjectByIdAsync(id, companyId);
+                    return Ok(project);
                 }
                 catch (Exception ex)
                 {
@@ -220,7 +116,215 @@ namespace TheBugInspector.Controllers
                     return Problem();
                 }
             }
+            return BadRequest();
 
+        }
+
+        [HttpGet("{projectId:int}/manager")]
+        public async Task<ActionResult<UserDTO>> GetProjectManager([FromRoute] int projectId)
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            if (user.CompanyId == companyId)
+            {
+
+                try
+                {
+                    UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
+                    return Ok(manager);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest();
+                }
+            }
+            return BadRequest();
+
+        }
+
+        [HttpGet("{projectId:int}/members")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetProjectMembers([FromRoute] int projectId)
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            if (user.CompanyId == companyId)
+            {
+
+                try
+                {
+                    IEnumerable<UserDTO> members = await _projectService.GetProjectMembersAsync(projectId, companyId);
+                    return Ok(members);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest();
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProjectDTO>> CreateProject([FromBody] ProjectDTO project)
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.CompanyId == companyId)
+            {
+
+                bool InAdminRole = User.IsInRole("Admin");
+                bool InPMRole = User.IsInRole("ProjectManager");
+
+                UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, companyId);
+
+                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                {
+
+                    try
+                    {
+                        ProjectDTO createdProject = await _projectService.AddProjectAsync(project, companyId, UserId);
+
+                        return Ok(createdProject);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return BadRequest();
+                    }
+                }
+                return BadRequest();
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("{projectId:int}")] // api/projects/5
+        public async Task<IActionResult> UpdateProject([FromRoute] int projectId,
+                                                       [FromBody] ProjectDTO project)
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.CompanyId == companyId)
+            {
+
+                bool InAdminRole = User.IsInRole("Admin");
+                bool InPMRole = User.IsInRole("ProjectManager");
+
+                UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, companyId);
+                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                {
+                    try
+                    {
+                        await _projectService.UpdateProjectAsync(project, companyId);
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return BadRequest();
+                    }
+
+                }
+                return BadRequest();
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("{projectId:int}/archived")] // api/projects/5/archived
+        public async Task<IActionResult> RestoreProject([FromRoute] int projectId)
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.CompanyId == companyId)
+            {
+
+                bool InAdminRole = User.IsInRole("Admin");
+                bool InPMRole = User.IsInRole("ProjectManager");
+
+                UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
+                if (!InAdminRole || InPMRole && manager.UserId == UserId)
+                {
+                    try
+                    {
+                        await _projectService.RestoreProjectAsync(projectId, companyId);
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return Problem();
+                    }
+
+                }
+                return BadRequest();
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("{projectId:int}/active")]
+        public async Task<IActionResult> ArchiveProject([FromRoute] int projectId)
+        {
+            int companyId = _companyId ?? 0;
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.CompanyId == companyId)
+            {
+
+                bool InAdminRole = User.IsInRole("Admin");
+                bool InPMRole = User.IsInRole("ProjectManager");
+
+                UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
+                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                {
+                    try
+                    {
+                        await _projectService.ArchiveProjectAsync(projectId, companyId);
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return Problem();
+                    }
+
+                }
+                return BadRequest();
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("{projectId:int}/manager")]
+        public async Task<IActionResult> RemoveManagerFromProject([FromRoute] int projectId)
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.CompanyId == companyId)
+            {
+
+                bool InAdminRole = User.IsInRole("Admin");
+
+                if (InAdminRole)
+                {
+
+                    try
+                    {
+                        await _projectService.RemoveProjectManagerAsync(projectId, UserId);
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return Problem();
+                    }
+                }
+
+                return BadRequest();
+            }
             return BadRequest();
         }
 
@@ -229,24 +333,34 @@ namespace TheBugInspector.Controllers
                                                                  [FromBody] string userId)
         {
             int companyId = _companyId ?? 0;
-            bool InAdminRole = User.IsInRole("Admin");
-            bool InPMRole = User.IsInRole("ProjectManager");
 
-            if (InAdminRole || InPMRole)
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.CompanyId == companyId)
             {
 
-                try
-                {
-                    await _projectService.RemoveMemberFromProjectAsync(projectId, userId, UserId);
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    return Problem();
-                }
-            }
+                bool InAdminRole = User.IsInRole("Admin");
+                bool InPMRole = User.IsInRole("ProjectManager");
 
+                UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
+
+                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                {
+
+                    try
+                    {
+                        await _projectService.RemoveMemberFromProjectAsync(projectId, userId, UserId);
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return Problem();
+                    }
+                }
+
+                return BadRequest();
+            }
             return BadRequest();
         }
 
@@ -255,24 +369,33 @@ namespace TheBugInspector.Controllers
                                                                  [FromBody] string userId)
         {
             int companyId = _companyId ?? 0;
-            bool InAdminRole = User.IsInRole("Admin");
-            bool InPMRole = User.IsInRole("ProjectManager");
+            var user = await _userManager.GetUserAsync(User);
 
-            if (InAdminRole || InPMRole)
+            if (user.CompanyId == companyId)
             {
 
-                try
-                {
-                    await _projectService.AddMemberToProjectAsync(projectId, userId, UserId);
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    return Problem();
-                }
-            }
+                bool InAdminRole = User.IsInRole("Admin");
+                bool InPMRole = User.IsInRole("ProjectManager");
 
+                UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
+
+                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                {
+
+                    try
+                    {
+                        await _projectService.AddMemberToProjectAsync(projectId, userId, UserId);
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return Problem();
+                    }
+                }
+
+                return BadRequest();
+            }
             return BadRequest();
         }
 
@@ -281,23 +404,30 @@ namespace TheBugInspector.Controllers
                                                                  [FromBody] string userId)
         {
             int companyId = _companyId ?? 0;
-            bool InAdminRole = User.IsInRole("Admin");
+            var user = await _userManager.GetUserAsync(User);
 
-            if (InAdminRole)
+            if (user.CompanyId == companyId)
             {
 
-                try
-                {
-                    await _projectService.AssignProjectManagerAsync(projectId, userId, UserId);
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    return Problem();
-                }
-            }
+                bool InAdminRole = User.IsInRole("Admin");
 
+                if (InAdminRole)
+                {
+
+                    try
+                    {
+                        await _projectService.AssignProjectManagerAsync(projectId, userId, UserId);
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return Problem();
+                    }
+                }
+
+                return BadRequest();
+            }
             return BadRequest();
         }
     }
