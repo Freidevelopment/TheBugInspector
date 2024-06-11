@@ -1,5 +1,6 @@
 ﻿@page "/tickets/Index/{id:int}"
 
+@using FreiBlogBuilder.Client.Helpers
 @using TheBugInspector.Client.Components.UI.Projects
 @using TheBugInspector.Client.Components.UI.Tickets
 @using TheBugInspector.Client.Helpers
@@ -173,7 +174,30 @@ else
 {
     <!-- Modal -->
     <div class="modal fade" id="AttachmentModal" tabindex="-1" aria-labelledby="AttachmentModal" aria-hidden="true">
-        <TicketAttachmentModal TicketId="ticket.Id" />
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <EditForm Model="newAttachment" OnSubmit="HandleSubmit" class="vstack gap-1">
+                    <DataAnnotationsValidator />
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="AttachmentLabel">Add File to Ticket</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <InputFile OnChange="e => newFile = e.File" />
+                        <InputText @bind-Value="newAttachment.Description"
+                                   class="form-control"
+                                   placeholder="Description (optional)">
+                        </InputText>
+                        <ValidationMessage For="() => newAttachment" />
+                        <span class="text-danger">@ErrorMessage</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Upload</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
 
     </div>
 
@@ -186,9 +210,15 @@ else
 
     [CascadingParameter]
     private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    [Parameter]
+    public EventCallback OnChange { get; set; }
     #endregion
 
     #region State
+
+    private TicketAttachmentDTO newAttachment = new();
+    private IBrowserFile? newFile; // <- this is bound to the file input element
     private TicketDTO? ticket;
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
@@ -215,6 +245,11 @@ else
                 if (ticket is not null)
                 {
                     project = await ProjectService.GetProjectByIdAsync(ticket.ProjectId, userInfo.CompanyId);
+
+                    // fill out the fields we know about already
+                    newAttachment.UserId = userInfo.UserId;
+                    newAttachment.TicketId = ticket.Id;
+                    newAttachment.Created = DateTime.Now;
 
                     if (project is not null)
                     {
@@ -324,7 +359,68 @@ else
         }
     }
 
-    
+    private async Task HandleSubmit()
+    {
+        if (newFile is not null)
+        {
+            ErrorMessage = string.Empty;
+
+            if (newFile.Size > ImageHelper.MaxFileSize)
+            {
+                ErrorMessage = "The File is too large to send";
+            }
+            else
+            {
+
+
+                try
+                {
+
+                    // get the byte[] and ContentType from the selected file
+                    using var stream = newFile.OpenReadStream(ImageHelper.MaxFileSize);
+                    using var ms = new MemoryStream();
+                    await stream.CopyToAsync(ms);
+
+                    byte[] fileData = ms.ToArray();
+                    string fileType = newFile.ContentType;
+                    newAttachment.FileName = newFile.Name;
+
+                    // send the model and file data to the service
+                    await TicketService.AddTicketAttachment(newAttachment,
+                                                            fileData,
+                                                            fileType,
+                                                            userInfo.CompanyId);
+
+
+                }
+                catch (Exception ex)
+                {
+                    // TODO: display an error message if, e.g. file is too big
+                    // or there was an error uploading the file
+                    ErrorMessage = "The File is either too large to send or there was an error or there was and error uploading the file";
+                    Console.WriteLine(ex);
+                }
+
+                // reset the form after this was successful
+                newFile = null;
+                newAttachment = new()
+                    {
+
+                        UserId = userInfo.UserId,
+                        TicketId = ticket.Id,
+                        Created = DateTime.Now
+                    };
+
+
+
+                // this can be replaced with however you want to update the page
+                // after a file was saved
+                await OnChange.InvokeAsync();
+
+                ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
+            }
+        }
+    }
 
 
     #endregion

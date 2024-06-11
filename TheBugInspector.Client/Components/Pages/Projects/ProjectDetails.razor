@@ -39,7 +39,7 @@
         </div>
     </div>
     <span class="text-danger">@ErrorMessage</span>
-    @if (project is not null && projectMembers is not null && projectManager is not null)
+    @if (project is not null)
     {
         <ProjectDetailsCard Project="project"
                             ProjectManager="projectManager"
@@ -47,9 +47,9 @@
 
 
         <AuthorizeView Context="AdjustProjectMembers">
-            @if (userInfo is not null && projectManager is not null)
+            @if (userInfo is not null)
             {
-                @if (AdjustProjectMembers.User.IsInRole("Admin") || AdjustProjectMembers.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                @if (AdjustProjectMembers.User.IsInRole("Admin") || projectManager is not null && AdjustProjectMembers.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
                 {
                     <div class="text-end mt-3">
                         <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#MemberAssignmentmodal" aria-expanded="false" aria-controls="collapseExample">
@@ -92,104 +92,110 @@
         </AuthorizeView>
 
         <h1 class="mt-3">Active Project Tickets</h1>
-        <table class="table table-hover table-info mt-5">
-            <thead>
-                <tr>
-                    <th scope="col">Ticket Name</th>
-                    <th scope="col">Ticket Created on</th>
-                    <th scope="col">Ticket Updated on</th>
-                    <th scope="col">Ticket Type</th>
-                    <th scope="col">Ticket Priority</th>
-                    <th scope="col">Ticket Status</th>
-                    <th scope="col">Ticket Submitter</th>
-                    <th scope="col">Ticket Developer</th>
-                    <th scope="col">Number of Comments</th>
-                    <AuthorizeView Context="TicketAssignment">
-                        @if (projectManager is not null && userInfo is not null)
-                        {
-                            @if (TicketAssignment.User.IsInRole("Admin") ||
-                           TicketAssignment.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
-                            {
-                                <th scope="col">Archive Ticket</th>
-                                <th scope="col">Assign Developer</th>
+        <div class="table-responsive">
 
+            <table class="table table-hover table-bordered border-info mt-5">
+                <thead>
+                    <tr>
+                        <th scope="col">Ticket Name</th>
+                        <th scope="col">Ticket Created on</th>
+                        <th scope="col">Ticket Updated on</th>
+                        <th scope="col">Ticket Type</th>
+                        <th scope="col">Ticket Priority</th>
+                        <th scope="col">Ticket Status</th>
+                        <th scope="col">Ticket Submitter</th>
+                        <th scope="col">Ticket Developer</th>
+                        <th scope="col">Number of Comments</th>
+                        <AuthorizeView Context="TicketAssignment">
+                            @if (projectManager is not null && userInfo is not null)
+                            {
+                                @if (TicketAssignment.User.IsInRole("Admin") ||
+                               TicketAssignment.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId && projectManager is not null)
+                                {
+                                    <th scope="col">Archive Ticket</th>
+                                    <th scope="col">Assign Developer</th>
+
+
+                                }
 
                             }
-
-                        }
-                    </AuthorizeView>
-                </tr>
-            </thead>
-            <tbody>
-                @if (userInfo is not null && projectManager is not null && projectMembers is not null)
-                {
-
-                    @foreach (TicketDTO ticket in project.Tickets.Where(p => p.IsArchived == false).OrderByDescending(p => p.Created))
+                        </AuthorizeView>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (userInfo is not null)
                     {
-                        <TicketProjectDetailsTable Ticket="ticket"
-                                                   UserInfo="userInfo"
-                                                   ProjectManager="projectManager"
-                                                   Members="projectMembers"
-                                                   OnArchive="HandleArchive"
-                                                   OnRestore="HandleRestore"
-                                                   OnAssignDeveloper="AssignDeveloper" />
+
+                        @foreach (TicketDTO ticket in project.Tickets.Where(p => p.IsArchived == false).OrderByDescending(p => p.Created))
+                        {
+                            <TicketProjectDetailsTable Ticket="ticket"
+                                                       UserInfo="userInfo"
+                                                       ProjectManager="projectManager"
+                                                       Members="projectMembers"
+                                                       OnArchive="HandleArchive"
+                                                       OnRestore="HandleRestore"
+                                                       OnAssignDeveloper="AssignDeveloper" />
+                        }
+
                     }
+                </tbody>
 
-                }
-            </tbody>
-
-        </table>
-        @if(project.Tickets.Any(t => t.IsArchived == true))
+            </table>
+        </div>
+        @if (project.Tickets.Any(t => t.IsArchived == true))
         {
-            
-        <h1 class="mt-3">Archived Project Tickets</h1>
-        <table class="table table-hover table-info mt-5">
-            <thead>
-                <tr>
-                    <th scope="col">Ticket Name</th>
-                    <th scope="col">Ticket Created on</th>
-                    <th scope="col">Ticket Updated on</th>
-                    <th scope="col">Ticket Type</th>
-                    <th scope="col">Ticket Priority</th>
-                    <th scope="col">Ticket Status</th>
-                    <th scope="col">Ticket Submitter</th>
-                    <th scope="col">Ticket Developer</th>
-                    <th scope="col">Number of Comments</th>
-                    <AuthorizeView Context="TicketAssignment">
-                        @if (projectManager is not null && userInfo is not null)
+
+            <h1 class="mt-3">Archived Project Tickets</h1>
+            <div class="table-responsive">
+
+                <table class="table table-hover table-bordered border-success mt-5 table-responsive">
+                    <thead>
+                        <tr>
+                            <th scope="col">Ticket Name</th>
+                            <th scope="col">Ticket Created on</th>
+                            <th scope="col">Ticket Updated on</th>
+                            <th scope="col">Ticket Type</th>
+                            <th scope="col">Ticket Priority</th>
+                            <th scope="col">Ticket Status</th>
+                            <th scope="col">Ticket Submitter</th>
+                            <th scope="col">Ticket Developer</th>
+                            <th scope="col">Number of Comments</th>
+                            <AuthorizeView Context="TicketAssignment">
+                                @if (projectManager is not null && userInfo is not null)
+                                {
+                                    @if (TicketAssignment.User.IsInRole("Admin") ||
+                                   TicketAssignment.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                                    {
+                                        <th scope="col">Archive Ticket</th>
+                                        <th scope="col">Assign Developer</th>
+
+
+                                    }
+
+                                }
+                            </AuthorizeView>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (userInfo is not null)
                         {
-                            @if (TicketAssignment.User.IsInRole("Admin") ||
-                           TicketAssignment.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+
+                            @foreach (TicketDTO ticket in project.Tickets.Where(p => p.IsArchived == true).OrderByDescending(p => p.Created))
                             {
-                                <th scope="col">Archive Ticket</th>
-                                <th scope="col">Assign Developer</th>
-
-
+                                <TicketProjectDetailsTable Ticket="ticket"
+                                                           UserInfo="userInfo"
+                                                           ProjectManager="projectManager"
+                                                           Members="projectMembers"
+                                                           OnArchive="HandleArchive"
+                                                           OnRestore="HandleRestore"
+                                                           OnAssignDeveloper="AssignDeveloper" />
                             }
 
                         }
-                    </AuthorizeView>
-                </tr>
-            </thead>
-            <tbody>
-                @if (userInfo is not null && projectManager is not null && projectMembers is not null)
-                {
+                    </tbody>
 
-                    @foreach (TicketDTO ticket in project.Tickets.Where(p => p.IsArchived == true).OrderByDescending(p => p.Created))
-                    {
-                        <TicketProjectDetailsTable Ticket="ticket"
-                                                   UserInfo="userInfo"
-                                                   ProjectManager="projectManager"
-                                                   Members="projectMembers"
-                                                   OnArchive="HandleArchive"
-                                                   OnRestore="HandleRestore"
-                                                   OnAssignDeveloper="AssignDeveloper" />
-                    }
-
-                }
-            </tbody>
-
-        </table>
+                </table>
+            </div>
         }
 
 

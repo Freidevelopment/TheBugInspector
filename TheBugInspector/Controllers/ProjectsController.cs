@@ -34,7 +34,7 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 try
@@ -58,7 +58,7 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 try
@@ -80,7 +80,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 try
@@ -102,7 +102,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 try
@@ -125,7 +125,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 try
@@ -148,7 +148,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 try
@@ -171,15 +171,14 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 bool InAdminRole = User.IsInRole("Admin");
                 bool InPMRole = User.IsInRole("ProjectManager");
 
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, companyId);
 
-                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                if (InAdminRole ||  InPMRole)
                 {
 
                     try
@@ -206,14 +205,14 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 bool InAdminRole = User.IsInRole("Admin");
                 bool InPMRole = User.IsInRole("ProjectManager");
 
                 UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, companyId);
-                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                if (InAdminRole || manager is not null && InPMRole && manager.UserId == UserId)
                 {
                     try
                     {
@@ -238,14 +237,14 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 bool InAdminRole = User.IsInRole("Admin");
                 bool InPMRole = User.IsInRole("ProjectManager");
 
                 UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
-                if (!InAdminRole || InPMRole && manager.UserId == UserId)
+                if (InAdminRole || manager is not null && InPMRole && manager.UserId == UserId)
                 {
                     try
                     {
@@ -271,14 +270,14 @@ namespace TheBugInspector.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 bool InAdminRole = User.IsInRole("Admin");
                 bool InPMRole = User.IsInRole("ProjectManager");
 
                 UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
-                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                if (InAdminRole || manager is not null && InPMRole && manager.UserId == UserId)
                 {
                     try
                     {
@@ -303,7 +302,7 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 bool InAdminRole = User.IsInRole("Admin");
@@ -336,7 +335,7 @@ namespace TheBugInspector.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 bool InAdminRole = User.IsInRole("Admin");
@@ -344,7 +343,7 @@ namespace TheBugInspector.Controllers
 
                 UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
 
-                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                if (InAdminRole || manager is not null && InPMRole && manager.UserId == UserId)
                 {
 
                     try
@@ -371,7 +370,7 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 bool InAdminRole = User.IsInRole("Admin");
@@ -379,7 +378,7 @@ namespace TheBugInspector.Controllers
 
                 UserDTO? manager = await _projectService.GetProjectManagerAsync(projectId, companyId);
 
-                if (InAdminRole || InPMRole && manager.UserId == UserId)
+                if (InAdminRole || manager is not null && InPMRole && manager.UserId == UserId)
                 {
 
                     try
@@ -406,7 +405,7 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 bool InAdminRole = User.IsInRole("Admin");

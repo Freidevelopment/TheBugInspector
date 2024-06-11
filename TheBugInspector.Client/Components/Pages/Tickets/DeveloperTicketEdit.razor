@@ -82,7 +82,7 @@
             Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
-        Nav.NavigateTo("/tickets/Index");
+        Nav.NavigateTo($"/tickets/Index/{ticket.Id}");
     }
     #endregion
 }

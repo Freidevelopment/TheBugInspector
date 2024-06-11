@@ -9,7 +9,7 @@
 
 <PageTitle>BugInspector | Company</PageTitle>
 
-@if (company is not null)
+@if (company is not null && userInfo is not null)
 {
 
 
@@ -23,7 +23,7 @@
                 <h3>Description</h3>
                 @company.Description
             </div>
-            <div class="row mt-5">
+            <div class="row mt-5 g-3">
 
                 <div class="col-md-6">
                     <a href="/projects/Index" class="text-primary"><u>Active Projects</u></a>
@@ -32,22 +32,30 @@
                     <a href="/archived/projects/Index" class="text-primary"><u>Archived Projects</u></a>
                 </div>
 
-                <div class="col-md-1">
-                </div>
-                <div class="col mt-3">
-                    <div>
-                        <AuthorizeView Context="AdminCompanyControl">
-                            @if (AdminCompanyControl.User.IsInRole("Admin") && Members.Any(m => m.UserId == userInfo.UserId) && company.Id == userInfo.CompanyId)
-                            {
-                                <a href="/Company/Edit/@company.Id" class="btn btn-primary text-end">
-                                    Edit Company Page
-                                </a>
-                            }
-                        </AuthorizeView>
-                    </div>
-                </div>
+
+
+
+                <AuthorizeView Context="AdminCompanyControl">
+                    @if (AdminCompanyControl.User.IsInRole("Admin") && company.Id == userInfo.CompanyId)
+                    {
+                        <div class="col-md-6">
+                            <a href="/Company/Edit/@company.Id" class="btn btn-primary">
+                                Edit Company Page
+                            </a>
+
+                        </div>
+                        <div class="col-md-6">
+                            <a href="/companies/manageRoles" class="btn btn-primary">
+                                Edit Employee Roles
+                            </a>
+
+                        </div>
+                    }
+                </AuthorizeView>
+
+
             </div>
-            <div class="mt-5 mb-5">
+            <div class="mt-5 mb-3">
                 <div>
                     <h3>Company Members</h3>
                 </div>

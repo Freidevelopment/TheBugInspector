@@ -65,15 +65,18 @@
                             {
                                 @foreach (UserDTO? user in Members)
                                 {
-
-
-                                    if (user.Role == Roles.Developer.ToString())
+                                    if (user.UserId != Ticket.DeveloperUserId)
                                     {
-                                        <option value="@user.UserId">
-                                            @user.FullName: @user.Role
-                                        </option>
 
 
+                                        if (user.Role == Roles.Developer.ToString())
+                                        {
+                                            <option value="@user.UserId">
+                                                @user.FullName: @user.Role
+                                            </option>
+
+
+                                        }
                                     }
 
                                 }

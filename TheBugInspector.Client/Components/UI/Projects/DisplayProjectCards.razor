@@ -3,7 +3,7 @@
 @if (Project is not null)
 {
     <!-- Header and footer -->
-    <div class="card cad-hover text-center h-100 w-100">
+    <div class="card card-hover bg-faded-success border-success text-center h-100 w-100">
         <div class="card-header">
             <div class="vstack text-start">
                 <div>
@@ -69,7 +69,7 @@
                     @if (AdminView.User.IsInRole("Admin") && Project.IsArchived == false)
                     {
 
-                        <div class="btn-group dropdown">
+                        @* <div class="btn-group dropdown">
 
                             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-controls="assignManagerdropdown" aria-expanded="false">
                                 Assign Project Manager
@@ -89,7 +89,7 @@
 
                                 }
                             </div>
-                        </div>
+                        </div> *@
 
                         <div>
 

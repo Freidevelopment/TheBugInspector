@@ -22,12 +22,12 @@
 
         </div>
         <AuthorizeView Context="ProjectManagerView">
-            @if(ProjectManagerView.User.IsInRole(Roles.ProjectManager.ToString()))
+            @if (ProjectManagerView.User.IsInRole(Roles.ProjectManager.ToString()))
             {
-            <div class="col text-end">
-                <a href="/projects/create" class="btn btn-primary">Create a Project?</a>
-            </div>
-                
+                <div class="col text-end">
+                    <a href="/projects/create" class="btn btn-primary">Create a Project?</a>
+                </div>
+
             }
 
         </AuthorizeView>
@@ -35,7 +35,7 @@
 
     @if (userInfo is not null)
     {
-        @if (myProjects is not null)
+        @if (myProjects.Count() > 0)
         {
 
 
@@ -70,6 +70,21 @@
         else
         {
             <span class="text-danger">@ErrorMessage</span>
+            <AuthorizeView Context="ProjectManagerView">
+                @if (ProjectManagerView.User.IsInRole(Roles.ProjectManager.ToString()))
+                {
+                    <h1>
+                        I am sorry but you have not been assinged to any Projects yet but you will be assigned shortly.
+                        Or as a Project Manager you may create a new project.
+                    </h1>
+
+                }
+                else
+                {
+                    <h1>I am sorry but you have not been assinged to any Projects yet but you will be assigned shortly</h1>
+
+                }
+            </AuthorizeView>
         }
     }
 

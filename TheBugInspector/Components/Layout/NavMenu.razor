@@ -7,9 +7,9 @@
 <header class="navbar navbar-expand-lg bg-light shadow-sm">
     <div class="container">
         <!-- Navbar Logo-->
-        <a href="#" class="navbar-brand">
-            <img src="assets/img/logo.svg" width="47" alt="Silicon">
-            Silicon
+        <a href="/" class="navbar-brand">
+            <img src="/Images/BugInspector.svg" width="50">
+            Bug Inspector
         </a>
 
         <!-- Mobile menu toggler (Hanburger) -->
@@ -21,21 +21,23 @@
         <nav id="navbarCollapse1" class="collapse navbar-collapse">
             <hr class="d-lg-none">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+                <li class="nav-item me-auto ">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                        Home
+                    </NavLink>
                 </li>
                 <AuthorizeView Context="NavbarMenu">
                     <Authorized>
-                        <li class="nav-item">
+                        <li class="nav-item me-auto">
                             <NavLink class="nav-link" href="/companies/Index">
                                 Company
                             </NavLink>
                         </li>
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown me-auto">
                             <NavLink class="nav-link dropdown-toggle" href="author" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 Projects
                             </NavLink>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu  dropdown-menu-end">
                                 @if (NavbarMenu.User.IsInRole("Admin"))
                                 {
                                     <li>
@@ -61,25 +63,39 @@
                         </li>
                         @if (NavbarMenu.User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <NavLink class="nav-link" href="/tickets/Index">
-                                    Tickets Index
+                            <li class="nav-item dropdown me-auto">
+                                <NavLink class="nav-link dropdown-toggle" href="author" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    Tickets
                                 </NavLink>
+                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                    <li>
+                                        <a class="dropdown-item" href="/tickets/active/Index">
+                                            Active Tickets Index
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/tickets/archived/Index">
+                                            Archived Tickets Index
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
 
                         }
                         else
                         {
-                            <li class="nav-item">
+                            <li class="nav-item me-auto ">
                                 <NavLink class="nav-link" href="/tickets/Personal/Index">
                                     My Tickets
                                 </NavLink>
                             </li>
                         }
-                        <ul class="navbar-nav ms-auto mb-2 mb-md-0">
-                            <li class="nav-item dropdown ms-auto">
-                                <NavLink class="nav-link dropdown-toggle" href="Account/Manage" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                                    @(NavbarMenu.User?.Identity?.Name ?? "Account")
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            <li class="nav-item dropdown">
+                                <NavLink class="nav-link dropdown-toggle" href="Account" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown">
+                                    <i class="bi bi-stack"></i>
+                                    <span>Account</span>
                                 </NavLink>
                                 <ul class="dropdown-menu dropdown-menu-end text-nowrap px-2 m-2">
                                     <AuthorizeView Context="AccountManager">
@@ -90,6 +106,7 @@
 
                                             <li class="nav-item">
                                                 <NavLink class="nav-link" href="Account/Manage">
+                                                    <img class="profile-picture" src="@userInfo?.ProfilePictureUrl" />
                                                     <span>Manage Account: @userInfo?.FullName</span>
                                                 </NavLink>
                                             </li>
@@ -104,20 +121,7 @@
                                                 </form>
                                             </li>
                                         </Authorized>
-                                        <NotAuthorized>
-                                            <li class="nav-iem">
-                                                <NavLink class="nav-link" href="Account/Register">
-                                                    <i class="bi bi-person"></i>
-                                                    <span>Register</span>
-                                                </NavLink>
-                                            </li>
-                                            <li class="nav-item">
-                                                <NavLink class="nav-link" href="Account/Login">
-                                                    <i class="bi bi-person-badge"></i>
-                                                    <span>Login</span>
-                                                </NavLink>
-                                            </li>
-                                        </NotAuthorized>
+
                                     </AuthorizeView>
                                 </ul>
                             </li>
@@ -126,9 +130,29 @@
                     </Authorized>
 
                     <NotAuthorized>
-                        <li class="nav-item">
-                            <NavLink class="nav-link" href="Account/Login" Match="NavLinkMatch.All">Login / Register</NavLink>
-                        </li>
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            <li class="nav-item dropdown">
+                                <NavLink Match=NavLinkMatch.Prefix class="nav-link dropdown-toggle" href="Account" data-bs-toggle="dropdown">
+                                    <i class="bi bi-stack"></i>
+                                    <span>Account</span>
+                                </NavLink>
+                                <ul class="dropdown-menu dropdown-menu-end text-nowrap px-2 m-2">
+
+                                    <li class="nav-iem">
+                                        <NavLink class="nav-link" href="Account/Register">
+                                            <i class="bi bi-person"></i>
+                                            <span>Register</span>
+                                        </NavLink>
+                                    </li>
+                                    <li class="nav-item">
+                                        <NavLink class="nav-link" href="Account/Login">
+                                            <i class="bi bi-person-badge"></i>
+                                            <span>Login</span>
+                                        </NavLink>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                     </NotAuthorized>
                 </AuthorizeView>
 

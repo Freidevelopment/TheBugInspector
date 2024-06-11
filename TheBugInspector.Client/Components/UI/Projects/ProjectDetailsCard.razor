@@ -2,12 +2,24 @@
 
 @if (Project is not null && Members is not null)
 {
+    if(Project.IsArchived == true)
+    {
+        backgroundColor = "border-primary bg-faded-primary";
+    }
+    else
+    {
+        backgroundColor = "bg-faded-success border-success";
+    }
 
     <div class="card @backgroundColor">
         <div class="card-header">
             <div class="row">
                 <div class="col-8 text-start">
                     <h3>@Project.Name</h3>
+                    @if(Project.IsArchived == true)
+                    {
+                        <h4>This Project has been Archived</h4>
+                    }
                 </div>
                 <div class="col-4">
                     @if (ProjectManager is not null)
@@ -22,66 +34,72 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-10">
-                    <h5 class="card-title">Project Description</h5>
-                    <p class="card-text">@Project.Description</p>
+
+            <div class=" text-center">
+                <h5 class="card-title">Project Description</h5>
+                <p class="card-text">@Project.Description</p>
+            </div>
+            <div class="row row-cols-md-3 mt-4">
+                <div class="col">
+                    <h2>Created:</h2>
+                    <h4>@Project.Created.ToString("g")</h4>
                 </div>
-                <div class="col-2 vstack">
-                    <div>
-                        <h2>Created</h2>
-                        <span>@Project.Created.ToString("g")</span>
-                        <h2>Start Date</h2>
-                        <span>@Project.StartDate.ToString("D")</span>
-                        <h2>End Date</h2>
-                        <span>@Project.EndDate.ToString("D")</span>
-                    </div>
+                <div class="col">
+                    <h2>Start Date:</h2>
+                    <h4>@Project.StartDate.ToString("D")</h4>
+
+                </div>
+                <div class="col">
+                    <h2>End Date:</h2>
+                    <h4>@Project.EndDate.ToString("D")</h4>
+
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-6 text-center">
                     <!-- Dropdown -->
-                    <div class="btn-group dropdown">
-                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Developers assigned to Project
-                        </button>
-                        <div class="dropdown-menu my-1">
-                            @if (Members is not null)
-                            {
-                                @foreach (UserDTO? developer in Members.Where(r => r?.Role == nameof(Roles.Developer)))
-                                {
-                                    if (developer is not null)
-                                    {
-                                        <a class="dropdown-item">@developer.FullName</a>
 
-                                    }
-                                }
+                    <h6>
+                        Developers assigned to Project
+                    </h6>
+
+                    @if (Members is not null)
+                    {
+                        @foreach (UserDTO? developer in Members.Where(r => r?.Role == nameof(Roles.Developer)))
+                        {
+                            if (developer is not null)
+                            {
+                                <h6 class="text-primary">@developer.FullName</h6>
 
                             }
-                        </div>
-                    </div>
+                        }
+
+                    }
+
+
                 </div>
                 <div class="col-6 text-center">
                     <!-- Dropdown -->
-                    <div class="btn-group dropdown">
-                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Submitters assigned to Project
-                        </button>
-                        <div class="dropdown-menu my-1">
-                            @if (Members is not null)
-                            {
-                                @foreach (UserDTO? submitter in Members.Where(r => r?.Role == nameof(Roles.Submitter)))
-                                {
-                                    if (submitter is not null)
-                                    {
-                                        <a class="dropdown-item">@submitter.FullName</a>
 
-                                    }
-                                }
+                    <h6>
+                        Submitters assigned to Project:
+                    </h6>
+
+                    @if (Members is not null)
+                    {
+                        @foreach (UserDTO? submitter in Members.Where(r => r?.Role == nameof(Roles.Submitter)))
+                        {
+                            if (submitter is not null)
+                            {
+                                <h6 class="text-primary">@submitter.FullName</h6>
 
                             }
-                        </div>
-                    </div>
+                        }
+
+                    }
+
+
                 </div>
 
             </div>
@@ -99,7 +117,7 @@
     public UserDTO? ProjectManager { get; set; }
 
     [Parameter, EditorRequired]
-    public IEnumerable<UserDTO?> Members { get; set; }
+    public IEnumerable<UserDTO>? Members { get; set; }
 
     #endregion
 

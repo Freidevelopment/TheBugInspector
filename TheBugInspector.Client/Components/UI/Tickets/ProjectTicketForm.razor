@@ -148,8 +148,12 @@
     {
         try
         {
+            if (Project is not null && Ticket is not null)
+            {
 
-            await OnSubmit.InvokeAsync(Ticket);
+                Ticket.ProjectId = Project.Id;
+                await OnSubmit.InvokeAsync(Ticket);
+            }
         }
         catch (Exception ex)
         {

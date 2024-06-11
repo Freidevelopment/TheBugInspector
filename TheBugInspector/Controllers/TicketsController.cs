@@ -34,7 +34,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 IEnumerable<TicketDTO> tickets = [];
@@ -57,7 +57,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 IEnumerable<TicketDTO> tickets = [];
@@ -80,7 +80,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 IEnumerable<TicketDTO> tickets = [];
@@ -103,7 +103,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 try
@@ -126,7 +126,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 IEnumerable<TicketCommentDTO> comments = [];
@@ -150,7 +150,7 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 TicketCommentDTO? comment = new();
@@ -173,7 +173,7 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 try
@@ -196,11 +196,11 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
                 ProjectDTO? project = await _projectService.GetProjectByIdAsync(ticketDTO.ProjectId, companyId);
 
-                if (project.CompanyMembers.Any(t => t.UserId == UserId) || User.IsInRole("Admin"))
+                if (project is not null && project.CompanyMembers.Any(t => t.UserId == UserId) || User.IsInRole("Admin"))
                 {
 
                     try
@@ -227,29 +227,34 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 TicketDTO? ticket = await _ticketService.GetTicketByIdAsync(ticketId, companyId);
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
-
-                if (manager.UserId == UserId ||
-                   ticket.SubmitterUserId == UserId ||
-                   ticket.DeveloperUserId == UserId ||
-                   User.IsInRole("Admin"))
+                if (ticket is not null)
                 {
+                    UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
 
-                    try
-                    {
-                        await _ticketService.AddCommentAsync(commentDTO, companyId);
 
-                        return Ok();
-                    }
-                    catch (Exception ex)
+                    if (manager is not null && manager.UserId == UserId ||
+                       ticket.SubmitterUserId == UserId ||
+                       ticket.DeveloperUserId == UserId ||
+                       User.IsInRole("Admin"))
                     {
-                        Console.WriteLine(ex);
-                        return BadRequest();
+
+                        try
+                        {
+                            await _ticketService.AddCommentAsync(commentDTO, companyId);
+
+                            return Ok();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            return BadRequest();
+                        }
                     }
+                    return BadRequest();
                 }
                 return BadRequest();
             }
@@ -271,43 +276,52 @@ namespace TheBugInspector.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             var ticket = await _ticketService.GetTicketByIdAsync(id, user!.CompanyId);
-            ProjectDTO? project = await _projectService.GetProjectByIdAsync(ticket.ProjectId, user.CompanyId);
-            UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, user.CompanyId);
-
-            if (user.CompanyId == _companyId)
+            if (ticket is not null)
             {
-
-                if (ticket is null)
+                ProjectDTO? project = await _projectService.GetProjectByIdAsync(ticket.ProjectId, user.CompanyId);
+                if (project is not null)
                 {
-                    return NotFound();
-                }
+                    UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, user.CompanyId);
 
-                if (User.IsInRole("Admin") ||
-                   manager.UserId == UserId ||
-                   ticket.SubmitterUserId == UserId ||
-                   ticket.DeveloperUserId == UserId)
-                {
 
-                    attachment.UserId = user!.Id;
-                    attachment.Created = DateTimeOffset.Now;
-
-                    if (string.IsNullOrWhiteSpace(attachment.FileName))
+                    if (user.CompanyId == _companyId)
                     {
-                        attachment.FileName = file.FileName;
-                    }
 
-                    // ImageHelper was renamed to UploadHelper!
-                    FileUpload upload = await FileHelper.GetFileUploadAsync(file);
+                        if (ticket is null)
+                        {
+                            return NotFound();
+                        }
 
-                    try
-                    {
-                        var newAttachment = await _ticketService.AddTicketAttachment(attachment, upload.Data!, upload.Type!, user!.CompanyId);
-                        return Ok(newAttachment);
+                        if (User.IsInRole("Admin") ||
+                           manager is not null && manager.UserId == UserId ||
+                           ticket.SubmitterUserId == UserId ||
+                           ticket.DeveloperUserId == UserId)
+                        {
+
+                            attachment.UserId = user!.Id;
+                            attachment.Created = DateTimeOffset.Now;
+
+                            if (string.IsNullOrWhiteSpace(attachment.FileName))
+                            {
+                                attachment.FileName = file.FileName;
+                            }
+
+                            // ImageHelper was renamed to UploadHelper!
+                            FileUpload upload = await FileHelper.GetFileUploadAsync(file);
+
+                            try
+                            {
+                                var newAttachment = await _ticketService.AddTicketAttachment(attachment, upload.Data!, upload.Type!, user!.CompanyId);
+                                return Ok(newAttachment);
+                            }
+                            catch
+                            {
+                                return Problem();
+                            }
+                        }
+                        return BadRequest();
                     }
-                    catch
-                    {
-                        return Problem();
-                    }
+                    return BadRequest();
                 }
                 return BadRequest();
             }
@@ -320,30 +334,35 @@ namespace TheBugInspector.Controllers
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
 
                 ProjectDTO? project = await _projectService.GetProjectByIdAsync(ticket.ProjectId, user.CompanyId);
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, user.CompanyId);
-
-                if (User.IsInRole("Admin") ||
-                   manager.UserId == UserId ||
-                   ticket.SubmitterUserId == UserId ||
-                   ticket.DeveloperUserId == UserId)
+                if (project is not null)
                 {
 
+                    UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, user.CompanyId);
 
-                    try
+                    if (User.IsInRole("Admin") ||
+                       manager is not null && manager.UserId == UserId ||
+                       ticket.SubmitterUserId == UserId ||
+                       ticket.DeveloperUserId == UserId)
                     {
-                        await _ticketService.UpdateTicketAsync(ticket, companyId, UserId);
-                        return Ok();
+
+
+                        try
+                        {
+                            await _ticketService.UpdateTicketAsync(ticket, companyId, UserId);
+                            return Ok();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            return Problem();
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                        return Problem();
-                    }
+                    return BadRequest();
                 }
                 return BadRequest();
             }
@@ -359,34 +378,38 @@ namespace TheBugInspector.Controllers
             string userId = _userManager.GetUserId(User)!;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 TicketDTO? ticket = await _ticketService.GetTicketByIdAsync(ticketCommentDTO.TicketId, companyId);
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
-
-
-                bool InAdminRole = User.IsInRole("Admin");
-                bool InPMRole = manager.UserId == userId;
-                bool IsSubmitter = UserId == ticketCommentDTO.UserId;
-
-                if (InAdminRole || InPMRole || IsSubmitter)
+                if (ticket != null)
                 {
 
-                    try
+                    UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
+
+
+                    bool InAdminRole = User.IsInRole("Admin");
+                    bool InPMRole = manager is not null && manager.UserId == userId;
+                    bool IsSubmitter = UserId == ticketCommentDTO.UserId;
+
+                    if (InAdminRole || InPMRole || IsSubmitter)
                     {
-                        await _ticketService.UpdateCommentAsync(ticketCommentDTO, companyId);
-                        return Ok();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                        return BadRequest(ex.Message);
+
+                        try
+                        {
+                            await _ticketService.UpdateCommentAsync(ticketCommentDTO, companyId);
+                            return Ok();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            return BadRequest(ex.Message);
+                        }
                     }
                 }
             }
 
-            return Problem();
+            return BadRequest();
 
         }
 
@@ -396,23 +419,27 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
                 TicketDTO? ticket = await _ticketService.GetTicketByIdAsync(ticketId, companyId);
-                ProjectDTO? project = await _projectService.GetProjectByIdAsync(ticket.ProjectId, companyId);
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, companyId);
+                if (ticket is not null)
+                {
+                    UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
 
-                if (User.IsInRole("Admin") || manager.UserId == UserId)
-                    try
-                    {
-                        await _ticketService.RestoreTicketAsync(ticketId, companyId);
-                        return Ok();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                        return Problem();
-                    }
+
+                    if (User.IsInRole("Admin") || manager is not null && manager.UserId == UserId)
+                        try
+                        {
+                            await _ticketService.RestoreTicketAsync(ticketId, companyId);
+                            return Ok();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            return Problem();
+                        }
+                }
+                return BadRequest();
             }
             return BadRequest();
         }
@@ -423,25 +450,29 @@ namespace TheBugInspector.Controllers
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
                 TicketDTO? ticket = await _ticketService.GetTicketByIdAsync(ticketId, companyId);
-                ProjectDTO? project = await _projectService.GetProjectByIdAsync(ticket.ProjectId, companyId);
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(project.Id, companyId);
-                if (User.IsInRole("Admin") || manager.UserId == UserId)
+                if (ticket is not null)
                 {
 
-                    try
+                    UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
+                    if (User.IsInRole("Admin") || manager is not null && manager.UserId == UserId)
                     {
-                        await _ticketService.ArchiveTicketAsync(ticketId, companyId);
-                        return Ok();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                        return Problem();
-                    }
 
+                        try
+                        {
+                            await _ticketService.ArchiveTicketAsync(ticketId, companyId);
+                            return Ok();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            return Problem();
+                        }
+
+                    }
+                    return BadRequest();
                 }
                 return BadRequest();
             }
@@ -456,31 +487,36 @@ namespace TheBugInspector.Controllers
             string userId = _userManager.GetUserId(User)!;
             var user = await _userManager.GetUserAsync(User);
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
 
                 TicketDTO? ticket = await _ticketService.GetTicketByIdAsync(ticketId, companyId);
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
-                TicketCommentDTO? comment = await _ticketService.GetTicketCommentByIdAsync(ticketId, companyId);
-
-                if (comment is not null)
+                if (ticket is not null)
                 {
-                    if (userId == comment.UserId || User.IsInRole("Admin") || manager.UserId == UserId)
+
+                    UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
+                    TicketCommentDTO? comment = await _ticketService.GetTicketCommentByIdAsync(ticketId, companyId);
+
+                    if (comment is not null)
                     {
-                        try
+                        if (userId == comment.UserId || User.IsInRole("Admin") || manager is not null && manager.UserId == UserId)
                         {
-                            await _ticketService.DeleteCommentAsync(commentId, ticketId);
-                            return NoContent();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex);
-                            return BadRequest(ex.Message);
+                            try
+                            {
+                                await _ticketService.DeleteCommentAsync(commentId, ticketId);
+                                return NoContent();
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                                return BadRequest(ex.Message);
+                            }
                         }
                     }
-                }
 
-                return Problem();
+                    return BadRequest();
+                }
+                return BadRequest();
             }
 
             return BadRequest();
@@ -494,20 +530,30 @@ namespace TheBugInspector.Controllers
             var user = await _userManager.GetUserAsync(User);
             int companyId = _companyId ?? 0;
 
-            if (user.CompanyId == companyId)
+            if (user is not null && user.CompanyId == companyId)
             {
                 TicketAttachmentDTO? attachment = await _ticketService.GetTicketAttachmentById(attachmentId, companyId);
-                TicketDTO? ticket = await _ticketService.GetTicketByIdAsync(attachment.TicketId, companyId);
-                UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
-
-                if (User.IsInRole("Admin") ||
-                    manager.UserId == UserId ||
-                    attachment.UserId == UserId)
+                if (attachment is not null)
                 {
-                    await _ticketService.DeleteTicketAttachment(attachmentId, user!.CompanyId);
 
-                    return NoContent();
+                    TicketDTO? ticket = await _ticketService.GetTicketByIdAsync(attachment.TicketId, companyId);
+                    if (ticket is not null)
+                    {
 
+                        UserDTO? manager = await _projectService.GetProjectManagerAsync(ticket.ProjectId, companyId);
+
+                        if (User.IsInRole("Admin") ||
+                            manager is not null && manager.UserId == UserId ||
+                            attachment.UserId == UserId)
+                        {
+                            await _ticketService.DeleteTicketAttachment(attachmentId, user!.CompanyId);
+
+                            return NoContent();
+
+                        }
+                        return BadRequest();
+                    }
+                    return BadRequest();
                 }
                 return BadRequest();
             }

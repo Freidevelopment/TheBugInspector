@@ -39,7 +39,7 @@
             <h1 class="text-danger">You are not able to create a ticket for this project</h1>
         }
     </AuthorizeView>
-    
+
 </div>
 
 @code {
@@ -98,7 +98,16 @@
             Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
-        Nav.NavigateTo("/tickets/Index");
+
+        if (project is not null)
+        {
+            Nav.NavigateTo($"/projects/details/{project.Id}");
+
+        }
+        else
+        {
+            Nav.NavigateTo($"/tickets/Personal/Index");
+        }
     }
     #endregion
 }

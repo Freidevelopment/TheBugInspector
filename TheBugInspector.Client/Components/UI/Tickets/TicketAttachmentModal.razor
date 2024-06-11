@@ -62,49 +62,58 @@
         {
             ErrorMessage = string.Empty;
 
-            // get the byte[] and ContentType from the selected file
-            using var stream = newFile.OpenReadStream();
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
-
-            byte[] fileData = ms.ToArray();
-            string fileType = newFile.ContentType;
-            newAttachment.FileName = newFile.Name;
-
-            try
+            if (newFile.Size > ImageHelper.MaxFileSize)
+            {
+                ErrorMessage = "The File is too large to send";
+            }
+            else
             {
 
-                // send the model and file data to the service
-                await TicketService.AddTicketAttachment(newAttachment,
-                                                        fileData,
-                                                        fileType,
-                                                        userInfo.CompanyId);
 
-
-            }
-            catch (Exception ex)
-            {
-                // TODO: display an error message if, e.g. file is too big
-                // or there was an error uploading the file
-                ErrorMessage = "The File is either too large to send or there was an error or there was and error uploading the file";
-                Console.WriteLine(ex);
-            }
-
-            // reset the form after this was successful
-            newFile = null;
-            newAttachment = new()
+                try
                 {
 
-                    UserId = userInfo.UserId,
-                    TicketId = TicketId,
-                    Created = DateTime.Now
-                };
+                    // get the byte[] and ContentType from the selected file
+                    using var stream = newFile.OpenReadStream(ImageHelper.MaxFileSize);
+                    using var ms = new MemoryStream();
+                    await stream.CopyToAsync(ms);
+
+                    byte[] fileData = ms.ToArray();
+                    string fileType = newFile.ContentType;
+                    newAttachment.FileName = newFile.Name;
+
+                    // send the model and file data to the service
+                    await TicketService.AddTicketAttachment(newAttachment,
+                                                            fileData,
+                                                            fileType,
+                                                            userInfo.CompanyId);
+
+
+                }
+                catch (Exception ex)
+                {
+                    // TODO: display an error message if, e.g. file is too big
+                    // or there was an error uploading the file
+                    ErrorMessage = "The File is either too large to send or there was an error or there was and error uploading the file";
+                    Console.WriteLine(ex);
+                }
+
+                // reset the form after this was successful
+                newFile = null;
+                newAttachment = new()
+                    {
+
+                        UserId = userInfo.UserId,
+                        TicketId = TicketId,
+                        Created = DateTime.Now
+                    };
 
 
 
-            // this can be replaced with however you want to update the page
-            // after a file was saved
-            await OnChange.InvokeAsync();
+                // this can be replaced with however you want to update the page
+                // after a file was saved
+                await OnChange.InvokeAsync();
+            }
         }
     }
 }

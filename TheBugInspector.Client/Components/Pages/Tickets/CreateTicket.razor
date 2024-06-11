@@ -46,6 +46,7 @@
     private UserInfo? userInfo;
     private TicketDTO? Ticket = new();
     private ProjectDTO? project;
+    TicketDTO? ticketNav;
     #endregion
 
     #region Methods
@@ -74,12 +75,14 @@
 
     private async Task HandleSubmit(TicketDTO ticket)
     {
+
+
         try
         {
             if (userInfo is not null)
             {
                 ticket.SubmitterUserId = userInfo.UserId;
-                await TicketService.AddTicketAsync(ticket, userInfo.CompanyId);
+                ticketNav = await TicketService.AddTicketAsync(ticket, userInfo.CompanyId);
             }
         }
         catch (Exception ex)
@@ -87,7 +90,10 @@
             Console.WriteLine(ex);
             ErrorMessage = "Something went wrong, check the DevTools";
         }
-        Nav.NavigateTo("/tickets/Index");
+
+        Nav.NavigateTo($"/tickets/Index/{ticketNav!.Id}");
+
+
     }
     #endregion
 }

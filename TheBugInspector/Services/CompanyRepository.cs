@@ -8,7 +8,7 @@ using TheBugInspector.Services.Interfaces;
 namespace TheBugInspector.Services
 {
     public class CompanyRepository(IDbContextFactory<ApplicationDbContext> contextFactory,
-                                   IServiceProvider serviceProvider) : ICompanyRepository
+                                   IServiceProvider serviceProvider, IProjectRepository projectRepository) : ICompanyRepository
     {
 
         public async Task AddUserToRoleAsync(string userId, string roleName, string adminId)
@@ -37,9 +37,23 @@ namespace TheBugInspector.Services
                     if (!string.IsNullOrEmpty(currentRole))
                     {
                         await userManager.RemoveFromRoleAsync(user, currentRole);
+
+                        
                     }
 
                     await userManager.AddToRoleAsync(user, roleName);
+
+                    bool isProjectManager = await userManager.IsInRoleAsync(user, nameof(Roles.ProjectManager));
+
+                    if (isProjectManager)
+                    {
+                        IEnumerable<Project> projects = await projectRepository.GetMyProjectsAsync(user.CompanyId, user.Id);
+
+                        foreach (Project project in projects)
+                        {
+                            await projectRepository.RemoveMemberFromProjectAsync(project.Id, user.Id, adminId);
+                        }
+                    }
                 }
             }
         }
