@@ -26,6 +26,10 @@
         </div>
 
     }
+    else
+    {
+        <h1 class="text-danger">@ErrorMessage</h1>
+    }
 </div>
 
 @code {
@@ -55,7 +59,8 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            ErrorMessage = "Something went wrong, check the DevTools";
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
         }
     }
 
@@ -71,7 +76,8 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            ErrorMessage = "Something went wrong, check the DevTools";
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
         }
         Nav.NavigateTo("/companies/Index");
     }

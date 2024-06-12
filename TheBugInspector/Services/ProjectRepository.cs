@@ -61,7 +61,7 @@ namespace TheBugInspector.Services
 
             ApplicationUser? user = await userManager.FindByIdAsync(userId);
 
-            bool shouldCreate = await context.Companies.AnyAsync(c => c.Id == companyId && user.CompanyId == companyId);
+            bool shouldCreate = await context.Companies.AnyAsync(c => c.Id == companyId);
 
             if (shouldCreate)
             {

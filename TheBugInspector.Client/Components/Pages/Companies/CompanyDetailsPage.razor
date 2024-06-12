@@ -80,6 +80,11 @@
     </div>
 }
 
+else
+{
+    <h1 class="text-danger">@ErrorMessage</h1>
+}
+
 @code {
     #region Parameters
     [Parameter]
@@ -115,7 +120,8 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            ErrorMessage = "Something went wrong, check the Devtools";
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
         }
     }
 
@@ -135,7 +141,8 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            ErrorMessage = "Something went wrong, check the Devtools";
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
         }
     }
     #endregion

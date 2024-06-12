@@ -54,7 +54,8 @@
         {
             Console.WriteLine(ex);
             // Change this errormessage
-            ErrorMessage = "Something went wrong, check the DevTools";
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
         }
     }
 
@@ -71,11 +72,13 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            ErrorMessage = "Something went wrong, check the DevTools";
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
         }
         if (userInfo is not null && userInfo.Roles.Contains(Roles.Admin.ToString()))
         {
             Nav.NavigateTo($"/projects/index");
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
 
         }
         else

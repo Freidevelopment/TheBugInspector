@@ -120,11 +120,11 @@
                 projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex)  
         {
             Console.WriteLine(ex);
             // Change this errormessage
-            ErrorMessage = "Something went wrong, check the DevTools";
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
         }
     }
 
@@ -142,7 +142,7 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            ErrorMessage = "Something went wrong, check the DevTools";
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
         }
     }
 
@@ -168,6 +168,7 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
 
         }
     }

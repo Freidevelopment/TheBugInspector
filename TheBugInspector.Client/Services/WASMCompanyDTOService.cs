@@ -55,6 +55,7 @@ namespace TheBugInspector.Client.Services
 
             try
             {
+                ;
                 HttpResponseMessage response = await _httpClient.GetAsync($"api/company/{userId}/role"); 
                 response.EnsureSuccessStatusCode();
 
