@@ -52,6 +52,29 @@ namespace TheBugInspector.Controllers
             return BadRequest();
         }
 
+        [HttpGet("recent/active")]
+        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetRecentActiveTicketsAsync()
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            if (user is not null && user.CompanyId == companyId)
+            {
+
+                IEnumerable<TicketDTO> tickets = [];
+                try
+                {
+                    tickets = await _ticketService.GetMostRecentActiveTicketsAsync(companyId);
+                    return Ok(tickets);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
         [HttpGet("archived")]
         public async Task<ActionResult<IEnumerable<TicketDTO>>> GetAllArchivedTicketsAsync()
         {
@@ -64,6 +87,29 @@ namespace TheBugInspector.Controllers
                 try
                 {
                     tickets = await _ticketService.GetAllArchivedTicketsAsync(companyId);
+                    return Ok(tickets);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("recent/archived")]
+        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetRecentArchivedTicketsAsync()
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            if (user is not null && user.CompanyId == companyId)
+            {
+
+                IEnumerable<TicketDTO> tickets = [];
+                try
+                {
+                    tickets = await _ticketService.GetMostRecentArchivedTicketsAsync(companyId);
                     return Ok(tickets);
                 }
                 catch (Exception ex)
@@ -98,6 +144,29 @@ namespace TheBugInspector.Controllers
             return BadRequest();
         }
 
+        [HttpGet("personal/recent/active")]
+        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetRecentUserTicketsAsync()
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            if (user is not null && user.CompanyId == companyId)
+            {
+
+                IEnumerable<TicketDTO> tickets = [];
+                try
+                {
+                    tickets = await _ticketService.GetRecentUserTicketsAsync(companyId, UserId);
+                    return Ok(tickets);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
         [HttpGet("personal/archived")]
         public async Task<ActionResult<IEnumerable<TicketDTO>>> GetUserArchivedTicketsAsync()
         {
@@ -110,6 +179,30 @@ namespace TheBugInspector.Controllers
                 {
                     IEnumerable<TicketDTO> tickets = [];
                     tickets = await _ticketService.GetArchivedUserTicketsAsync(companyId, UserId);
+                    return Ok(tickets);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
+
+        [HttpGet("personal/recent/archived")]
+        public async Task<ActionResult<IEnumerable<TicketDTO>>> GetRecentUserArchivedTicketsAsync()
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            if (user is not null && user.CompanyId == companyId)
+            {
+
+                try
+                {
+                    IEnumerable<TicketDTO> tickets = [];
+                    tickets = await _ticketService.GetRecentArchivedUserTicketsAsync(companyId, UserId);
                     return Ok(tickets);
                 }
                 catch (Exception ex)

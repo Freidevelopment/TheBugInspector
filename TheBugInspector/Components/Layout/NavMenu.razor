@@ -22,9 +22,41 @@
             <hr class="d-lg-none">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item me-auto ">
-                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                        Home
-                    </NavLink>
+                    <AuthorizeView Context="NavDashbar">
+                        <Authorized>
+
+                            @if (NavDashbar.User.IsInRole("Admin"))
+                            {
+                                <NavLink class="nav-link" href="/dashboard/Admin" Match="NavLinkMatch.All">
+                                    Dashboard
+                                </NavLink>
+                            }
+                            else if (NavDashbar.User.IsInRole("ProjectManager"))
+                            {
+                                <NavLink class="nav-link" href="/dashboard/Projectmanager" Match="NavLinkMatch.All">
+                                    Dashboard
+                                </NavLink>
+                            }
+                            else if (NavDashbar.User.IsInRole("Developer"))
+                            {
+                                <NavLink class="nav-link" href="/dashboard/Developer" Match="NavLinkMatch.All">
+                                    Dashboard
+                                </NavLink>
+                            }
+                            else if (NavDashbar.User.IsInRole("Submitter"))
+                            {
+                                <NavLink class="nav-link" href="/dashboard/Submitter" Match="NavLinkMatch.All">
+                                    Dashboard
+                                </NavLink>
+                            }
+                        </Authorized>
+                        <NotAuthorized>
+
+                            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                                Home
+                            </NavLink>
+                        </NotAuthorized>
+                    </AuthorizeView>
                 </li>
                 <AuthorizeView Context="NavbarMenu">
                     <Authorized>

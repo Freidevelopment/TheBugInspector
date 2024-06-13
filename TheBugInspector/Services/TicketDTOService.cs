@@ -201,5 +201,41 @@ namespace TheBugInspector.Services
 
             return attachment?.ToDTO();
         }
+
+        public async Task<IEnumerable<TicketDTO>> GetMostRecentActiveTicketsAsync(int companyId)
+        {
+            IEnumerable<Ticket> tickets = await repository.GetMostRecentActiveTicketsAsync(companyId);
+
+            IEnumerable<TicketDTO> results = tickets.Select(t => t.ToDTO());
+
+            return results;
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetMostRecentArchivedTicketsAsync(int companyId)
+        {
+            IEnumerable<Ticket> tickets = await repository.GetMostRecentArchivedTicketsAsync(companyId);
+
+            IEnumerable<TicketDTO> results = tickets.Select(t => t.ToDTO());
+
+            return results;
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetRecentUserTicketsAsync(int companyId, string userId)
+        {
+            IEnumerable<Ticket> tickets = await repository.GetRecentUserTicketsAsync(companyId, userId);
+
+            IEnumerable<TicketDTO> results = tickets.Select(t => t.ToDTO());
+
+            return results;
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetRecentArchivedUserTicketsAsync(int companyId, string userId)
+        {
+            IEnumerable<Ticket> tickets = await repository.GetRecentArchivedUserTicketsAsync(companyId, userId);
+
+            IEnumerable<TicketDTO> results = tickets.Select(t => t.ToDTO());
+
+            return results;
+        }
     }
 }

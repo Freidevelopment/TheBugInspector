@@ -11,9 +11,13 @@ namespace TheBugInspector.Client.Services.Interfaces
 
         #region Retrieve
         Task<IEnumerable<TicketDTO>> GetAllTicketsAsync(int companyId);
-        Task<IEnumerable<TicketDTO>> GetUserTicketsAsync(int companyId, string userId);
         Task<IEnumerable<TicketDTO>> GetAllArchivedTicketsAsync(int companyId);
+        Task<IEnumerable<TicketDTO>> GetMostRecentActiveTicketsAsync(int companyId);
+        Task<IEnumerable<TicketDTO>> GetMostRecentArchivedTicketsAsync(int companyId);
+        Task<IEnumerable<TicketDTO>> GetUserTicketsAsync(int companyId, string userId);
+        Task<IEnumerable<TicketDTO>> GetRecentUserTicketsAsync(int companyId, string userId);
         Task<IEnumerable<TicketDTO>> GetArchivedUserTicketsAsync(int companyId, string userId);
+        Task<IEnumerable<TicketDTO>> GetRecentArchivedUserTicketsAsync(int companyId, string userId);
         Task<TicketDTO?> GetTicketByIdAsync(int ticketId, int companyId);
         #endregion
 

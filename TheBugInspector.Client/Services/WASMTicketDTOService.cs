@@ -217,5 +217,69 @@ namespace TheBugInspector.Client.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<IEnumerable<TicketDTO>> GetMostRecentActiveTicketsAsync(int companyId)
+        {
+            IEnumerable<TicketDTO> tickets = [];
+
+            try
+            {
+                tickets = await _httpClient.GetFromJsonAsync<IEnumerable<TicketDTO>>($"api/tickets/recent/active") ?? [];
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return tickets;
+            }
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetMostRecentArchivedTicketsAsync(int companyId)
+        {
+            IEnumerable<TicketDTO> tickets = [];
+
+            try
+            {
+                tickets = await _httpClient.GetFromJsonAsync<IEnumerable<TicketDTO>>($"api/tickets/recent/archived") ?? [];
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return tickets;
+            }
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetRecentUserTicketsAsync(int companyId, string userId)
+        {
+            IEnumerable<TicketDTO> tickets = [];
+
+            try
+            {
+                tickets = await _httpClient.GetFromJsonAsync<IEnumerable<TicketDTO>>($"api/tickets/personal/recent/active") ?? [];
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return tickets;
+            }
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetRecentArchivedUserTicketsAsync(int companyId, string userId)
+        {
+            IEnumerable<TicketDTO> tickets = [];
+
+            try
+            {
+                tickets = await _httpClient.GetFromJsonAsync<IEnumerable<TicketDTO>>($"api/tickets/personal/recent/archived") ?? [];
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return tickets;
+            }
+        }
     }
 }

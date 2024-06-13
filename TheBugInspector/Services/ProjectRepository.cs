@@ -139,7 +139,6 @@ namespace TheBugInspector.Services
 
                     if (project is not null) 
                     {
-                        context.Users.Update(projectManager);
                         project.CompanyMembers.Add(projectManager);
                         await context.SaveChangesAsync();
                     }
