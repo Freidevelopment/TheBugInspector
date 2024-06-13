@@ -29,11 +29,11 @@ else
 
     @if (ticket is not null)
     {
-        <div class="row row-cols-2">
-            <div class="col">
+        <div class="row">
+            <div class="col-12 col-md-6">
                 <h1>Ticket Details: @ticket.Title</h1>
             </div>
-            <div class="col text-end">
+            <div class="col-12 col-md-6 text-end">
                 <AuthorizeView>
                     @if (projectManager is not null && userInfo is not null)
                     {
@@ -149,10 +149,10 @@ else
                                 OnUpdate="UpdateComment" />
         }
 
-        <div class="row row-cols-3 g-3">
+        <div class="row row-cols-md-3 g-3">
             @foreach (TicketAttachmentDTO attachment in ticket.Attachments)
             {
-                <div class="col">
+                <div class="col-12 col-md-4">
 
                     <AttachmentCards Attachment="attachment"
                                      ProjectManager="projectManager"

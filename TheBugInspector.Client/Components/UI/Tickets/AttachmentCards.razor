@@ -3,7 +3,7 @@
 {
     @if (status == Status.Viewing)
     {
-        <div class="card w-100 h-100">
+        <div class="card">
             <div class="card-body">
                 <h5 class="card-title">@Attachment.FileName</h5>
                 @if (Attachment.Description is not null)
@@ -17,9 +17,9 @@
                         string? extension = Path.GetExtension(Attachment.FileName)?.Trim('.') ?? "default";
                     }
                 </div>
-                <p class="card-text">@Attachment.Created.ToString("f")</p>
+                <p class="card-text">@Attachment.Created.ToString("g")</p>
                 <p class="card-text">Submitted By: @userInfo.FullName</p>
-                <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" class="img-fluid" /></a>
+                <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" height="50" width="125"/></a>
 
                 <AuthorizeView>
                     @if (Attachment.UserId == userInfo.UserId)
@@ -92,7 +92,7 @@
                         string? extension = Path.GetExtension(Attachment.FileName)?.Trim('.') ?? "default";
                     }
                 </div>
-                <p class="card-text">@Attachment.Created.ToString("f")</p>
+                <p class="card-text">@Attachment.Created.ToString("g")</p>
                 <p class="card-text">Submitted By: @userInfo.FullName</p>
                 <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" class="img-fluid" /></a>
                 <AuthorizeView Context="ManagementView">

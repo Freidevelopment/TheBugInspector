@@ -55,10 +55,11 @@
                     else if (AssignDeveloper == true)
                     {
                         @* Work on this button to look better on the app*@
-                        <button class="badge bg-warning text-end" @onclick="() => AssignDeveloper = false"><i class='bx bxs-x-square'></i></button>
+
                         <label for="DeveloperAssignment" class="form-label">
                             Available Developers
                         </label>
+                        
                         <InputSelect @bind-Value="Ticket.DeveloperUserId" class="form-select">
                             <option value="">Assign Developer to Ticket</option>
                             @if (Members is not null)
@@ -84,10 +85,12 @@
                             }
                         </InputSelect>
                         <div class="row">
-                            <div class="col">
+                            <div class="col-8">
                                 <button class="badge bg-primary mt-3" @onclick="AssignMember">Assign Developer</button>
                             </div>
-
+                            <div class="col-4">
+                                <button class="btn btn-danger btn-sm text-end mt-3" @onclick="() => AssignDeveloper = false"><i class='bx bxs-x-square'></i></button>
+                            </div>
                         </div>
                     }
                 }

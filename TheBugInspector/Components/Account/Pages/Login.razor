@@ -203,8 +203,8 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            
-            RedirectManager.RedirectTo(ReturnUrl);
+
+            NavigationManager.NavigateTo("/dashboard");
         }
         else if (result.RequiresTwoFactor)
         {
@@ -238,7 +238,7 @@
         if (user is not null)
         {
             await SignInManager.SignInAsync(user, false);
-            RedirectManager.RedirectTo(ReturnUrl);
+            NavigationManager.NavigateTo("/dashboard");
         }
 
         errorMessage = "Error: Invalid login attempt.";

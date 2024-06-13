@@ -11,17 +11,17 @@
         backgroundColor = "bg-faded-success border-success";
     }
 
-    <div class="card @backgroundColor">
+    <div class="card @backgroundColor mt-3">
         <div class="card-header">
             <div class="row">
-                <div class="col-8 text-start">
+                <div class="col-12 col-md-8 text-start">
                     <h3>@Project.Name</h3>
                     @if(Project.IsArchived == true)
                     {
                         <h4>This Project has been Archived</h4>
                     }
                 </div>
-                <div class="col-4">
+                <div class="col-12 col-md-4">
                     @if (ProjectManager is not null)
                     {
                         <span>Project Manager: @ProjectManager.FullName</span>
@@ -39,17 +39,17 @@
                 <h5 class="card-title">Project Description</h5>
                 <p class="card-text">@Project.Description</p>
             </div>
-            <div class="row row-cols-md-3 mt-4">
-                <div class="col">
+            <div class="row mt-4">
+                <div class="col-12 col-md-4">
                     <h2>Created:</h2>
                     <h4>@Project.Created.ToString("g")</h4>
                 </div>
-                <div class="col">
+                <div class="col-12 col-md-4">
                     <h2>Start Date:</h2>
                     <h4>@Project.StartDate.ToString("D")</h4>
 
                 </div>
-                <div class="col">
+                <div class="col-12 col-md-4">
                     <h2>End Date:</h2>
                     <h4>@Project.EndDate.ToString("D")</h4>
 
@@ -57,11 +57,11 @@
             </div>
 
             <div class="row">
-                <div class="col-6 text-center">
+                <div class="col-12 col-md-6 text-center">
                     <!-- Dropdown -->
 
                     <h6>
-                        Developers assigned to Project
+                        Developers assigned to Project:
                     </h6>
 
                     @if (Members is not null)
@@ -79,7 +79,7 @@
 
 
                 </div>
-                <div class="col-6 text-center">
+                <div class="col-12 col-md-6 text-center">
                     <!-- Dropdown -->
 
                     <h6>

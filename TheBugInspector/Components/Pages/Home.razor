@@ -2,237 +2,25 @@
 
 <PageTitle>Home</PageTitle>
 
-<div class="container-xxl">
-    <div class="text-center">
-        <h1>Welcome to your Bug Inspector!</h1>
-        <p class="fs-3">
-            Every Company has a goal and a way to achieve that goal. The
-            Bug Inspector will help you achieve your goals. Here you
-            can make large goals that you want to accomplish for your company in the
-            form of Projects. Those Projects can then be filled with small steps needed to
-            accomplish that project in the form of tickets. There is a lot that the Bug Inpsector
-            can do for you to simplify projects and accoplish goals. Give it a try today as a Demo User!
-        </p>
-        <a class="btn btn-primary" href="/Account/Login">
-            Demo User Sign In
-        </a>
-    </div>
 
-    <!-- Accordion: Default style -->
-    <div class="accordion mt-5" id="accordionDefault">
 
-        <!-- Item -->
-        <div class="accordion-item">
-            <h3 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Admin Management</button>
-            </h3>
-            <div class="accordion-collapse collapse" id="collapseOne" aria-labelledby="headingOne" data-bs-parent="#accordionDefault">
-                <div class="accordion-body">
-                    The Bug Inspector will allow someone that is an Admin the ability to
-                    monitor all parts of the company. This will allow for them to edit the
-                    company page, or a project, or even a ticket. The Admin has easy control
-                    over everything that a Company may run into and will be able to get things done fast
-                    and easily.
-                </div>
+        <div class="row text-center">
+            <div class="col-12 col-md-6">
+                <h1><img src="/Images/BugInspector.svg" width="100" /> Welcome to your Bug Inspector!</h1>
+                <p class="lead">
+                    Here at the Bug Inspector we help you achieve your goals.
+                    It is pesky to track down every little issue possible. The bug Inspector makes
+                    it seem like a genntle spring breeze. Not sure if you want to try yet?
+                    Test as a Demo User and find out today.
+                </p>
+                <a class="btn btn-primary" href="/Account/Login">
+                    Demo User Sign In
+                </a>
             </div>
-        </div>
-
-        <!-- Item -->
-        <div class="accordion-item">
-            <h3 class="accordion-header" id="headingTwo">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Project Details</button>
-            </h3>
-            <div class="accordion-collapse collapse" id="collapseTwo" aria-labelledby="headingTwo" data-bs-parent="#accordionDefault">
-                <div class="accordion-body">
-                    One of the most important parts to any company is the projects they are working on.
-                    On this page you will be able to see every needed detail that a project has. You will
-                    be able to see the tickets that are paired with that project, and how it is coming along
-                    on its deadline. If you are in the proper role, you can even make edits to the project
-                    as is neccessary to keep everything moving at a good pace.
-                </div>
-            </div>
-        </div>
-
-        <!-- Item -->
-        <div class="accordion-item">
-            <h3 class="accordion-header" id="headingThree">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Ticket Creation</button>
-            </h3>
-            <div class="accordion-collapse collapse" id="collapseThree" aria-labelledby="headingThree" data-bs-parent="#accordionDefault">
-                <div class="accordion-body">
-                    The Bug Inspector makes it very simple to add a ticket that belongs to a project.
-                    It can be made by anyone for any project that they are working on or have been assigned to
-                    and regardless of your role it is simple to go back and edit the ticket to make sure that
-                    everything is running smoothly for each and every project.
-                </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h3 class="accordion-header" id="headingFour">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseThree">Ticket Details</button>
-            </h3>
-            <div class="accordion-collapse collapse" id="collapseFour" aria-labelledby="headingFour" data-bs-parent="#accordionDefault">
-                <div class="accordion-body">
-                    Now for one of the most important points of the projects, it's tickets.
-                    These are bite-sized steps that are a part of the project and just as you can do with
-                    projects you can also see all of the details for each individual ticket. If you are
-                    in the proper role you can also add comments to the ticket for extra clarity or to report on
-                    the steps being taken to move the ticket along. You can also add downloadable attachments
-                    that can be useful for anyone working on the ticket.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="text-center mt-3">
-        <h2>Examples of Bug Inspector in action</h2>
-        <div class="row row-cols-1 g-3">
-            <div class="col">
-                <!-- Horizontal card: Image on the left -->
-                <div class="card">
-                    <img src="/Images/CompanyDetails.png" class="img-fluid" />
-                </div>
-            </div>
-            <div class="col">
-                <!-- Horizontal card: Image on the left -->
-                <div class="card">
-                    <img src="/Images/Projectpage.png" class="img-fluid" />
-
-                </div>
-            </div>
-            <div class="col">
-                <!-- Horizontal card: Image on the left -->
-                <div class="card">
-                    <img src="/Images/ProjectDetails.png" class="img-fluid" />
-
-                </div>
-            </div>
-            <div class="col">
-                <!-- Horizontal card: Image on the left -->
-                <div class="card">
-                    <img src="/Images/MyTicketsIndex.png" class="img-fluid" />
-
-                </div>
-            </div>
-            <div class="col">
-                <!-- Horizontal card: Image on the left -->
-                <div class="card">
-                    <img src="/Images/TicketDetails.png" class="img-fluid" />
-                </div>
+            <div class="col-12 col-md-6 mt-2 ">
+                <img src="/Images/ProjectDetailsResized.png" />
             </div>
         </div>
 
 
-        <!-- Multiple slides responsive slider with external Prev / Next buttons and bullets outside -->
-        @* <div>
 
-
-
-            <!-- Slider prev/next buttons -->
-            <button type="button" id="prev-news" class="btn btn-prev btn-icon btn-sm start-0 d-inline-flex" aria-label="Previous">
-                <i class="bx bx-chevron-left"></i>
-            </button>
-            <button type="button" id="next-news" class="btn btn-next btn-icon btn-sm end-0  d-inline-flex" aria-label="Next">
-                <i class="bx bx-chevron-right"></i>
-            </button>
-
-            <!-- Slider -->
-            <div class="px-xl-2">
-                <div class="swiper mx-n2" data-swiper-options='{
-        "slidesPerView": 1,
-        "loop": true,
-        "pagination": {
-        "el": ".swiper-pagination",
-        "clickable": true
-        },
-        "navigation": {
-        "prevEl": "#prev-news",
-        "nextEl": "#next-news"
-        },
-        "breakpoints": {
-        "500": {
-        "slidesPerView": 1
-        },
-        "1000": {
-        "slidesPerView": 1
-        }
-        }
-        }'>
-                    <div class="swiper-wrapper">
-
-                        <!-- Item -->
-                        <div class="swiper-slide h-auto pb-3">
-                            <article class="card h-100 border-0 shadow-sm mx-2">
-
-                                <div class="card-body">
-
-                                    <img src="/Images/Projectpage.png" class="img-fluid" alt="Image">
-                                </div>
-                            </article>
-                        </div>
-
-                        <!-- Item -->
-                        <div class="swiper-slide h-auto pb-3">
-                            <article class="card h-100 border-0 shadow-sm mx-2">
-
-                                <div class="card-body pb-4">
-
-                                    <img src="/Images/ProjectDetails.png" class="img-fluid" alt="Image">
-                                </div>
-                            </article>
-                        </div>
-                        <!-- Item -->
-                        <div class="swiper-slide h-auto pb-3">
-                            <article class="card h-100 border-0 shadow-sm mx-2">
-                                <div class="position-relative">
-
-                                    <img src="/Images/MyTicketsIndex.png" class="card-img-top" alt="Image">
-                                </div>
-                                <div class="card-body pb-4">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <a class="badge fs-sm text-nav bg-secondary text-decoration-none">Ticket</a>
-                                    </div>
-                                    <h3 class="h5 mb-0">
-                                        <a>
-                                            Here is a table for the tickets that will display for the user based on their role
-                                            in the Company. This provides easy access to everything that the user is working on
-                                            regardless of whether that user has submitted the ticket or was assigned to it.
-                                            If they are in the Admin role they are able to see every ticket that is in the Company.
-                                        </a>
-                                    </h3>
-                                </div>
-                            </article>
-                        </div>
-
-                        <!-- Item -->
-                        <div class="swiper-slide h-auto pb-3">
-                            <article class="card h-100 border-0 shadow-sm mx-2">
-                                <div class="position-relative">
-                                    <img src="/Images/TicketDetails.png" class="card-img-top" alt="Image">
-                                </div>
-                                <div class="card-body pb-4">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <a class="badge fs-sm text-nav bg-secondary text-decoration-none">Ticket</a>
-                                    </div>
-                                    <h3 class="h5 mb-0">
-                                        <a>
-                                            Here is a ticket details page from the view of a logged in user. In particular
-                                            this is from the view of a user that submitted the ticket or is allowed to make
-                                            changes to the ticket. However anyone can look into the details of a ticket, not only
-                                            to see it's progress but also to add helpful information to move the work on the ticket
-                                            along. This helps the ticket get to a finished state.
-                                        </a>
-                                    </h3>
-                                </div>
-                            </article>
-                        </div>
-
-                    </div>
-
-                    <!-- Pagination (bullets) -->
-                    <div class="swiper-pagination position-relative bottom-0 mt-4 mb-lg-2"></div>
-                </div>
-            </div>
-        </div> *@
-    </div>
-</div>
