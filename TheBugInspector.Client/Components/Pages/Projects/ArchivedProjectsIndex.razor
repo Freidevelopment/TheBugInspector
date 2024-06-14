@@ -111,7 +111,7 @@
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
-                archivedProjects = await ProjectService.GetArchivedProjectsAsync(userInfo.CompanyId, Page, pageSize);
+
                 projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
 
             }
@@ -121,6 +121,16 @@
             Console.WriteLine(ex);
             // Change this errormessage
             ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
+        }
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (Page < 1) Page = 1;
+        if (userInfo is not null)
+        {
+            archivedProjects = await ProjectService.GetMyProjectsAsync(userInfo.CompanyId, userInfo.UserId, Page, pageSize);
 
         }
     }

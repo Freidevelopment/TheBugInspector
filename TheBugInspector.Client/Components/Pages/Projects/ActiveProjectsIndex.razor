@@ -37,12 +37,12 @@
             {
                 <div class="col">
                     <DisplayProjectCards @key="project.Id"
-                                       Project="project"
-                                       userInfo="userInfo"
-                                       ProjectManagers="projectManagers"
-                                       OnSubmit="HandleArchive"
-                                       OnProjectIdSubmit="AssignProjectIdAsync"
-                                       OnManagerSubmit="AssignProjectManager" />
+                                         Project="project"
+                                         userInfo="userInfo"
+                                         ProjectManagers="projectManagers"
+                                         OnSubmit="HandleArchive"
+                                         OnProjectIdSubmit="AssignProjectIdAsync"
+                                         OnManagerSubmit="AssignProjectManager" />
 
                 </div>
 
@@ -57,17 +57,17 @@
         </div>
 
         <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-4 pt-lg-0">
-            @* <div class="col col-md-4 col-6 order-md-1 order-1">
-                @if (Page > 1)
-                {
+            <div class="col col-md-4 col-6 order-md-1 order-1">
+                @* @if (Page > 1)
+            {
 
-                    <a class="btn btn-info w-md-auto w-100" type="button" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page - 1)"><box-icon name='left-arrow'></box-icon></a>
-                }
-                @if (Page < activeProjects.TotalPages)
-                {
-                    <a class="btn btn-info w-md-auto w-100" type="button" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page + 1)"><box-icon name='right-arrow'></box-icon></a>
-                }
-            </div> *@
+            <a class="btn btn-info w-md-auto w-100" type="button" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page - 1)"><box-icon name='left-arrow'></box-icon></a>
+            }
+            @if (Page < activeProjects.TotalPages)
+            {
+            <a class="btn btn-info w-md-auto w-100" type="button" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page + 1)"><box-icon name='right-arrow'></box-icon></a>
+            } *@
+            </div>
             <div class="col col-md-4 col-12 order-md-2 order-3 text-center">
                 <button class="btn btn-outline-success w-md-auto w-100" type="button"> Page @activeProjects.Page of @activeProjects.TotalPages</button>
             </div>
@@ -118,6 +118,7 @@
             if (userInfo is not null)
             {
                 activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId, Page, pageSize);
+
                 projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
             }
         }
@@ -126,6 +127,16 @@
             Console.WriteLine(ex);
             // Change this errormessage
             ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
+        }
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (Page < 1) Page = 1;
+        if (userInfo is not null)
+        {
+            activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId, Page, pageSize);
 
         }
     }

@@ -4,23 +4,92 @@
 
 
 
-        <div class="row text-center">
-            <div class="col-12 col-md-6">
-                <h1><img src="/Images/BugInspector.svg" width="100" /> Welcome to your Bug Inspector!</h1>
-                <p class="lead">
-                    Here at the Bug Inspector we help you achieve your goals.
-                    It is pesky to track down every little issue possible. The bug Inspector makes
-                    it seem like a genntle spring breeze. Not sure if you want to try yet?
-                    Test as a Demo User and find out today.
-                </p>
-                <a class="btn btn-primary" href="/Account/Login">
-                    Demo User Sign In
+<div class="row text-center">
+    <div class="col-12">
+        <h1><img src="/Images/BugInspector.svg" width="100" /> Welcome to your Bug Inspector!</h1>
+        <p class="lead">
+            Here at the Bug Inspector we help you achieve your goals.
+            It is pesky to track down every little issue possible. The bug Inspector makes
+            it seem like a genntle spring breeze. Not sure if you want to try yet?
+            Test as a Demo User and find out today.
+        </p>
+        <a class="btn btn-primary" href="/Account/Login">
+            Demo User Sign In
+        </a>
+    </div>
+    <div class="col-12 mt-2 ">
+        <h3>Here are examples of the Bug Inspector in action</h3>
+        <h5>Swipe or click the arrows to see</h5>
+       
+        <!-- Pagination: Pager -->
+        <div class="swiper swiper-pager swiper-nav-onhover" data-swiper-options='{
+  "spaceBetween": 20,
+  "loop": true,
+  "pager": true,
+  "navigation": {
+    "prevEl": ".page-prev",
+    "nextEl": ".page-next"
+  }
+}'>
+            <!-- Normal prev/next buttons -->
+            <button type="button" class="btn btn-prev btn-icon me-2" aria-label="Previous">
+                <a class="page-link page-prev btn-icon btn-sm" href="#" aria-label="Previous page">
+                    <i class="bx bx-chevron-left"></i>
                 </a>
-            </div>
-            <div class="col-12 col-md-6 mt-2 ">
-                <img src="/Images/ProjectDetailsResized.png" />
+            </button>
+            <button type="button" class="btn btn-next btn-icon ms-2" aria-label="Next">
+                <a class="page-link page-next btn-icon btn-sm" href="#" aria-label="Next page">
+                    <i class="bx bx-chevron-right"></i>
+                </a>
+            </button>
+            <div class="swiper-wrapper">
+
+                <!-- Item -->
+                <div class="swiper-slide">
+                    <div class="ratio ratio-16x9 bg-secondary">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center display-4">
+                            <img src="/Images/CompanyDetails.png" class="img-fluid"/> 
+                            </div>
+                    </div>
+                </div>
+
+                <!-- Item -->
+                <div class="swiper-slide">
+                    <div class="ratio ratio-16x9 bg-secondary">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center display-4">
+                            <img src="/Images/Projectpage.png" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item -->
+                <div class="swiper-slide">
+                    <div class="ratio ratio-16x9 bg-secondary">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center display-4">
+                            <img src="/Images/ProjectDetails2.0.png" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
+                <!-- Item -->
+                <div class="swiper-slide">
+                    <div class="ratio ratio-16x9 bg-secondary">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center display-4">
+                            <img src="/Images/MyTicketsIndex.png" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
+                <!-- Item -->
+                <div class="swiper-slide">
+                    <div class="ratio ratio-16x9 bg-secondary">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center display-4">
+                            <img src="/Images/TicketDetails.png" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+</div>
 
 
 

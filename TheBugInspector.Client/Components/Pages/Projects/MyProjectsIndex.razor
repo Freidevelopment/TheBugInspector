@@ -144,7 +144,7 @@
         try
         {
             ErrorMessage = string.Empty;
-
+            if (Page < 1) Page = 1;
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
@@ -152,11 +152,21 @@
                 projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
             }
         }
-        catch (Exception ex)  
+        catch (Exception ex)
         {
             Console.WriteLine(ex);
             // Change this errormessage
             ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+        }
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (Page < 1) Page = 1;
+        if (userInfo is not null)
+        {
+            myProjects = await ProjectService.GetMyProjectsAsync(userInfo.CompanyId, userInfo.UserId, Page, pageSize);
+
         }
     }
 
