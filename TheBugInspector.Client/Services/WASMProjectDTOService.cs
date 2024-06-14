@@ -46,7 +46,7 @@ namespace TheBugInspector.Client.Services
 
             try
             {
-                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/active");
+                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/active?page={page}&pageSize={pageSize}");
                 return projects;
             }
             catch (Exception ex)
@@ -62,7 +62,7 @@ namespace TheBugInspector.Client.Services
 
             try
             {
-                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/personal");
+                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/personal?page={page}&pageSize={pageSize}");
                 return projects;
             }
             catch (Exception ex)
@@ -78,7 +78,7 @@ namespace TheBugInspector.Client.Services
 
             try
             {
-                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/archived");
+                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/archived?page={page}&pageSize={pageSize}");
                 return projects;
             }
             catch (Exception ex)

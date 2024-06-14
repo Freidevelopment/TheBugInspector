@@ -15,7 +15,7 @@ namespace TheBugInspector.Client.Models
         [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
         public string? Description { get; set; }
 
-        public string ImageUrl { get; set; } = ImageHelper.DefaultProfilePicture;
+        public string ImageUrl { get; set; } = ImageHelper.DefaultCompanyImage;
 
         public virtual ICollection<ProjectDTO> Projects { get; set; } = new HashSet<ProjectDTO>();
 

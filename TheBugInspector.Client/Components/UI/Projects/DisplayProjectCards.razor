@@ -2,65 +2,26 @@
 
 @if (Project is not null)
 {
-    <!-- Header and footer -->
-    <div class="card card-hover bg-faded-success border-success text-center h-100 w-100">
-        <div class="card-header">
-            <div class="vstack text-start">
-                <div>
-                    Project Title:
-                </div>
-                <a href="/projects/details/@Project.Id" class="text-primary">
-                    <u>@Project.Name</u>
-                </a>
-                <div class="mt-2">
-                    @if (projectManager is not null)
-                    {
-                        <span>Project Manager: @projectManager.FullName</span>
-
-                    }
-                    else
-                    {
-                        <span>Project Manager: There is no assigned Project Manager</span>
-                    }
-                </div>
-                <div class="mt-2">
-                    Priority: @Project.Priority.GetDisplayName()
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="vstack text-start">
-                <div class="mt-2">
-                    Created: @Project.Created.ToString("g")
-                </div>
-                <div class="mt-2">
-                    StartDate: @Project.StartDate.ToString("D")
-                </div>
-                <div class="mt-2">
-                    EndDate: @Project.EndDate.ToString("D")
-                </div>
-            </div>
-            <div class="text-start mt-2">
-                Assigned Project Members:
-            </div>
-            @foreach (UserDTO user in Project.CompanyMembers)
+    <article class="card h-100 card-hover border-primary bg-faded-primary shadow-sm">
+        <div class="card-body pb-3">
+            <h3 class="h5 mb-2">
+                <a href="/projects/details/@Project.Id">@Project.Name</a>
+            </h3>
+            @if(projectManager is not null)
             {
-                @if (projectManager is not null)
-                {
+                <p class="fs-lg fw-semibold mb-2 text-primary">Project Manager: @projectManager.FullName</p>
 
-                    @if (user.UserId != projectManager.UserId)
-                    {
-                        <div class="text-start mt-2">@user.FullName</div>
-
-                    }
-
-                }
             }
-            <div class="mt-2 text-start">
-                <span>Number of Tickets: @Project.Tickets.Count()</span>
-            </div>
+            else
+            {
+                <p class="fs-lg fw-semibold mb-2 text-primary">Project Manager: None Assigned</p>
+            }
+            <p class="fs-lg fw-semibold text-primary mb-0">Created: @Project.Created.ToString("d")</p>
+            <p class="fs-lg fw-semibold text-primary mb-0">Priority: @Project.Priority.GetDisplayName()</p>
         </div>
-        <div class="card-footer fs-sm">
+    </article>
+    
+        @* <div class="card-footer fs-sm">
 
             <AuthorizeView Context="AdminView">
                 @if (userInfo is not null)
@@ -90,7 +51,7 @@
                                 }
                             </div>
                         </div> *@
-
+@* 
                         <div>
 
                             @if (Project.IsArchived is false)
@@ -101,9 +62,9 @@
                             {
                                 <button class="btn btn-success btn-sm mt-3" @onclick="HandleSubmit">Restore</button>
                             }
-                        </div>
+                        </div> *@
 
-
+@* 
                     }
                     else if (projectManager is not null && AdminView.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId || AdminView.User.IsInRole("Admin"))
                     {
@@ -121,9 +82,9 @@
                         </div>
                     }
                 }
-            </AuthorizeView>
-        </div>
-    </div>
+            </AuthorizeView> *@
+        @* </div>
+    </div> *@ 
 
 }
 

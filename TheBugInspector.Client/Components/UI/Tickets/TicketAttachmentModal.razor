@@ -11,7 +11,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <InputFile OnChange="e => newFile = e.File" />
+                <InputFile OnChange="e => newFile = e.File" class="form-control" />
                 <InputText @bind-Value="newAttachment.Description"
                            class="form-control"
                            placeholder="Description (optional)">

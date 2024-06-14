@@ -1,4 +1,4 @@
-﻿@page "/tickets/Personal/Index"
+﻿@page "/tickets/Personal"
 
 @using TheBugInspector.Client.Components.UI.Projects
 @using TheBugInspector.Client.Components.UI.Tickets
@@ -23,79 +23,52 @@
     {
 
     }
-    
+
     @if (activeTickets is not null)
     {
-        <div class="row row-cols-md-2">
-            <div class="col">
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
                 <h1>My Tickets</h1>
             </div>
-            <div class="col text-end">
+            <div class="col-12 col-md-6 text-end">
                 <a class="btn btn-primary" href="/tickets/create">Create Ticket</a>
             </div>
-        </div>
-        
-        <table class="table table-hover table-bordered border-primary">
-            <thead>
-                <tr>
-                    <th scope="col">Ticket Name</th>
-                    <th scope="col">Ticket Created on</th>
-                    <th scope="col">Ticket Updated on</th>
-                    <th scope="col">Project</th>
-                    <th scope="col">Ticket Priority</th>
-                    <th scope="col">Ticket Status</th>
-                    <th scope="col">Ticket Submitter</th>
-                    <th scope="col">Number of Comments</th>
-                    <AuthorizeView Roles="ProjectManager">
-                        <th scope="col">Archive Ticket</th>
-                    </AuthorizeView>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (TicketDTO ticket in activeTickets)
-                {
+
+
+            @foreach (TicketDTO ticket in activeTickets)
+            {
+                <div class="col-12 col-md-6">
                     <TicketTable Ticket="ticket"
                                  UserInfo="userInfo"
                                  OnArchive="HandleArchive"
                                  OnRestore="HandleRestore" />
-                }
 
-            </tbody>
+                </div>
+            }
 
-        </table>
 
-        <AuthorizeView Roles="ProjectManager" Context="ProjectManagerView">
-            <h1>My Archived Tickets</h1>
-            <table class="table table-hover table-bordered border-primary">
-                <thead>
-                    <tr>
-                        <th scope="col">Ticket Name</th>
-                        <th scope="col">Ticket Created on</th>
-                        <th scope="col">Ticket Updated on</th>
-                        <th scope="col">Project</th>
-                        <th scope="col">Ticket Priority</th>
-                        <th scope="col">Ticket Status</th>
-                        <th scope="col">Ticket Submitter</th>
-                        <th scope="col">Number of Comments</th>
-                        <AuthorizeView Roles="ProjectManager">
-                            <th scope="col">Restore Ticket</th>
-                        </AuthorizeView>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (TicketDTO ticket in archivedTickets)
-                    {
+
+
+            <AuthorizeView Roles="ProjectManager" Context="ProjectManagerView">
+                <div class="col-12">
+                    <h1>My Archived Tickets</h1>
+
+                </div>
+
+                @foreach (TicketDTO ticket in archivedTickets)
+                {
+                    <div class="col-12 col-md-6">
                         <TicketTable Ticket="ticket"
                                      UserInfo="userInfo"
                                      OnArchive="HandleArchive"
                                      OnRestore="HandleRestore" />
-                    }
 
-                </tbody>
+                    </div>
+                }
 
-            </table>
-        </AuthorizeView>
 
+            </AuthorizeView>
+        </div>
 
     }
     else
@@ -128,7 +101,7 @@
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
-                
+
                 userRole = await CompanyService.GetUserRoleAsync(userInfo.UserId, userInfo.CompanyId);
                 if (userRole is not null)
                 {

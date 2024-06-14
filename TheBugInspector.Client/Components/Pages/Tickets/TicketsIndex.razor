@@ -1,4 +1,4 @@
-﻿@page "/tickets/active/Index"
+﻿@page "/tickets/active"
 
 @using TheBugInspector.Client.Components.UI.Projects
 @using TheBugInspector.Client.Components.UI.Tickets
@@ -21,7 +21,7 @@
     {
 
 
-        <div class="row row-cols-2">
+        <div class="row row-cols-2 g-3">
             <div class="col">
                 <h1>Active Tickets</h1>
 
@@ -35,37 +35,17 @@
                     </div>
                 }
             </AuthorizeView>
-        </div>
-        <div class="table-responsive">
+            @foreach (TicketDTO ticket in activeTickets)
+            {
+                <div class="col-12 col-md-6">
+                    <TicketTable Ticket="ticket"
+                                 UserInfo="userInfo"
+                                 OnArchive="HandleArchive"
+                                 OnRestore="HandleRestore" />
 
-            <table class="table table-hover table-bordered border-info border-primary">
-                <thead>
-                    <tr>
-                        <th scope="col">Ticket Name</th>
-                        <th scope="col">Ticket Created on</th>
-                        <th scope="col">Ticket Updated on</th>
-                        <th scope="col">Project</th>
-                        <th scope="col">Ticket Priority</th>
-                        <th scope="col">Ticket Status</th>
-                        <th scope="col">Ticket Submitter</th>
-                        <th scope="col">Number of Comments</th>
-                        <AuthorizeView Roles="Admin">
-                            <th scope="col">Archive Ticket</th>
-                        </AuthorizeView>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (TicketDTO ticket in activeTickets)
-                    {
-                        <TicketTable Ticket="ticket"
-                                     UserInfo="userInfo"
-                                     OnArchive="HandleArchive"
-                                     OnRestore="HandleRestore" />
-                    }
+                </div>
+            }
 
-                </tbody>
-
-            </table>
         </div>
 
 

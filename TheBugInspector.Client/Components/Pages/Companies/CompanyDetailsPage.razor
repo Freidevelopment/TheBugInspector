@@ -14,70 +14,63 @@
 
 
     <div class="container">
-        <div class="text-center">
-            <h1>@company.Name</h1>
-            <img src="@company.ImageUrl" class="img-fluid" />
-            <div class="text-center">
-            </div>
-            <div class="mt-4">
-                <h3>Description</h3>
-                @company.Description
-            </div>
-            <div class="row mt-5 g-3">
-
+        <!-- About -->
+        <section class="container my-5 py-lg-5 py-md-4 py-3">
+            <div class="row gy-4 py-xl-3">
                 <div class="col-md-6">
-                    <a href="/projects/Index" class="text-primary"><u>Active Projects</u></a>
+                    <img src="@company.ImageUrl" alt="Image" class="rounded-3">
                 </div>
-                <div class="col-md-6">
-                    <a href="/archived/projects/Index" class="text-primary"><u>Archived Projects</u></a>
-                </div>
+                <div class="col-lg-5 col-md-6 offset-lg-1 d-flex">
+                    <div class="align-self-center ps-lg-0 ps-md-4">
+                        <h2 class="h1 mb-lg-4 mb-3">@company.Name</h2>
+                        <p class="mb-4 pb-lg-3 fs-lg">
+                            @company.Description
+                        </p>
+                        <div class="d-flex align-items-center ms-sm-n4 ms-n3 mb-4 pb-lg-3">
+                            <div class="ms-sm-4 ms-3">
+                                <a href="/projects" class="btn btn-outline-primary">Active Projects</a>
+                            </div>
+                            <div class="ms-sm-4 ms-3">
+                                <a href="/archived/projects" class="btn btn-outline-primary">Archived Projects</a>
+                            </div>
+                            <AuthorizeView Context="AdminCompanyControl">
+                                @if (AdminCompanyControl.User.IsInRole("Admin") && company.Id == userInfo.CompanyId)
+                                {
+                                    <div class="ms-sm-4 ms-3">
+                                        <a href="/Company/Edit/@company.Id" class="btn btn-outline-primary">
+                                            Edit Company Page
+                                        </a>
 
-
-
-
-                <AuthorizeView Context="AdminCompanyControl">
-                    @if (AdminCompanyControl.User.IsInRole("Admin") && company.Id == userInfo.CompanyId)
-                    {
-                        <div class="col-md-6">
-                            <a href="/Company/Edit/@company.Id" class="btn btn-primary">
-                                Edit Company Page
-                            </a>
+                                    </div>
+                                }
+                            </AuthorizeView>
 
                         </div>
-                        <div class="col-md-6">
-                            <a href="/companies/manageRoles" class="btn btn-primary">
-                                Edit Employee Roles
-                            </a>
-
-                        </div>
-                    }
-                </AuthorizeView>
-
-
-            </div>
-            <div class="mt-5 mb-3">
-                <div>
-                    <h3>Company Members</h3>
-                </div>
-                <div class="row">
-
-                    @foreach (UserDTO member in Members)
-                    {
-                        <div class="col-md-6">
-                            <CompanyMembersDisplay @key="member.UserId"
-                                                   User="member"
-                                                   UserInfo="userInfo"
-                                                   OnSubmit="UpdateRole" />
-
-                        </div>
-                    }
-
+                    </div>
 
                 </div>
             </div>
+        </section>
 
-        </div>
+        <section class="container py-5 my-md-3 my-lg-5">
+            <h2 class="h1 text-center pt-1 pb-3 mb-3 mb-lg-4">Our Employees</h2>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+
+                @foreach (UserDTO member in Members)
+                {
+                    <div class="col">
+                        <CompanyMembersDisplay @key="member.UserId"
+                                               User="member"
+                                               UserInfo="userInfo"
+                                               OnSubmit="UpdateRole" />
+
+                    </div>
+                }
+            </div>
+        </section>
     </div>
+
+
 }
 
 else

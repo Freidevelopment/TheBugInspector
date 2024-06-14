@@ -50,7 +50,7 @@
                                 @if (NavbarMenu.User.IsInRole("Admin"))
                                 {
                                     <li>
-                                        <a class="dropdown-item" href="/projects/index">
+                                        <a class="dropdown-item" href="/projects">
                                             Active Projects
                                         </a>
                                     </li>
@@ -58,13 +58,13 @@
                                 else
                                 {
                                     <li>
-                                        <a class="dropdown-item" href="/projects/personal/Index">
+                                        <a class="dropdown-item" href="/projects/personal">
                                             My Projects
                                         </a>
                                     </li>
                                 }
                                 <li>
-                                    <a class="dropdown-item" href="/archived/projects/Index">
+                                    <a class="dropdown-item" href="/archived/projects">
                                         Archived Projects
                                     </a>
                                 </li>
@@ -79,13 +79,13 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
 
                                     <li>
-                                        <a class="dropdown-item" href="/tickets/active/Index">
-                                            Active Tickets Index
+                                        <a class="dropdown-item" href="/tickets/active">
+                                            Active Tickets
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="/tickets/archived/Index">
-                                            Archived Tickets Index
+                                        <a class="dropdown-item" href="/tickets/archived">
+                                            Archived Tickets
                                         </a>
                                     </li>
                                 </ul>
@@ -95,7 +95,7 @@
                         else
                         {
                             <li class="nav-item me-auto ">
-                                <NavLink class="nav-link" href="/tickets/Personal/Index">
+                                <NavLink class="nav-link" href="/tickets/Personal">
                                     My Tickets
                                 </NavLink>
                             </li>
@@ -115,8 +115,7 @@
 
                                             <li class="nav-item">
                                                 <NavLink class="nav-link" href="Account/Manage">
-                                                    <img class="profile-picture" src="@userInfo?.ProfilePictureUrl" />
-                                                    <span>Manage Account: @userInfo?.FullName</span>
+                                                    <span>Manage Account</span>
                                                 </NavLink>
                                             </li>
                                             <li class="nav-item">

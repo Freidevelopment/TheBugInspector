@@ -2,8 +2,46 @@
 
 @if (Ticket is not null)
 {
+    <!-- Item -->
+    <div class="card d-sm-flex flex-sm-row align-items-sm-center card-hover justify-content-between bg-faded-info border-info shadow-sm p-3 p-md-4 mb-4 h-100">
+        <div class="d-flex align-items-center pe-sm-3">
+            <div class="ps-3 ps-sm-4">
+                @if (Ticket.IsArchived == false)
+                {
+                    <h5 class="h5 mb-2">
+                        <a class="mb-2 text-info" href="/tickets/Index/@Ticket.Id">@Ticket.Title</a>
+                    </h5>
 
-    <tr>
+
+                }
+                else
+                {
+                    <h5 class="h5 mb-2">
+                        <a class="mb-2 text-info" href="/tickets/Index/@Ticket.Id">@Ticket.Title</a>
+                    </h5>
+                }
+
+                @if (Ticket.Updated.HasValue)
+                {
+                    <div>Last Updated: @Ticket.Updated.Value.ToString("d")</div>
+                }
+                else
+                {
+                    <div>Last Updated: @Ticket.Created.ToString("d")</div>
+                }
+
+                <div>Project: @Ticket.Project.Name</div>
+            <div class="vstack">
+                <div>Priority: @Ticket.Priority.GetDisplayName()</div>
+                <div>Type: @Ticket.Type.GetDisplayName()</div>
+                <div>Status: @Ticket.Status.GetDisplayName()</div>
+
+            </div>
+            </div>
+        </div>
+    </div>
+
+    @* <tr>
         <th scope="row"><a class="nav-link text-primary" href="/tickets/Index/@Ticket.Id"><u>@Ticket.Title</u></a></th>
         <td>@Ticket.Created.ToString("g")</td>
         @if (Ticket.Updated is not null)
@@ -47,7 +85,7 @@
                 }
             }
         </AuthorizeView>
-    </tr>
+    </tr> *@
 
 }
 

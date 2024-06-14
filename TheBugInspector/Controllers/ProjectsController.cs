@@ -29,7 +29,7 @@ namespace TheBugInspector.Controllers
 
         [HttpGet("active")] // api/projects/active
         public async Task<ActionResult<PagedList<ProjectDTO>>> GetAllProjectsAsync([FromQuery] int page,
-                                                                                      [FromQuery] int pageSize)
+                                                                                   [FromQuery] int pageSize)
         {
             // ensuring that the companyId is the correct users company Id
             int companyId = _companyId ?? 0;

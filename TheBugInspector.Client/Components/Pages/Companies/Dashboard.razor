@@ -18,8 +18,10 @@
         <AuthorizeView>
 
 
-            <div class="row">
-                <div class="col-6">
+            <div class="row g-3">
+                <div class="col-12 col-md-2">
+                </div>
+                <div class="col-12 col-md-8">
                     <!-- Primary background on hover -->
                     <div class="card border-primary bg-faded-primary">
                         <div class="card-body">
@@ -30,7 +32,7 @@
                                 </div>
                                 <div class="col-6">
                                     <p class="card-text">Role:@user.Role</p>
-                                    
+
                                     <a class="text-primary" href="/Account/Manage"><u>Manage Account</u></a>
                                 </div>
                                 <div class="col-12">
@@ -40,42 +42,44 @@
                         </div>
                     </div>
                 </div>
-                
+                <div class="col-12 col-md-2">
+                </div>
+
                 <div class="col-12 col-md-4">
 
                     <!-- Primary card -->
-                    <div class="card border-primary bg-faded-primary mt-3">
-                        <div class="card-header border-primary text-primary">Active Tickets:</div>
+                    <div class="card border-warning bg-faded-warning mt-3">
+                        <div class="card-header border-warning">Active Tickets:</div>
                         <div class="card-body text-center">
-                            <h1 class="card-title text-primary">@tickets.Count()</h1>
+                            <h1 class="card-title">@tickets.Count()</h1>
                             @if (context.User.IsInRole("Admin"))
                             {
-                                <a href="/tickets/active/Index" class=" text-end text-primary"><u>All active tickets</u></a>
+                                <a href="/tickets/active/Index" class=" text-end"><u>All active tickets</u></a>
 
                             }
                             else
                             {
-                                <a href="/tickets/Personal/Index" class=" text-end text-primary"><u>My tickets</u></a>
+                                <a href="/tickets/Personal/Index" class=" text-end"><u>My tickets</u></a>
                             }
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
 
-                    <div class="card border-primary bg-faded-primary mt-3">
-                        <div class="card-header border-primary text-primary">Active Projects:</div>
+                    <div class="card border-success bg-faded-success mt-3">
+                        <div class="card-header border-success">Active Projects:</div>
                         <div class="card-body text-center">
-                            <h1 class="card-title text-primary">@projects.Count()</h1>
+                            <h1 class="card-title">@projects.Count()</h1>
                             @if (context.User.IsInRole("Admin"))
                             {
-                                <a href="/projects/Index" class="text-end text-primary"><u>All Active Projects</u></a>
+                                <a href="/projects/Index" class="text-end"><u>All Active Projects</u></a>
 
                             }
                             else
                             {
-                                <a href="/projects/personal/Index" class="text-end text-primary"><u>My Projects</u></a>
+                                <a href="/projects/personal/Index" class="text-end"><u>My Projects</u></a>
                             }
-                            
+
                         </div>
                     </div>
                 </div>
@@ -91,15 +95,78 @@
                     </div>
                 </div>
 
+                @if (context.User.IsInRole(nameof(Roles.Admin)))
+                {
+                    <div class="col-12 col-md-4">
+                        <div class="card border-info bg-faded-info mt-3 h-100">
+                            <div class="card-header border-info text-info">Project Managers</div>
+                            <div class="card-body">
+                                <ul>
+                                    @foreach (UserDTO PM in Members)
+                                    {
+                                        if (PM.Role == nameof(Roles.ProjectManager))
+                                        {
+                                            <li class="list-item">
+                                                <a class="text-info">@PM.FullName</a>
+                                            </li>
+
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <div class="card border-info bg-faded-info mt-3 h-100">
+                            <div class="card-header border-info text-info">Developers</div>
+                            <div class="card-body">
+                                <ul>
+                                    @foreach (UserDTO user in Members)
+                                    {
+                                        if (user.Role == nameof(Roles.Developer))
+                                        {
+                                            <li class="list-item">
+                                                <a class="text-info"><u>@user.FullName</u></a>
+                                            </li>
+
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <div class="card border-info bg-faded-info mt-3 h-100">
+                            <div class="card-header border-info text-info">Submitters</div>
+                            <div class="card-body">
+                                <ul>
+                                    @foreach (UserDTO user in Members)
+                                    {
+                                        if (user.Role == nameof(Roles.Submitter))
+                                        {
+                                            <li class="list-item">
+                                                <a class="text-info"><u>@user.FullName</u></a>
+                                            </li>
+
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                }
+
                 <div class="col-12 col-md-6">
-                    <div class="card border-primary bg-faded-primary mt-3">
-                        <div class="card-header border-primary text-primary">Recent active Tickets</div>
+                    <div class="card border-info bg-faded-info mt-3">
+                        <div class="card-header border-info text-info">Recent active Tickets</div>
                         <div class="card-body text-center">
                             <ul>
                                 @foreach (TicketDTO ticket in recentActiveTickets)
                                 {
                                     <li class="list-item">
-                                        <a class="text-primary" href="/tickets/Index/@ticket.Id"><u>@ticket.Title</u></a>
+                                        <a class="text-info" href="/tickets/Index/@ticket.Id"><u>@ticket.Title</u></a>
                                     </li>
                                 }
                             </ul>
@@ -107,20 +174,22 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
-                    <div class="card border-primary bg-faded-primary mt-3">
-                        <div class="card-header border-primary text-primary">Recent archived Tickets</div>
+                    <div class="card border-warning bg-faded-warning mt-3">
+                        <div class="card-header border-warning">Recent archived Tickets</div>
                         <div class="card-body text-center">
                             <ul>
                                 @foreach (TicketDTO ticket in recentArchivedTickets)
                                 {
                                     <li class="list-item">
-                                        <a class="text-primary" href="/tickets/Index/@ticket.Id"><u>@ticket.Title</u></a>
+                                        <a href="/tickets/Index/@ticket.Id"><u>@ticket.Title</u></a>
                                     </li>
                                 }
                             </ul>
                         </div>
                     </div>
                 </div>
+
+               
                 @* <h1 class="text-center">Charts:</h1>
             <div class="col-12">
 

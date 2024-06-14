@@ -2,109 +2,90 @@
 
 @if (Project is not null && Members is not null)
 {
-    if(Project.IsArchived == true)
-    {
-        backgroundColor = "border-primary bg-faded-primary";
-    }
-    else
-    {
-        backgroundColor = "bg-faded-success border-success";
-    }
+    
+    <div class="col-12 col-md-6">
 
-    <div class="card @backgroundColor mt-3">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-12 col-md-8 text-start">
-                    <h3>@Project.Name</h3>
-                    @if(Project.IsArchived == true)
-                    {
-                        <h4>This Project has been Archived</h4>
-                    }
-                </div>
-                <div class="col-12 col-md-4">
-                    @if (ProjectManager is not null)
-                    {
-                        <span>Project Manager: @ProjectManager.FullName</span>
-                    }
-                    else
-                    {
-                        <span>Project Manager: No Manager Assigned to this project</span>
-                    }
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
+    <div class="card h-100 p-lg-5">
+        <div class="card-body p-lg-2">
+            @if (ProjectManager is not null)
+            {
+                <h4>Project Manager: @ProjectManager.FullName</h4>
 
-            <div class=" text-center">
-                <h5 class="card-title">Project Description</h5>
-                <p class="card-text">@Project.Description</p>
-            </div>
-            <div class="row mt-4">
-                <div class="col-12 col-md-4">
-                    <h2>Created:</h2>
-                    <h4>@Project.Created.ToString("g")</h4>
-                </div>
-                <div class="col-12 col-md-4">
-                    <h2>Start Date:</h2>
-                    <h4>@Project.StartDate.ToString("D")</h4>
-
-                </div>
-                <div class="col-12 col-md-4">
-                    <h2>End Date:</h2>
-                    <h4>@Project.EndDate.ToString("D")</h4>
-
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-md-6 text-center">
-                    <!-- Dropdown -->
-
-                    <h6>
-                        Developers assigned to Project:
-                    </h6>
-
-                    @if (Members is not null)
-                    {
-                        @foreach (UserDTO? developer in Members.Where(r => r?.Role == nameof(Roles.Developer)))
-                        {
-                            if (developer is not null)
-                            {
-                                <h6 class="text-primary">@developer.FullName</h6>
-
-                            }
-                        }
-
-                    }
-
-
-                </div>
-                <div class="col-12 col-md-6 text-center">
-                    <!-- Dropdown -->
-
-                    <h6>
-                        Submitters assigned to Project:
-                    </h6>
-
-                    @if (Members is not null)
-                    {
-                        @foreach (UserDTO? submitter in Members.Where(r => r?.Role == nameof(Roles.Submitter)))
-                        {
-                            if (submitter is not null)
-                            {
-                                <h6 class="text-primary">@submitter.FullName</h6>
-
-                            }
-                        }
-
-                    }
-
-
-                </div>
-
-            </div>
+            }
+            else
+            {
+                <h4>Project Manager: None Assigned</h4>
+            }
+            
+            <h6>Description</h6>
+            <p>@Project.Description</p>
         </div>
     </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="accordion" id="faq">
+
+            <!-- Item -->
+            <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
+                <h3 class="accordion-header">
+                    <button class="accordion-button shadow-none rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#q-1" aria-expanded="true" aria-controls="q-1">Project Members</button>
+                </h3>
+                <div class="accordion-collapse collapse" id="q-1" data-bs-parent="#faq">
+                    <div class="accordion-body fs-sm pt-0">
+                        @if (Members is not null)
+                        {
+                            @foreach (UserDTO? user in Members)
+                            {
+                                if (user is not null && user.Role == nameof(Roles.Developer) || user is not null && user.Role == nameof(Roles.Submitter))
+                                {
+                                    if (user.Role == nameof(Roles.Developer))
+                                    {
+                                        <h5>@user.FullName: @Roles.Developer.GetDisplayName()</h5>
+
+                                    }
+                                    else
+                                    {
+                                        <h5>@user.FullName: @Roles.Submitter.GetDisplayName()</h5>
+                                    }
+
+                                }
+                            }
+
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item -->
+            <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
+                <h3 class="accordion-header">
+                    <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-2" aria-expanded="false" aria-controls="q-2">Important Times</button>
+                </h3>
+                <div class="accordion-collapse collapse" id="q-2" data-bs-parent="#faq">
+                    <div class="accordion-body fs-sm pt-0">
+                        <h5>Created: @Project.Created.ToString("d")</h5>
+                        <h5>Start Date: @Project.StartDate.ToString("d")</h5>
+                        <h5>End Date: @Project.EndDate.ToString("d")</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item -->
+            <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
+                <h3 class="accordion-header">
+                    <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-3" aria-expanded="false" aria-controls="q-3">Project Priority: @Project.Priority.GetDisplayName()</button>
+                </h3>
+                <div class="accordion-collapse collapse" id="q-3" data-bs-parent="#faq">
+                    <div class="accordion-body fs-sm pt-0">
+                        <h3>@Project.Priority.GetDisplayName()</h3>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 }
 
 

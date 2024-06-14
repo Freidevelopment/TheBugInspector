@@ -4,7 +4,23 @@
 {
     @if (IsEdit is false)
     {
+        <div class="card card-hover border-0 bg-transparent">
+            <div class="position-relative">
+                <img src="@User.ProfilePictureUrl" class="rounded-3" alt="Jenny Wilson">
 
+            </div>
+            <div class="card-body text-center p-3">
+                <h3 class="fs-lg fw-semibold pt-1 mb-2">@User.FullName</h3>
+                @foreach (Roles role in Enum.GetValues<Roles>())
+                {
+                    if (role.ToString() == User.Role)
+                    {
+                        <p class="fs-sm mb-0">@role.GetDisplayName()</p>
+                    }
+                }
+
+            </div>
+        </div>
         <!-- Team Style 2: Vertical -->
         <div class="card card-body card-hover bg-light border-0 text-center">
             <img src="@User.ProfilePictureUrl" class="d-block rounded-circle mx-auto mb-3" width="162" alt="@User.UserId">
@@ -44,7 +60,7 @@
                         @if (role != Roles.DemoUser)
                         {
                             <option value="@role">
-                                @role.ToString()
+                                @role.GetDisplayName()
                             </option>
 
                         }
