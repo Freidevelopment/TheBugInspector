@@ -28,7 +28,8 @@ namespace TheBugInspector.Controllers
 
 
         [HttpGet("active")] // api/projects/active
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetAllProjectsAsync()
+        public async Task<ActionResult<PagedList<ProjectDTO>>> GetAllProjectsAsync([FromQuery] int page,
+                                                                                      [FromQuery] int pageSize)
         {
             // ensuring that the companyId is the correct users company Id
             int companyId = _companyId ?? 0;
@@ -39,7 +40,7 @@ namespace TheBugInspector.Controllers
 
                 try
                 {
-                    IEnumerable<ProjectDTO> projects = await _projectService.GetAllProjectsAsync(companyId);
+                    PagedList<ProjectDTO> projects = await _projectService.GetAllProjectsAsync(companyId, page, pageSize);
                     return Ok(projects);
                 }
                 catch (Exception ex)
@@ -52,7 +53,8 @@ namespace TheBugInspector.Controllers
         }
 
         [HttpGet("personal")] // api/projects/personal
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjectsAsync()
+        public async Task<ActionResult<PagedList<ProjectDTO>>> GetMyProjectsAsync([FromQuery] int page,
+                                                                                  [FromQuery] int pageSize)
         {
             // ensuring that the companyId is the correct users company Id
             int companyId = _companyId ?? 0;
@@ -63,7 +65,7 @@ namespace TheBugInspector.Controllers
 
                 try
                 {
-                    IEnumerable<ProjectDTO> projects = await _projectService.GetMyProjectsAsync(companyId, UserId);
+                    PagedList<ProjectDTO> projects = await _projectService.GetMyProjectsAsync(companyId, UserId, page, pageSize);
                     return Ok(projects);
                 }
                 catch (Exception ex)
@@ -76,7 +78,8 @@ namespace TheBugInspector.Controllers
         }
 
         [HttpGet("archived")] // api/projects/1/archived
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetArchivedProjectsAsync()
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetArchivedProjectsAsync([FromQuery] int page,
+                                                                                         [FromQuery] int pageSize)
         {
             int companyId = _companyId ?? 0;
             var user = await _userManager.GetUserAsync(User);
@@ -85,7 +88,77 @@ namespace TheBugInspector.Controllers
 
                 try
                 {
-                    IEnumerable<ProjectDTO> projects = await _projectService.GetArchivedProjectsAsync(companyId);
+                    PagedList<ProjectDTO> projects = await _projectService.GetArchivedProjectsAsync(companyId, page, pageSize);
+                    return Ok(projects);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("archived/count")] // api/projects/1/archived
+        public async Task<ActionResult<PagedList<ProjectDTO>>> GetArchivedProjectsCountAsync()
+        {
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            if (user is not null && user.CompanyId == companyId)
+            {
+
+                try
+                {
+                    IEnumerable<ProjectDTO> projects = await _projectService.GetArchivedProjectsCountAsync(companyId);
+                    return Ok(projects);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("personal/count")] // api/projects/personal
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetMyProjectsCountAsync()
+        {
+            // ensuring that the companyId is the correct users company Id
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is not null && user.CompanyId == companyId)
+            {
+
+                try
+                {
+                    IEnumerable<ProjectDTO> projects = await _projectService.GetMyProjectsCountAsync(companyId, UserId);
+                    return Ok(projects);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("active/count")] // api/projects/personal
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetAllProjectsCountAsync()
+        {
+            // ensuring that the companyId is the correct users company Id
+            int companyId = _companyId ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is not null && user.CompanyId == companyId)
+            {
+
+                try
+                {
+                    IEnumerable<ProjectDTO> projects = await _projectService.GetAllProjectsCountAsync(companyId);
                     return Ok(projects);
                 }
                 catch (Exception ex)

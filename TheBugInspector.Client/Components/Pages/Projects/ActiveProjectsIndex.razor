@@ -9,6 +9,7 @@
 
 @inject IProjectDTOService ProjectService
 @inject ICompanyDTOService CompanyService
+@inject NavigationManager Nav
 
 @attribute [Authorize]
 
@@ -32,7 +33,7 @@
         <div class="row row-cols-lg-3 row-cols-md-2 g-3">
 
 
-            @foreach (ProjectDTO project in activeProjects)
+            @foreach (ProjectDTO project in activeProjects.Data)
             {
                 <div class="col">
                     <DisplayProjectCards @key="project.Id"
@@ -55,6 +56,33 @@
             <a href="/archived/projects/Index" class="text-primary">Go to Archived Projects</a>
         </div>
 
+        <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-4 pt-lg-0">
+            @* <div class="col col-md-4 col-6 order-md-1 order-1">
+                @if (Page > 1)
+                {
+
+                    <a class="btn btn-info w-md-auto w-100" type="button" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page - 1)"><box-icon name='left-arrow'></box-icon></a>
+                }
+                @if (Page < activeProjects.TotalPages)
+                {
+                    <a class="btn btn-info w-md-auto w-100" type="button" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page + 1)"><box-icon name='right-arrow'></box-icon></a>
+                }
+            </div> *@
+            <div class="col col-md-4 col-12 order-md-2 order-3 text-center">
+                <button class="btn btn-outline-success w-md-auto w-100" type="button"> Page @activeProjects.Page of @activeProjects.TotalPages</button>
+            </div>
+            <div class="col col-md-4 col-6 order-md-3 order-2">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm justify-content-end">
+                        @for (int currentPage = 1; currentPage <= activeProjects.TotalPages; currentPage++)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page = currentPage)">@currentPage</a></li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
     }
     else
     {
@@ -65,14 +93,18 @@
     #region Parameters
     [CascadingParameter]
     private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    [SupplyParameterFromQuery]
+    public int Page { get; set; }
     #endregion
 
     #region State
-    private IEnumerable<ProjectDTO> activeProjects = [];
+    private PagedList<ProjectDTO> activeProjects = new PagedList<ProjectDTO>();
     private IEnumerable<UserDTO> projectManagers = [];
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
     private ProjectDTO? project;
+    private int pageSize = 6;
     #endregion
 
     #region Methods
@@ -85,7 +117,7 @@
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
-                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId, Page, pageSize);
                 projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
             }
         }
@@ -106,7 +138,7 @@
             {
                 await ProjectService.ArchiveProjectAsync(projectId, userInfo.CompanyId);
 
-                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId, Page, pageSize);
             }
         }
         catch (Exception ex)
@@ -132,7 +164,7 @@
             {
                 await ProjectService.AssignProjectManagerAsync(project.Id, memberId, userInfo.UserId);
 
-                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId, Page, pageSize);
             }
         }
         catch (Exception ex)

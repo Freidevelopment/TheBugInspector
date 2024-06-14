@@ -55,32 +55,51 @@ namespace TheBugInspector.Services
             await _projectRepository.AssignProjectManagerAsync(projectId, userId, adminId);
         }
 
-        public async Task<IEnumerable<ProjectDTO>> GetAllProjectsAsync(int companyId)
+        public async Task<PagedList<ProjectDTO>> GetAllProjectsAsync(int companyId, int page, int pageSize)
         {
-            IEnumerable<Project> projects = await _projectRepository.GetAllProjectsAsync(companyId);
+            PagedList<Project> projects = await _projectRepository.GetAllProjectsAsync(companyId, page, pageSize);
 
-            IEnumerable<ProjectDTO> result = projects.Select(p => p.ToDTO());
+            PagedList<ProjectDTO> results = new PagedList<ProjectDTO>()
+            {
+                Page = projects.Page,
+                TotalItems = projects.TotalItems,
+                TotalPages = projects.TotalPages,
+                Data = projects.Data.Select(x => x.ToDTO()),
+            };
 
-            return result;
+            return results;
         }
 
-        public async Task<IEnumerable<ProjectDTO>> GetMyProjectsAsync(int companyId, string userId)
+        public async Task<PagedList<ProjectDTO>> GetMyProjectsAsync(int companyId, string userId, int page, int pageSize)
         {
 
-            IEnumerable<Project> projects = await _projectRepository.GetMyProjectsAsync(companyId, userId);
+            PagedList<Project> projects = await _projectRepository.GetMyProjectsAsync(companyId, userId, page, pageSize);
 
-            IEnumerable<ProjectDTO> result = projects.Select(p => p.ToDTO());
+            PagedList<ProjectDTO> results = new PagedList<ProjectDTO>()
+            {
+                Page=projects.Page,
+                TotalItems = projects.TotalItems,
+                TotalPages = projects.TotalPages,
+                Data = projects.Data.Select(x => x.ToDTO()),
+            };
 
-            return result;
+
+            return results;
         }
 
-        public async Task<IEnumerable<ProjectDTO>> GetArchivedProjectsAsync(int companyId)
+        public async Task<PagedList<ProjectDTO>> GetArchivedProjectsAsync(int companyId, int page, int pageSize)
         {
-            IEnumerable<Project> projects = await _projectRepository.GetArchivedProjectsAsync(companyId);
+            PagedList<Project> projects = await _projectRepository.GetArchivedProjectsAsync(companyId, page, pageSize);
 
-            IEnumerable<ProjectDTO> result = projects.Select(p => p.ToDTO());
+            PagedList<ProjectDTO> results = new PagedList<ProjectDTO>()
+            {
+                Page = projects.Page,
+                TotalItems = projects.TotalItems,
+                TotalPages = projects.TotalPages,
+                Data = projects.Data.Select(x => x.ToDTO()),
+            };
 
-            return result;
+            return results;
         }
 
         public async Task<ProjectDTO?> GetProjectByIdAsync(int projectId, int companyId)
@@ -160,6 +179,34 @@ namespace TheBugInspector.Services
             }
         }
 
-        
+        public async Task<IEnumerable<ProjectDTO>> GetAllProjectsCountAsync(int companyId)
+        {
+            IEnumerable<Project> projects = await _projectRepository.GetAllProjectsCountAsync(companyId);
+
+            IEnumerable<ProjectDTO> results = projects.Select(t => t.ToDTO());
+
+
+            return results;
+        }
+
+        public async Task<IEnumerable<ProjectDTO>> GetMyProjectsCountAsync(int companyId, string userId)
+        {
+            IEnumerable<Project> projects = await _projectRepository.GetMyProjectsCountAsync(companyId, userId);
+
+            IEnumerable<ProjectDTO> results = projects.Select(t => t.ToDTO());
+
+
+            return results;
+        }
+
+        public async Task<IEnumerable<ProjectDTO>> GetArchivedProjectsCountAsync(int companyId)
+        {
+            IEnumerable<Project> projects = await _projectRepository.GetArchivedProjectsCountAsync(companyId);
+
+            IEnumerable<ProjectDTO> results = projects.Select(t => t.ToDTO());
+            
+
+            return results;
+        }
     }
 }

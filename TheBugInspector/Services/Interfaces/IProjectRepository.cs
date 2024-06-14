@@ -1,4 +1,5 @@
-﻿using TheBugInspector.Data;
+﻿using TheBugInspector.Client.Models;
+using TheBugInspector.Data;
 using TheBugInspector.Models;
 
 namespace TheBugInspector.Services.Interfaces
@@ -10,9 +11,12 @@ namespace TheBugInspector.Services.Interfaces
         #endregion
 
         #region Retrieve
-        Task<IEnumerable<Project>> GetAllProjectsAsync(int companyId);
-        Task<IEnumerable<Project>> GetMyProjectsAsync(int companyId, string userId);
-        Task<IEnumerable<Project>> GetArchivedProjectsAsync(int companyId);
+        Task<PagedList<Project>> GetAllProjectsAsync(int companyId, int page, int pageSize);
+        Task<PagedList<Project>> GetMyProjectsAsync(int companyId, string userId, int page, int pageSize);
+        Task<PagedList<Project>> GetArchivedProjectsAsync(int companyId, int page, int pageSize);
+        Task<IEnumerable<Project>> GetAllProjectsCountAsync(int companyId);
+        Task<IEnumerable<Project>> GetMyProjectsCountAsync(int companyId, string userId);
+        Task<IEnumerable<Project>> GetArchivedProjectsCountAsync(int companyId);
         Task<Project?> GetProjectByIdAsync(int projectId, int companyId);
         #endregion
 

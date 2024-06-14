@@ -132,7 +132,7 @@
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
-                projects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                projects = await ProjectService.GetAllProjectsCountAsync(userInfo.CompanyId);
 
             }
 

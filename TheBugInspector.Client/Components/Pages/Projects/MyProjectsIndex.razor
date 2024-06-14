@@ -9,6 +9,7 @@
 
 @inject IProjectDTOService ProjectService
 @inject ICompanyDTOService CompanyService
+@inject NavigationManager Nav
 
 @attribute [Authorize(Roles = $"{nameof(Roles.ProjectManager)}, {nameof(Roles.Submitter)}, {nameof(Roles.Developer)}")]
 <PageTitle>BugInspector | MyProjects</PageTitle>
@@ -35,14 +36,14 @@
 
     @if (userInfo is not null)
     {
-        @if (myProjects.Count() > 0)
+        @if (myProjects.Data.Count() > 0)
         {
 
 
             <div class="row row-cols-lg-3 row-cols-md-2 g-3">
 
 
-                @foreach (ProjectDTO project in myProjects)
+                @foreach (ProjectDTO project in myProjects.Data)
                 {
                     <div class="col">
                         <DisplayProjectCards @key="project.Id"
@@ -63,6 +64,33 @@
 
             <div class="text-end">
                 <a href="/archived/projects/Index" class="text-primary">Go to Archived Projects</a>
+            </div>
+
+            <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-4 pt-lg-0">
+                <div class="col col-md-4 col-6 order-md-1 order-1">
+                    @if (Page > 1)
+                    {
+
+                        <a class="btn btn-info w-md-auto w-100" type="button" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page - 1)"><i class="ai-arrow-left fs-xl"></i></a>
+                    }
+                    @if (Page < myProjects.TotalPages)
+                    {
+                        <a class="btn btn-info w-md-auto w-100" type="button" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page + 1)"><i class="ai-arrow-right fs-xl"></i></a>
+                    }
+                </div>
+                <div class="col col-md-4 col-12 order-md-2 order-3 text-center">
+                    <button class="btn btn-outline-success w-md-auto w-100" type="button"> Page @myProjects.Page of @myProjects.TotalPages</button>
+                </div>
+                <div class="col col-md-4 col-6 order-md-3 order-2">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm justify-content-end">
+                            @for (int currentPage = 1; currentPage <= myProjects.TotalPages; currentPage++)
+                            {
+                                <li class="page-item"><a class="page-link" href="@Nav.GetUriWithQueryParameter(nameof(Page), Page = currentPage)">@currentPage</a></li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
             </div>
 
 
@@ -95,15 +123,19 @@
     #region Parameters
     [CascadingParameter]
     private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    [SupplyParameterFromQuery]
+    public int Page { get; set; }
     #endregion
 
     #region State
-    private IEnumerable<ProjectDTO> myProjects = [];
+    private PagedList<ProjectDTO> myProjects = new PagedList<ProjectDTO>();
     private IEnumerable<UserDTO> ProjectMembers = [];
     private IEnumerable<UserDTO> projectManagers = [];
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
     private ProjectDTO? project;
+    private int pageSize = 6;
     #endregion
 
     #region Methods
@@ -116,7 +148,7 @@
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
-                myProjects = await ProjectService.GetMyProjectsAsync(userInfo.CompanyId, userInfo.UserId);
+                myProjects = await ProjectService.GetMyProjectsAsync(userInfo.CompanyId, userInfo.UserId, Page, pageSize);
                 projectManagers = await CompanyService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), userInfo.CompanyId);
             }
         }
@@ -136,7 +168,7 @@
             {
                 await ProjectService.ArchiveProjectAsync(projectId, userInfo.CompanyId);
 
-                myProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                myProjects = await ProjectService.GetMyProjectsAsync(userInfo.CompanyId, userInfo.UserId, Page, pageSize);
             }
         }
         catch (Exception ex)
@@ -162,7 +194,7 @@
             {
                 await ProjectService.AssignProjectManagerAsync(project.Id, memberId, userInfo.UserId);
 
-                myProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                myProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId, Page, pageSize);
             }
         }
         catch (Exception ex)

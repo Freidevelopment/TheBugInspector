@@ -47,7 +47,7 @@ namespace TheBugInspector.Services
 
                     if (isProjectManager)
                     {
-                        IEnumerable<Project> projects = await projectRepository.GetMyProjectsAsync(user.CompanyId, user.Id);
+                        IEnumerable<Project> projects = await projectRepository.GetMyProjectsCountAsync(user.CompanyId, user.Id);
 
                         foreach (Project project in projects)
                         {

@@ -40,13 +40,13 @@ namespace TheBugInspector.Client.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<IEnumerable<ProjectDTO>> GetAllProjectsAsync(int companyId)
+        public async Task<PagedList<ProjectDTO>> GetAllProjectsAsync(int companyId, int page, int pageSize)
         {
-            IEnumerable<ProjectDTO> projects = [];
+            PagedList<ProjectDTO>? projects = new PagedList<ProjectDTO>();
 
             try
             {
-                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/active") ?? [];
+                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/active");
                 return projects;
             }
             catch (Exception ex)
@@ -56,13 +56,13 @@ namespace TheBugInspector.Client.Services
             }
         }
 
-        public async Task<IEnumerable<ProjectDTO>> GetMyProjectsAsync(int companyId, string userId)
+        public async Task<PagedList<ProjectDTO>> GetMyProjectsAsync(int companyId, string userId, int page, int pageSize)
         {
-            IEnumerable<ProjectDTO> projects = [];
+            PagedList<ProjectDTO>? projects = new PagedList<ProjectDTO>();
 
             try
             {
-                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/personal") ?? [];
+                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/personal");
                 return projects;
             }
             catch (Exception ex)
@@ -72,13 +72,13 @@ namespace TheBugInspector.Client.Services
             }
         }
 
-        public async Task<IEnumerable<ProjectDTO>> GetArchivedProjectsAsync(int companyId)
+        public async Task<PagedList<ProjectDTO>> GetArchivedProjectsAsync(int companyId, int page, int pageSize)
         {
-            IEnumerable<ProjectDTO> projects = [];
+            PagedList<ProjectDTO>? projects = new PagedList<ProjectDTO>();
 
             try
             {
-                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/archived") ?? [];
+                projects = await _httpClient.GetFromJsonAsync<PagedList<ProjectDTO>>($"api/projects/archived");
                 return projects;
             }
             catch (Exception ex)
@@ -160,6 +160,52 @@ namespace TheBugInspector.Client.Services
             response.EnsureSuccessStatusCode();
         }
 
-        
+        public async Task<IEnumerable<ProjectDTO>> GetAllProjectsCountAsync(int companyId)
+        {
+            IEnumerable<ProjectDTO>? projects = [];
+
+            try
+            {
+                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/active/count") ?? [];
+                return projects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return projects;
+            }
+        }
+
+        public async Task<IEnumerable<ProjectDTO>> GetMyProjectsCountAsync(int companyId, string userId)
+        {
+            IEnumerable<ProjectDTO>? projects = [];
+
+            try
+            {
+                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/personal/count") ?? [];
+                return projects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return projects;
+            }
+        }
+
+        public async Task<IEnumerable<ProjectDTO>> GetArchivedProjectsCountAsync(int companyId)
+        {
+            IEnumerable<ProjectDTO>? projects = [];
+
+            try
+            {
+                projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDTO>>($"api/projects/archived/count") ?? [];
+                return projects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return projects;
+            }
+        }
     }
 }

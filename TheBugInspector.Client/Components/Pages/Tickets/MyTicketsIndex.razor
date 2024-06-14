@@ -113,7 +113,6 @@
     #region State
     private IEnumerable<TicketDTO> activeTickets = [];
     private IEnumerable<TicketDTO> archivedTickets = [];
-    private IEnumerable<ProjectDTO> activeProjects = [];
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
     private string? userRole;
@@ -129,7 +128,7 @@
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
-                activeProjects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                
                 userRole = await CompanyService.GetUserRoleAsync(userInfo.UserId, userInfo.CompanyId);
                 if (userRole is not null)
                 {

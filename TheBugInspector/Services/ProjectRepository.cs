@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TheBugInspector.Client.Models;
 using TheBugInspector.Data;
+using TheBugInspector.Helpers.Extensions;
 using TheBugInspector.Models;
 using TheBugInspector.Services.Interfaces;
 
@@ -147,29 +148,29 @@ namespace TheBugInspector.Services
         }
 
         // this has been tested and works
-        public async Task<IEnumerable<Project>> GetAllProjectsAsync(int companyId)
+        public async Task<PagedList<Project>> GetAllProjectsAsync(int companyId, int page, int pageSize)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            IEnumerable<Project> projects = await context.Projects
+            PagedList<Project> projects = await context.Projects
                                                          .Where(p => p.IsArchived == false && p.CompanyId == companyId)
                                                          .Include(p => p.Tickets)
                                                          .Include(p => p.CompanyMembers)
                                                          .OrderByDescending(p => p.Created)
-                                                         .ToListAsync();
+                                                         .ToPagedListAsync(page, pageSize);
             return projects;
         }
 
-        public async Task<IEnumerable<Project>> GetMyProjectsAsync(int companyId, string userId)
+        public async Task<PagedList<Project>> GetMyProjectsAsync(int companyId, string userId, int page, int pageSize)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            IEnumerable<Project> projects = await context.Projects
+            PagedList<Project> projects = await context.Projects
                                                          .Where(p => p.IsArchived == false && p.CompanyId == companyId && p.CompanyMembers.Any(c => c.Id == userId))
                                                          .Include(p => p.Tickets)
                                                          .Include(p => p.CompanyMembers)
                                                          .OrderByDescending(p => p.Created)
-                                                         .ToListAsync();
+                                                         .ToPagedListAsync(page, pageSize);
 
             
 
@@ -177,16 +178,16 @@ namespace TheBugInspector.Services
         }
 
         // this has been tested and works
-        public async Task<IEnumerable<Project>> GetArchivedProjectsAsync(int companyId)
+        public async Task<PagedList<Project>> GetArchivedProjectsAsync(int companyId, int page, int pageSize)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            IEnumerable<Project> projects = await context.Projects
+            PagedList<Project> projects = await context.Projects
                                                          .Where(p => p.IsArchived == true && p.CompanyId == companyId)
                                                          .Include(p => p.Tickets)
                                                          .Include(p => p.CompanyMembers)
                                                          .OrderByDescending(p => p.Created)
-                                                         .ToListAsync();
+                                                         .ToPagedListAsync(page, pageSize);
             return projects;
         }
 
@@ -307,6 +308,52 @@ namespace TheBugInspector.Services
             }
         }
 
-        
+        public async Task<IEnumerable<Project>> GetAllProjectsCountAsync(int companyId)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            IEnumerable<Project> projects = await context.Projects
+                                                         .Where(p => p.IsArchived == false && p.CompanyId == companyId)
+                                                         .Include(p => p.Tickets)
+                                                         .Include(p => p.CompanyMembers)
+                                                         .OrderByDescending(p => p.Created)
+                                                         .ToListAsync();
+
+
+
+            return projects;
+        }
+
+        public async Task<IEnumerable<Project>> GetMyProjectsCountAsync(int companyId, string userId)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            IEnumerable<Project> projects = await context.Projects
+                                                         .Where(p => p.IsArchived == false && p.CompanyId == companyId && p.CompanyMembers.Any(c => c.Id == userId))
+                                                         .Include(p => p.Tickets)
+                                                         .Include(p => p.CompanyMembers)
+                                                         .OrderByDescending(p => p.Created)
+                                                         .ToListAsync();
+
+
+
+            return projects;
+        }
+
+        public async Task<IEnumerable<Project>> GetArchivedProjectsCountAsync(int companyId)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            IEnumerable<Project> projects = await context.Projects
+                                                         .Where(p => p.IsArchived == true && p.CompanyId == companyId)
+                                                         .Include(p => p.Tickets)
+                                                         .Include(p => p.CompanyMembers)
+                                                         .OrderByDescending(p => p.Created)
+                                                         .ToListAsync();
+
+
+
+            return projects;
+        }
     }
 }

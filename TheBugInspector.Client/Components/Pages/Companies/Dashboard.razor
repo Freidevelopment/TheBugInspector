@@ -164,7 +164,7 @@
                 if (user is not null && user.Role == Roles.Admin.GetDisplayName())
                 {
                     tickets = await TicketService.GetAllTicketsAsync(userInfo.CompanyId);
-                    projects = await ProjectService.GetAllProjectsAsync(userInfo.CompanyId);
+                    projects = await ProjectService.GetAllProjectsCountAsync(userInfo.CompanyId);
                     recentActiveTickets = await TicketService.GetMostRecentActiveTicketsAsync(userInfo.CompanyId);
                     recentArchivedTickets = await TicketService.GetMostRecentArchivedTicketsAsync(userInfo.CompanyId);
 
@@ -172,7 +172,7 @@
                 else
                 {
                     tickets = await TicketService.GetUserTicketsAsync(userInfo.CompanyId, userInfo.UserId);
-                    projects = await ProjectService.GetMyProjectsAsync(userInfo.CompanyId, userInfo.UserId);
+                    projects = await ProjectService.GetMyProjectsCountAsync(userInfo.CompanyId, userInfo.UserId);
                     recentActiveTickets = await TicketService.GetRecentUserTicketsAsync(userInfo.CompanyId, userInfo.UserId);
                     recentArchivedTickets = await TicketService.GetRecentArchivedUserTicketsAsync(userInfo.CompanyId, userInfo.UserId);
                 }
