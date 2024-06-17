@@ -60,43 +60,44 @@ else
             </div>
         </div>
 
-
         <TicketDetailsCard Ticket="ticket" />
 
-
         <AuthorizeView>
-            @if (projectManager is not null && userInfo is not null)
+            @if (userInfo is not null)
             {
-                @if (context.User.IsInRole("Admin") ||
-               context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
-                {
-                    <p class="text-end mt-3">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                            add a comment?
-                        </button>
-                    </p>
-                }
-                else if (userInfo.UserId == ticket.SubmitterUserId)
-                {
-                    <p class="text-end mt-3">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                            add a comment?
-                        </button>
-                    </p>
-                }
-                else if (userInfo.UserId == ticket.DeveloperUserId)
-                {
-                    <p class="text-end mt-3">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                            add a comment?
-                        </button>
-                    </p>
-                }
+                <div class="text-end mt-3">
+
+                    @if (context.User.IsInRole("Admin") ||
+                   context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                    {
+                        <p class="text-end mt-3">
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                add a comment?
+                            </button>
+                        </p>
+                    }
+                    else if (userInfo.UserId == ticket.SubmitterUserId)
+                    {
+                        <p class="text-end mt-3">
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                add a comment?
+                            </button>
+                        </p>
+                    }
+                    else if (userInfo.UserId == ticket.DeveloperUserId)
+                    {
+                        <p class="text-end mt-3">
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                add a comment?
+                            </button>
+                        </p>
+                    }
+                </div>
 
             }
         </AuthorizeView>
 
-        <div class="collapse" id="CommentCreation">
+        <div class="collapse mt-3" id="CommentCreation">
             <div class="card card-body">
                 <TicketCommentForm ticketComment="userComment"
                                    Id="ticket.Id"
@@ -111,7 +112,7 @@ else
                 @if (context.User.IsInRole("Admin") ||
                context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
                 {
-                    <div class="text-end">
+                    <div class="text-end mt-2">
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
                             Add Attachment?
@@ -120,7 +121,7 @@ else
                 }
                 else if (context.User.IsInRole("Developer") && userInfo.UserId == ticket.DeveloperUserId)
                 {
-                    <div class="text-end">
+                    <div class="text-end mt-2">
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
                             Add Attachment?
@@ -129,7 +130,7 @@ else
                 }
                 else if (userInfo.UserId == ticket.SubmitterUserId)
                 {
-                    <div class="text-end">
+                    <div class="text-end mt-2">
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
                             Add Attachment?
@@ -139,30 +140,56 @@ else
 
             }
         </AuthorizeView>
-
-        @foreach (TicketCommentDTO comment in ticketComments)
+        @if (ticketComments.Count() > 0)
         {
-            <TicketComments Comment="comment"
-                                ProjectManager="projectManager"
-                                userInfo="userInfo"
-                                OnDelete="DeleteComment"
-                                OnUpdate="UpdateComment" />
+            <div class="mt-3">
+                <h3>Comments</h3>
+            </div>
+            <div class="mt-4">
+
+                @foreach (TicketCommentDTO comment in ticketComments)
+                {
+                    <TicketComments Comment="comment"
+                                    ProjectManager="projectManager"
+                                    userInfo="userInfo"
+                                    OnDelete="DeleteComment"
+                                    OnUpdate="UpdateComment" />
+                }
+            </div>
+        }
+        else
+        {
+            <div class="mt-3">
+                <h5>There are no Comments at this time</h5>
+            </div>
         }
 
-        <div class="row row-cols-md-3 g-3">
-            @foreach (TicketAttachmentDTO attachment in ticket.Attachments)
-            {
-                <div class="col-12 col-md-4">
+        @if (ticket.Attachments.Count > 0)
+        {
 
-                    <AttachmentCards Attachment="attachment"
-                                     ProjectManager="projectManager"
-                                     userInfo="userInfo"
-                                     OnSubmit="DeleteAttachment" />
-                </div>
-            }
+            <div class="mt-3">
+                <h3>Attachments</h3>
+            </div>
+            <div class="row g-3">
+                @foreach (TicketAttachmentDTO attachment in ticket.Attachments)
+                {
+                    <div class="col-12">
 
-        </div>
+                        <AttachmentCards Attachment="attachment"
+                                         ProjectManager="projectManager"
+                                         userInfo="userInfo"
+                                         OnSubmit="DeleteAttachment" />
+                    </div>
+                }
 
+            </div>
+        }
+        else
+        {
+            <div class="mt-3">
+                <h5>There are no Attachments at this time</h5>
+            </div>
+        }
     }
     else
     {

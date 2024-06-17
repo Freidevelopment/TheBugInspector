@@ -2,88 +2,257 @@
 
 @if (Project is not null && Members is not null)
 {
-    
-    <div class="col-12 col-md-6">
 
-    <div class="card h-100 p-lg-5">
-        <div class="card-body p-lg-2">
-            @if (ProjectManager is not null)
-            {
-                <h4>Project Manager: @ProjectManager.FullName</h4>
+    <div class="col-12">
 
-            }
-            else
-            {
-                <h4>Project Manager: None Assigned</h4>
-            }
-            
-            <h6>Description</h6>
-            <p>@Project.Description</p>
+        <div class="card h-100 p-lg-5">
+            <div class="card-body p-lg-2">
+                @if (ProjectManager is not null)
+                {
+                    <h4>Project Manager: @ProjectManager.FullName</h4>
+
+                }
+                else
+                {
+                    <h4>Project Manager: None Assigned</h4>
+                }
+
+                <h6>Description</h6>
+                <p>@Project.Description</p>
+            </div>
         </div>
     </div>
-    </div>
+    <div class="col-12">
+        <div class="card bg-faded-primary mt-3 p-3">
 
-    <div class="col-12 col-md-6">
-        <div class="accordion" id="faq">
+            <div class="accordion mt-3" id="faq">
 
-            <!-- Item -->
-            <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
-                <h3 class="accordion-header">
-                    <button class="accordion-button shadow-none rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#q-1" aria-expanded="true" aria-controls="q-1">Project Members</button>
-                </h3>
-                <div class="accordion-collapse collapse" id="q-1" data-bs-parent="#faq">
-                    <div class="accordion-body fs-sm pt-0">
-                        @if (Members is not null)
-                        {
-                            @foreach (UserDTO? user in Members)
+
+                <!-- Item -->
+                <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-3" aria-expanded="false" aria-controls="q-3">Project Priority: @Project.Priority.GetDisplayName()</button>
+                    </h3>
+                    <div class="accordion-collapse collapse" id="q-3" data-bs-parent="#faq">
+                        <div class="accordion-body fs-sm pt-0">
+                            <h3>@Project.Priority.GetDisplayName()</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item -->
+                <div class="accordion-item  border-0 rounded-3 shadow-sm mb-3">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button shadow-none rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#q-1" aria-expanded="true" aria-controls="q-1">Project Members</button>
+                    </h3>
+                    <div class="accordion-collapse collapse" id="q-1" data-bs-parent="#faq">
+                        <div class="accordion-body fs-sm pt-0">
+                            @if (Members is not null)
                             {
-                                if (user is not null && user.Role == nameof(Roles.Developer) || user is not null && user.Role == nameof(Roles.Submitter))
+                                @foreach (UserDTO? user in Members)
                                 {
-                                    if (user.Role == nameof(Roles.Developer))
+                                    if (user is not null && user.Role == nameof(Roles.Developer) || user is not null && user.Role == nameof(Roles.Submitter))
                                     {
-                                        <h5>@user.FullName: @Roles.Developer.GetDisplayName()</h5>
+                                        if (user.Role == nameof(Roles.Developer))
+                                        {
+                                            <img src="@user.ProfilePictureUrl" width="50" class="rounded-circle" />
+                                            <h5> @user.FullName: @Roles.Developer.GetDisplayName()</h5>
+
+                                        }
+                                        else
+                                        {
+                                            <img src="@user.ProfilePictureUrl" width="50" class="rounded-circle" />
+                                            <h5> @user.FullName: @Roles.Submitter.GetDisplayName()</h5>
+                                        }
 
                                     }
-                                    else
-                                    {
-                                        <h5>@user.FullName: @Roles.Submitter.GetDisplayName()</h5>
-                                    }
-
                                 }
+
                             }
-
-                        }
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Item -->
-            <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
-                <h3 class="accordion-header">
-                    <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-2" aria-expanded="false" aria-controls="q-2">Important Times</button>
-                </h3>
-                <div class="accordion-collapse collapse" id="q-2" data-bs-parent="#faq">
-                    <div class="accordion-body fs-sm pt-0">
-                        <h5>Created: @Project.Created.ToString("d")</h5>
-                        <h5>Start Date: @Project.StartDate.ToString("d")</h5>
-                        <h5>End Date: @Project.EndDate.ToString("d")</h5>
+                <!-- Item -->
+                <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-2" aria-expanded="false" aria-controls="q-2">Important Times</button>
+                    </h3>
+                    <div class="accordion-collapse collapse" id="q-2" data-bs-parent="#faq">
+                        <div class="accordion-body fs-sm pt-0">
+                            <h5>Created: @Project.Created.ToString("d")</h5>
+                            <h5>Start Date: @Project.StartDate.ToString("d")</h5>
+                            <h5>End Date: @Project.EndDate.ToString("d")</h5>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Item -->
-            <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
-                <h3 class="accordion-header">
-                    <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-3" aria-expanded="false" aria-controls="q-3">Project Priority: @Project.Priority.GetDisplayName()</button>
-                </h3>
-                <div class="accordion-collapse collapse" id="q-3" data-bs-parent="#faq">
-                    <div class="accordion-body fs-sm pt-0">
-                        <h3>@Project.Priority.GetDisplayName()</h3>
-                    </div>
-                </div>
-            </div>
 
+                <AuthorizeView Context="ManageProjectMembers">
+                    @if (ManageProjectMembers.User.IsInRole("Admin") || UserInfo.UserId == ProjectManager.UserId)
+                    {
+
+                        <!-- Item -->
+                        <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-4" aria-expanded="false" aria-controls="q-3">Manage Project Members</button>
+                            </h3>
+                            <div class="accordion-collapse collapse" id="q-4" data-bs-parent="#faq">
+                                <div class="accordion-body fs-sm pt-0">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="text-end">
+
+                                                <label for="MemberAssignment" class="form-label">
+                                                    Project Members
+                                                </label>
+                                                <InputSelect @bind-Value="MemberAssignment" class="form-select">
+                                                    <option value="">Assign Employees to Project</option>
+                                                    @if (Employees is not null)
+                                                    {
+                                                        @foreach (UserDTO? user in Employees)
+                                                        {
+                                                            if (user is not null)
+                                                            {
+                                                                bool shouldNotDisplay = Members.Any(m => m?.UserId == user.UserId);
+
+                                                                if (shouldNotDisplay == false)
+                                                                {
+                                                                    if (user.Role == Roles.Developer.ToString() || user.Role == Roles.Submitter.ToString())
+                                                                    {
+                                                                        <option value="@user.UserId">
+                                                                            @user.FullName: @user.Role
+                                                                        </option>
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+                                                        }
+
+                                                    }
+                                                </InputSelect>
+                                            </div>
+                                            <div class="text-end">
+                                                <button class="btn btn-primary mt-2 text-end" @onclick="AssignMember">Assign Members</button>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-6 text-end">
+
+                                            @if (Members.Count() > 0)
+                                            {
+                                                @if (ManageProjectMembers.User.IsInRole("Admin") || UserInfo.UserId == ProjectManager.UserId)
+                                                {
+                                                    <label for="MemberAssignment" class="form-label text-end">
+                                                        Project Members
+                                                    </label>
+                                                    <InputSelect @bind-Value="MemberRemoval" class="form-select">
+                                                        <option value="">Remove Member</option>
+                                                        @if (Members is not null)
+                                                        {
+                                                            @foreach (UserDTO? user in Members)
+                                                            {
+                                                                if (user is not null)
+                                                                {
+                                                                    if (user.Role == Roles.Developer.ToString() || user.Role == Roles.Submitter.ToString())
+                                                                    {
+                                                                        <option value="@user.UserId">
+                                                                            @user.FullName: @user.Role
+                                                                        </option>
+
+                                                                    }
+
+                                                                }
+                                                            }
+
+                                                        }
+                                                    </InputSelect>
+                                                    <div class="text-end">
+                                                        <button class="btn btn-danger mt-3" @onclick="RemoveMember">Remove Member</button>
+
+                                                    </div>
+                                                }
+
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+
+
+                    @if (ManageProjectMembers.User.IsInRole("Admin"))
+                    {
+                        <!-- Item -->
+                        <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-5" aria-expanded="false" aria-controls="q-3">Manage Project Manager</button>
+                            </h3>
+                            <div class="accordion-collapse collapse" id="q-5" data-bs-parent="#faq">
+                                <div class="accordion-body fs-sm pt-0">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="text-end">
+
+                                                <label for="ManagerAssignment" class="form-label">
+                                                    Project Manager
+                                                </label>
+                                                <InputSelect @bind-Value="ManagerAssignment" class="form-select">
+                                                    <option value="">Assign Project Manager</option>
+                                                    @if (Employees is not null)
+                                                    {
+                                                        @foreach (UserDTO? user in Employees)
+                                                        {
+                                                            if (user is not null)
+                                                            {
+
+                                                                if (user.Role == Roles.ProjectManager.ToString() && ProjectManager.UserId != user.UserId)
+                                                                {
+
+                                                                    <option value="@user.UserId">
+                                                                        @user.FullName: @Roles.ProjectManager.GetDisplayName()
+                                                                    </option>
+
+
+
+                                                                }
+
+                                                            }
+                                                        }
+
+                                                    }
+                                                </InputSelect>
+                                            </div>
+                                            <div class="text-end">
+                                                <button class="btn btn-primary mt-2 text-end" @onclick="AssignManager">Assign Manager</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6 text-end">
+
+                                            @if (ProjectManager is not null)
+                                            {
+                                                <button class="btn btn-danger mt-4" @onclick="RemoveManager">Remove Manager </button>
+
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </AuthorizeView>
+
+            </div>
         </div>
+
     </div>
 
 }
@@ -98,7 +267,25 @@
     public UserDTO? ProjectManager { get; set; }
 
     [Parameter, EditorRequired]
+    public UserInfo? UserInfo { get; set; }
+
+    [Parameter, EditorRequired]
     public IEnumerable<UserDTO>? Members { get; set; }
+
+    [Parameter, EditorRequired]
+    public IEnumerable<UserDTO>? Employees { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<string?> OnMemberSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<string?> OnManagerSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<string?> OnMemberRemoval { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<string?> OnManagerRemoval { get; set; }
 
     #endregion
 
@@ -110,7 +297,64 @@
     #endregion
 
     #region Methods
+    private async Task AssignMember()
+    {
+        try
+        {
 
+            await OnMemberSubmit.InvokeAsync(MemberAssignment);
+            MemberAssignment = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+
+    private async Task AssignManager()
+    {
+        try
+        {
+
+            await OnManagerSubmit.InvokeAsync(ManagerAssignment);
+            ManagerAssignment = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    private async Task RemoveMember()
+    {
+        try
+        {
+
+            await OnMemberRemoval.InvokeAsync(MemberRemoval);
+            MemberRemoval = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
+    private async Task RemoveManager()
+    {
+        try
+        {
+            if (ProjectManager is not null)
+            {
+                await OnManagerRemoval.InvokeAsync(ProjectManager.UserId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
+    }
 
 
     #endregion

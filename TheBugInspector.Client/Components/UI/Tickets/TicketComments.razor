@@ -1,9 +1,87 @@
 ﻿@if (Comment is not null && userInfo is not null)
 {
 
+
     @if (status == Status.Viewing)
     {
-        <div class="border-bottom py-4 mt-2 mb-4">
+        <div class="card-body swiper scrollbar-hover overflow-hidden w-100 pb-0" data-swiper-options='{
+                      "direction": "vertical",
+                      "slidesPerView": "auto",
+                      "freeMode": true,
+                      "scrollbar": {
+                        "el": ".swiper-scrollbar"
+                      },
+                      "mousewheel": true
+                    }'>
+            <div class="swiper-wrapper">
+                <div class="swiper-slide h-auto">
+                    @if (userInfo.UserId != Comment.UserId && Comment.User is not null)
+                    {
+                        @* <!-- User message --> *@
+                        <div class="d-flex align-items-start mb-3">
+                            <img src="@Comment.User.ProfilePictureUrl" class="rounded-circle" width="40" alt="Albert Flores">
+                            <div class="ps-2 ms-1" style="max-width: 348px;">
+                                <div class="bg-secondary p-3 mb-1" style="border-top-right-radius: .5rem; border-bottom-right-radius: .5rem; border-bottom-left-radius: .5rem;">@Comment.Content</div>
+                                <div class="fs-sm text-muted">@Comment.Created.ToString("f")</div>
+                                <div class="text-start">
+
+                                    <AuthorizeView>
+                                        @if (ProjectManager is not null)
+                                        {
+
+                                            @if (Comment.UserId == userInfo.UserId || (context.User.IsInRole("Admin") || context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId))
+                                            {
+                                                <button class="btn btn-sm btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
+                                                <button class="btn btn-sm btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
+                                            }
+
+                                        }
+                                    </AuthorizeView>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    else if (userInfo.UserId == Comment.UserId && Comment.User is not null)
+                    {
+                        @* <!-- Own message --> *@
+                        <div class="d-flex align-items-start justify-content-end mb-3">
+                            <div class="pe-2 me-1" style="max-width: 348px;">
+                                <div class="bg-primary text-light p-3 mb-1" style="border-top-left-radius: .5rem; border-bottom-right-radius: .5rem; border-bottom-left-radius: .5rem;">@Comment.Content</div>
+                                <div class="d-flex justify-content-end align-items-center fs-sm text-muted">
+                                    <div>
+                                        @Comment.Created.ToString("f")
+                                    </div>
+                                    <div>
+                                        @Comment.User.FullName
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <AuthorizeView>
+                                        @if (ProjectManager is not null)
+                                        {
+
+                                            @if (Comment.UserId == userInfo.UserId || (context.User.IsInRole("Admin") || context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId))
+                                            {
+                                                <button class="btn btn-sm btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
+                                                <button class="btn btn-sm btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
+                                            }
+
+                                        }
+                                    </AuthorizeView>
+                                </div>
+                            </div>
+                            <img src="@Comment.User.ProfilePictureUrl" class="rounded-circle" width="40" alt="Albert Flores">
+                        </div>
+
+                    }
+
+
+                </div>
+            </div>
+            <div class="swiper-scrollbar end-0"></div>
+        </div>
+        @* <div class="border-bottom py-4 mt-2 mb-4">
             <div class="d-flex align-items-center pb-1 mb-3">
                 @if (Comment.User is not null)
                 {
@@ -22,23 +100,18 @@
                         @if (ProjectManager is not null)
                         {
 
-                            @if (Comment.UserId == userInfo.UserId)
+                            @if (Comment.UserId == userInfo.UserId || (context.User.IsInRole("Admin") || context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId))
                             {
                                 <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
                                 <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                             }
-                            else if (context.User.IsInRole("Admin") ||
-                            context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
-                            {
-                                <button class="btn btn-primary" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
-                                <button class="btn btn-danger" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
-                            }
+
                         }
                     </AuthorizeView>
                 </div>
 
             </div>
-        </div>
+        </div> *@
 
     }
     else if (status == Status.Updating)

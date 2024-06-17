@@ -6,74 +6,58 @@
     }
     else
     {
-        backgroundColor = "bg-info-subtle";
+        backgroundColor = "bg-primary-subtle";
     }
 
-
-    <div class="card @backgroundColor mt-3">
-        <div class="card-header">
-            @Ticket.Title
-        </div>
-
-
-        <div class="card-body">
-            <h5 class="card-title">Ticket Description</h5>
-            <p class="card-text">@Ticket.Description</p>
-            <div class="row row-cols-md-2">
-                <div class="col">
-                    <h2>Created</h2>
-                    <h5>@Ticket.Created.ToString("g")</h5>
+    <div class="row mb-5 g-3">
+        <div class="col-12 col-md-8">
+            <div class="card @backgroundColor mt-3 h-100">
+                <div class="card-header">
+                    <h2>@Ticket.Title</h2>
                 </div>
-                <div class="col">
-                    @if (Ticket.Updated.HasValue)
+
+                <div class="card-body">
+                    <h5 class="card-title">Ticket Description</h5>
+                    <p class="card-text">@Ticket.Description</p>
+                    @*             <a href="/projects/edit/@Project.Id" class="btn btn-warning">Edit?</a> *@
+                </div>
+            </div>
+
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card @backgroundColor mt-3">
+                <div class="card-body text-start">
+                    @if (Ticket.Project is not null)
                     {
-                        <h2>Last Updated</h2>
-                        <h5>@Ticket.Updated.Value.ToString("g")</h5>
+                        <h4>Project:</h4>
+                        <h6>@Ticket.Project.Name</h6>
+
+                    }
+                    @if(Ticket.Updated is not null)
+                    {
+                        <h6>Last Updated: @Ticket.Updated.Value.ToString("d")</h6>
                     }
                     else
                     {
-                        <h2>Has not been updated</h2>
+                        <h6>Last Updated: @Ticket.Created.ToString("d")</h6>
+                    }
+                    <h6>Type: @Ticket.Type.GetDisplayName()</h6>
+                    <h6>Type: @Ticket.Priority.GetDisplayName()</h6>
+                    <h6>Type: @Ticket.Status.GetDisplayName()</h6>
+                    <h6>Ticket Submitter: </h6>
+                    <h6><img src="@Ticket.SubmitterUser.ProfilePictureUrl" width="50" class="rounded-circle" /> @Ticket.SubmitterUser.FullName</h6>
+                    @if(Ticket.DeveloperUser is not null)
+                    {
+                        <h6>Ticket Developer: @Ticket.DeveloperUser.FullName</h6>
+                        <h6><img src="@Ticket.DeveloperUser.ProfilePictureUrl" width="50" class="rounded-circle" /> @Ticket.SubmitterUser.FullName</h6>
+
                     }
                 </div>
-                <div class="row row-cols-md-2">
-                    <div class="vstak text-start">
-                        @if (Ticket.Project is not null)
-                        {
-                            <div>
-                                Project: @Ticket.Project.Name
-                            </div>
-
-                        }
-                        @if (Ticket.SubmitterUser is not null)
-                        {
-                            <div>
-                                Submitter: @Ticket.SubmitterUser.FullName
-                            </div>
-
-                        }
-                        @if (Ticket.DeveloperUser is not null)
-                        {
-                            <div>
-                                Developer: @Ticket.DeveloperUser.FullName
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div class="vstack text-start text-md-end">
-                    <div>
-                        Type: @Ticket.Type
-                    </div>
-                    <div>
-                        Priority: @Ticket.Priority
-                    </div>
-                    <div>
-                        Status: @Ticket.Status
-                    </div>
-                </div>
             </div>
-            @*             <a href="/projects/edit/@Project.Id" class="btn btn-warning">Edit?</a> *@
+
         </div>
     </div>
+
 }
 
 

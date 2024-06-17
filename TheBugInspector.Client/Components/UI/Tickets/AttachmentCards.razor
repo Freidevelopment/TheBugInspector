@@ -3,7 +3,44 @@
 {
     @if (status == Status.Viewing)
     {
-        <div class="card">
+        <!-- Item -->
+        <div class="card d-sm-flex flex-sm-row align-items-sm-center justify-content-between border-0 shadow-sm p-3 p-md-4 mb-4">
+            <div class="d-flex align-items-center pe-sm-3">
+                <div>
+                    @{
+                        string? extension = Path.GetExtension(Attachment.FileName)?.Trim('.') ?? "default";
+                    }
+                </div>
+                <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" height="50" width="125" /></a>
+                <div class="ps-3 ps-sm-4">
+                    <h6 class="mb-2">@Attachment.FileName</h6>
+                    <div class="fs-sm">@Attachment.Created.ToString("d")</div>
+                    <div class="fs-sm">Submitted By: @userInfo.FullName</div>
+                    <div>
+                        @if (Attachment.Description is not null)
+                        {
+                            <h6 class="fs-sm mt-1 mb-0">Description: </h6>
+                            <p class="fs-sm">@Attachment.Description</p>
+
+                        }
+                    </div>
+                </div>
+            </div>
+            <AuthorizeView>
+                @if (Attachment.UserId == userInfo.UserId || context.User.IsInRole("Admin") || context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
+                {
+                    <div class="text-end pt-3 pt-sm-0">
+                        <button type="button" class="btn btn-outline-danger px-3 px-xl-4" @onclick="() => status = Status.Deleting">
+                            <i class="bx bx-trash-alt fs-xl me-lg-1 me-xl-2"></i>
+                            <span class="d-none d-lg-inline">Delete</span>
+                        </button>
+                    </div>
+
+                }
+            </AuthorizeView>
+        </div>
+
+        @* <div class="card">
             <div class="card-body">
                 <h5 class="card-title">@Attachment.FileName</h5>
                 @if (Attachment.Description is not null)
@@ -12,30 +49,30 @@
                     <p class="card-text">@Attachment.Description</p>
 
                 }
-                <div>
+                @* <div>
                     @{
                         string? extension = Path.GetExtension(Attachment.FileName)?.Trim('.') ?? "default";
                     }
                 </div>
                 <p class="card-text">@Attachment.Created.ToString("g")</p>
                 <p class="card-text">Submitted By: @userInfo.FullName</p>
-                <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" height="50" width="125"/></a>
+                @* <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" height="50" width="125"/></a>
 
                 <AuthorizeView>
                     @if (Attachment.UserId == userInfo.UserId)
                     {
-                        @* <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button> *@
+                        @* <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
                         <button class="btn btn-danger mt-3" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                     }
                     else if (context.User.IsInRole("Admin") ||
                     context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
                     {
-                        @* <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button> *@
+                        @* <button class="btn btn-primary mt-3" @onclick="() => status = Status.Updating"><i class="bi bi-pencil-fill"></i></button>
                         <button class="btn btn-danger mt-3" @onclick="() => status = Status.Deleting"><i class="bi bi-trash-fill"></i></button>
                     }
                 </AuthorizeView>
             </div>
-        </div>
+        </div> *@
 
     }
     @* else if (status == Status.Updating)
@@ -76,7 +113,49 @@
     } *@
     @if (status == Status.Deleting)
     {
-        <div class="card w-100 h-100">
+        <!-- Item -->
+        <div class="card d-sm-flex flex-sm-row align-items-sm-center justify-content-between border-0 shadow-sm p-3 p-md-4 mb-4">
+            <div class="d-flex align-items-center pe-sm-3">
+                <div>
+                    @{
+                        string? extension = Path.GetExtension(Attachment.FileName)?.Trim('.') ?? "default";
+                    }
+                </div>
+                <a href="@Attachment.UploadUrl" class="card-link"><img src="@($"png/{extension}.png")" height="125" width="125" /></a>
+                <div class="ps-3 ps-sm-4">
+                    <h6 class="mb-2">@Attachment.FileName</h6>
+                    <div class="fs-sm">@Attachment.Created.ToString("d")</div>
+                    <div class="fs-sm">Submitted By: @userInfo.FullName</div>
+                    <div>
+                        @if (Attachment.Description is not null)
+                        {
+                            <h6 class="fs-sm mt-1 mb-0">Description: </h6>
+                            <p class="fs-sm">@Attachment.Description</p>
+
+                        }
+                    </div>
+                </div>
+            </div>
+            <AuthorizeView>
+                @if (Attachment.UserId == userInfo.UserId || context.User.IsInRole("Admin") || context.User.IsInRole("ProjectManager") && userInfo.UserId == ProjectManager.UserId)
+                {
+                    <div class="text-end pt-3 pt-sm-0">
+                        <span class="text-danger">Delete Attachment?</span>
+
+                        <button type="button" class="btn btn-outline-danger px-3 px-xl-4" @onclick="HandleDelete">
+                            <i class="bx bx-trash-alt fs-xl me-lg-1 me-xl-2"></i>
+                            <span class="d-none d-lg-inline">Delete</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-warning px-3 px-xl-4 mt-0 mt-lg-2" @onclick="() => status = Status.Viewing">
+                            <i class="bi bi-x-circle "></i>
+                            <span class="d-none d-lg-inline">Cancel</span>
+                        </button>
+                    </div>
+
+                }
+            </AuthorizeView>
+        </div>
+        @* <div class="card w-100 h-100">
             <div class="card-body">
                 <h5 class="card-title">@Attachment.FileName</h5>
                 <h6 class="card-subtitle mb-2 text-body-secondary">Description of Attachment</h6>
@@ -105,7 +184,7 @@
                     }
                 </AuthorizeView>
             </div>
-        </div>
+        </div> *@
     }
 
 }

@@ -56,11 +56,17 @@
 
             <ProjectDetailsCard Project="project"
                                 ProjectManager="projectManager"
-                                Members="projectMembers" />
+                                Members="projectMembers"
+                                UserInfo="userInfo"
+                                Employees="companyMembers"
+                                OnMemberSubmit="AssignProjectMembers"
+                                OnManagerSubmit="AssignProjectManager"
+                                OnManagerRemoval="RemoveProjectManager"
+                                OnMemberRemoval="RemoveProjectMember"/>
 
         </div>
 
-        <AuthorizeView Context="AdjustProjectMembers">
+       @*  <AuthorizeView Context="AdjustProjectMembers">
             @if (userInfo is not null)
             {
                 @if (AdjustProjectMembers.User.IsInRole("Admin") || projectManager is not null && AdjustProjectMembers.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
@@ -89,7 +95,7 @@
                 </div>
             </div>
 
-        </AuthorizeView>
+        </AuthorizeView> *@
 
         <AuthorizeView Context="TicketCreation">
             @if (userInfo is not null)
@@ -219,6 +225,7 @@
     {
         try
         {
+            ErrorMessage = string.Empty;
             if (userInfo is not null)
             {
                 await ProjectService.UpdateProjectAsync(project, userInfo.CompanyId);
@@ -236,6 +243,7 @@
     {
         try
         {
+            ErrorMessage = string.Empty;
             if (userInfo is not null && project is not null)
             {
                 await TicketService.ArchiveTicketAsync(ticketId, userInfo.CompanyId);
@@ -255,6 +263,7 @@
     {
         try
         {
+            ErrorMessage = string.Empty;
             if (userInfo is not null && project is not null)
             {
                 await TicketService.RestoreTicketAsync(ticketId, userInfo.CompanyId);
@@ -274,6 +283,7 @@
     {
         try
         {
+            ErrorMessage = string.Empty;
             if (userInfo is not null)
             {
                 await ProjectService.AddMemberToProjectAsync(Id, memberId, userInfo.UserId);
@@ -294,6 +304,8 @@
     {
         try
         {
+            ErrorMessage = string.Empty;
+
             if (userInfo is not null)
             {
                 await ProjectService.AssignProjectManagerAsync(Id, memberId, userInfo.UserId);
@@ -313,6 +325,7 @@
     {
         try
         {
+            ErrorMessage = string.Empty;
             if (userInfo is not null)
             {
                 await ProjectService.RemoveProjectManagerAsync(Id, userInfo.UserId);
@@ -334,6 +347,7 @@
     {
         try
         {
+            ErrorMessage = string.Empty;
             if (userInfo is not null)
             {
                 await ProjectService.RemoveMemberFromProjectAsync(Id, memberId, userInfo.UserId);
@@ -353,6 +367,7 @@
     {
         try
         {
+            ErrorMessage = string.Empty;
             if (userInfo is not null)
             {
                 await TicketService.UpdateTicketAsync(ticket, userInfo.CompanyId, userInfo.UserId);

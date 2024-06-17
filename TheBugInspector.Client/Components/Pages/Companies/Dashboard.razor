@@ -25,18 +25,18 @@
                     <!-- Primary background on hover -->
                     <div class="card border-primary bg-faded-primary">
                         <div class="card-body">
-                            <h5 class="card-title">Information: @userInfo.FullName</h5>
+                            <h5 class="card-title text-primary">Information: @userInfo.FullName</h5>
                             <div class="row">
                                 <div class="col-6">
                                     <img src="@userInfo.ProfilePictureUrl" class="rounded-circle" height="50" width="100" />
                                 </div>
                                 <div class="col-6">
-                                    <p class="card-text">Role:@user.Role</p>
+                                    <p class="card-text text-primary">Role:@user.Role</p>
 
-                                    <a class="text-primary" href="/Account/Manage"><u>Manage Account</u></a>
+                                    <a class="btn btn-outline-primary" href="/Account/Manage">Manage Account</a>
                                 </div>
                                 <div class="col-12">
-                                    <p class="card-text">Email: @userInfo.Email</p>
+                                    <p class="card-text text-primary">Email: @userInfo.Email</p>
                                 </div>
                             </div>
                         </div>
@@ -45,39 +45,96 @@
                 <div class="col-12 col-md-2">
                 </div>
 
-                <div class="col-12 col-md-4">
+                @if (context.User.IsInRole("Admin"))
+                {
+                    <div class="col-12 col-md-4">
+                        <!-- Primary card -->
+                        <div class="card border-primary bg-faded-primary mt-3 h-100">
+                            <div class="card-header border-primary "><h4 class="text-primary">All Tickets:</h4></div>
+                            <div class="card-body text-center">
+                                <h1 class="text-primary card-title"> @tickets.Count()</h1>
 
-                    <!-- Primary card -->
-                    <div class="card border-warning bg-faded-warning mt-3">
-                        <div class="card-header border-warning">Active Tickets:</div>
-                        <div class="card-body text-center">
-                            <h1 class="card-title">@tickets.Count()</h1>
-                            @if (context.User.IsInRole("Admin"))
-                            {
-                                <a href="/tickets/active/Index" class=" text-end"><u>All active tickets</u></a>
 
-                            }
-                            else
-                            {
-                                <a href="/tickets/Personal/Index" class=" text-end"><u>My tickets</u></a>
-                            }
+                                <a href="/tickets/active" class="btn btn-outline-primary text-end">All active tickets</a>
+
+
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card border-primary bg-faded-primary mt-3 h-100">
+                            <div class="card-header border-primary "><h4 class="text-primary">Assigned Tickets:</h4></div>
+                            <div class="card-body text-center">
+                                @if (assignedTickets is not null)
+                                {
+                                    <h1 class="text-primary card-title">@assignedTickets.Count()</h1>
+
+
+                                }
+
+                                <a href="/tickets/active" class="btn btn-outline-primary text-end">All active tickets</a>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card border-danger bg-faded-danger mt-3 h-100">
+                            <div class="card-header border-danger "><h4 class="text-danger">Unassigned Tickets:</h4></div>
+                            <div class="card-body text-center">
+                                @if (unassignedTickets is not null)
+                                {
+                                    <h1 class="card-title text-danger">@unassignedTickets.Count()</h1>
+
+
+                                }
+
+                                <a href="/tickets/active" class="btn btn-outline-danger text-end">All active tickets</a>
+
+
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-12 col-md-4">
+                        <!-- Primary card -->
+                        <div class="card border-primary bg-faded-primary mt-3">
+                            <div class="card-header border-primary h4 text-primary">My Tickets: </div>
+                            <div class="card-body text-center">
+                                <h1 class="card-title text-primary">@tickets.Count()</h1>
+
+
+
+                                <a href="/tickets/Personal" class="btn btn-outline-primary text-end">My tickets</a>
+
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+                @if (context.User.IsInRole("Admin"))
+                {
+                    <div class="col-2">
+                    </div>
+                }
+
                 <div class="col-12 col-md-4">
 
-                    <div class="card border-success bg-faded-success mt-3">
-                        <div class="card-header border-success">Active Projects:</div>
+                    <div class="card border-primary bg-faded-primary mt-3">
+                        <div class="card-header border-primary text-primary h4">Active Projects:</div>
                         <div class="card-body text-center">
-                            <h1 class="card-title">@projects.Count()</h1>
+                            <h1 class="card-title text-primary">@projects.Count()</h1>
                             @if (context.User.IsInRole("Admin"))
                             {
-                                <a href="/projects/Index" class="text-end"><u>All Active Projects</u></a>
+                                <a href="/projects" class=" btn btn-outline-primary text-end">All Active Projects</a>
 
                             }
                             else
                             {
-                                <a href="/projects/personal/Index" class="text-end"><u>My Projects</u></a>
+                                <a href="/projects/personal" class="btn btn-outline-primary text-end">My Projects</a>
                             }
 
                         </div>
@@ -87,19 +144,25 @@
 
                     @* get rid of card only need link to company page*@
                     <div class="card border-primary bg-faded-primary mt-3">
-                        <div class="card-header border-primary text-primary">@company.Name: Employees</div>
+                        <div class="card-header border-primary text-primary h4">@company.Name: Employees</div>
                         <div class="card-body text-center">
                             <h1 class="card-title text-primary">@Members.Count()</h1>
-                            <a href="/companies/Index" class=" text-end text-primary mt-3"><u>@company.Name page</u></a>
+                            <a href="/companies" class="btn btn-outline-primary text-primary">@company.Name page</a>
                         </div>
                     </div>
                 </div>
 
+                @if (context.User.IsInRole("Admin"))
+                {
+                    <div class="col-2">
+                    </div>
+                }
+
                 @if (context.User.IsInRole(nameof(Roles.Admin)))
                 {
                     <div class="col-12 col-md-4">
-                        <div class="card border-info bg-faded-info mt-3 h-100">
-                            <div class="card-header border-info text-info">Project Managers</div>
+                        <div class="card border-primary bg-faded-primary mt-3 h-100">
+                            <div class="card-header border-primary text-primary h4">Project Managers</div>
                             <div class="card-body">
                                 <ul>
                                     @foreach (UserDTO PM in Members)
@@ -118,8 +181,8 @@
                     </div>
 
                     <div class="col-12 col-md-4">
-                        <div class="card border-info bg-faded-info mt-3 h-100">
-                            <div class="card-header border-info text-info">Developers</div>
+                        <div class="card border-primary bg-faded-primary mt-3 h-100">
+                            <div class="card-header border-primary text-primary h4">Developers</div>
                             <div class="card-body">
                                 <ul>
                                     @foreach (UserDTO user in Members)
@@ -127,7 +190,7 @@
                                         if (user.Role == nameof(Roles.Developer))
                                         {
                                             <li class="list-item">
-                                                <a class="text-info"><u>@user.FullName</u></a>
+                                                <a class="text-primary"><u>@user.FullName</u></a>
                                             </li>
 
                                         }
@@ -138,8 +201,8 @@
                     </div>
 
                     <div class="col-12 col-md-4">
-                        <div class="card border-info bg-faded-info mt-3 h-100">
-                            <div class="card-header border-info text-info">Submitters</div>
+                        <div class="card border-primary bg-faded-primary mt-3 h-100">
+                            <div class="card-header border-primary text-primary h4">Submitters</div>
                             <div class="card-body">
                                 <ul>
                                     @foreach (UserDTO user in Members)
@@ -147,7 +210,7 @@
                                         if (user.Role == nameof(Roles.Submitter))
                                         {
                                             <li class="list-item">
-                                                <a class="text-info"><u>@user.FullName</u></a>
+                                                <a class="text-primary"><u>@user.FullName</u></a>
                                             </li>
 
                                         }
@@ -159,37 +222,38 @@
                 }
 
                 <div class="col-12 col-md-6">
-                    <div class="card border-info bg-faded-info mt-3">
-                        <div class="card-header border-info text-info">Recent active Tickets</div>
-                        <div class="card-body text-center">
-                            <ul>
+                    <div class="card border-primary bg-faded-primary mt-3">
+                        <div class="card-header border-primary text-primary h4">Recent active Tickets</div>
+                        <div class="card-body">
+                            <div class="list-group">
                                 @foreach (TicketDTO ticket in recentActiveTickets)
                                 {
-                                    <li class="list-item">
-                                        <a class="text-info" href="/tickets/Index/@ticket.Id"><u>@ticket.Title</u></a>
-                                    </li>
+
+                                    <a class="text-primary list-group-item list-group-item-action" href="/tickets/Index/@ticket.Id">@ticket.Title</a>
+
                                 }
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
-                    <div class="card border-warning bg-faded-warning mt-3">
-                        <div class="card-header border-warning">Recent archived Tickets</div>
-                        <div class="card-body text-center">
-                            <ul>
+                    <div class="card border-primary bg-faded-primary mt-3">
+                        <div class="card-header border-primary text-primary h4">Recent archived Tickets</div>
+                        <div class="card-body">
+                            <div class="list-group">
                                 @foreach (TicketDTO ticket in recentArchivedTickets)
                                 {
-                                    <li class="list-item">
-                                        <a href="/tickets/Index/@ticket.Id"><u>@ticket.Title</u></a>
-                                    </li>
+
+                                    <a class="text-primary list-group-item list-group-item-action" href="/tickets/Index/@ticket.Id">@ticket.Title</a>
+
+
                                 }
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-               
+
                 @* <h1 class="text-center">Charts:</h1>
             <div class="col-12">
 
@@ -213,6 +277,8 @@
     private UserInfo? userInfo;
     private UserDTO? user;
     private IEnumerable<TicketDTO> tickets = [];
+    private IEnumerable<TicketDTO> assignedTickets = [];
+    private IEnumerable<TicketDTO> unassignedTickets = [];
     private IEnumerable<TicketDTO> recentActiveTickets = [];
     private IEnumerable<TicketDTO> recentArchivedTickets = [];
     private IEnumerable<ProjectDTO> projects = [];
@@ -236,6 +302,8 @@
                     projects = await ProjectService.GetAllProjectsCountAsync(userInfo.CompanyId);
                     recentActiveTickets = await TicketService.GetMostRecentActiveTicketsAsync(userInfo.CompanyId);
                     recentArchivedTickets = await TicketService.GetMostRecentArchivedTicketsAsync(userInfo.CompanyId);
+                    assignedTickets = tickets.Where(t => t.DeveloperUser != null);
+                    unassignedTickets = tickets.Where(t => t.DeveloperUser == null);
 
                 }
                 else
