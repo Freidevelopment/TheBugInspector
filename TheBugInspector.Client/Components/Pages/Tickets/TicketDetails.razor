@@ -30,29 +30,39 @@ else
     @if (ticket is not null)
     {
         <div class="row">
-            <div class="col-12 col-md-6">
-                <h1>Ticket Details: @ticket.Title</h1>
+            <div class="col-12 col-md-10">
+                <h1 class="mb-0">Details:</h1>
+                <h1>@ticket.Title</h1>
             </div>
-            <div class="col-12 col-md-6 text-end">
+            <div class="col-12 col-md-2 text-end">
                 <AuthorizeView>
                     @if (projectManager is not null && userInfo is not null)
                     {
                         @if (context.User.IsInRole("Admin") ||
                        context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
                         {
-                            <a class="btn btn-warning" href="Tickets/edit/@ticket.Id">Edit?</a>
+                            <a class="btn btn-outline-info" href="Tickets/edit/@ticket.Id">Edit</a>
+                            @if (ticket.IsArchived == false)
+                            {
+                                <button class="btn btn-outline-info mt-2 mb-2" @onclick="(() => HandleArchive(ticket.Id))">Archive</button>
+
+                            }
+                            else
+                            {
+                                <button class="btn btn-outline-info mt-2 mb-2" @onclick="(() => HandleRestore(ticket.Id))">Restore</button>
+                            }
                         }
                         else if (userInfo.UserId == ticket.SubmitterUserId && userInfo.UserId == ticket.DeveloperUserId)
                         {
-                            <a class="btn btn-warning" href="Tickets/edit/@ticket.Id">Edit?</a>
+                            <a class="btn btn-outline-info" href="Tickets/edit/@ticket.Id">Edit</a>
                         }
                         else if (userInfo.UserId == ticket.SubmitterUserId)
                         {
-                            <a class="btn btn-warning" href="Tickets/submitter/edit/@ticket.Id">Edit?</a>
+                            <a class="btn btn-outline-info" href="Tickets/submitter/edit/@ticket.Id">Edit</a>
                         }
                         else if (userInfo.UserId == ticket.DeveloperUserId)
                         {
-                            <a class="btn btn-warning" href="Tickets/developer/edit/@ticket.Id">Edit?</a>
+                            <a class="btn btn-outline-info" href="Tickets/developer/edit/@ticket.Id">Edit</a>
                         }
 
                     }
@@ -71,24 +81,24 @@ else
                    context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
                     {
                         <p class="text-end mt-3">
-                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                                add a comment?
+                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                add a comment
                             </button>
                         </p>
                     }
                     else if (userInfo.UserId == ticket.SubmitterUserId)
                     {
                         <p class="text-end mt-3">
-                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                                add a comment?
+                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                add a comment
                             </button>
                         </p>
                     }
                     else if (userInfo.UserId == ticket.DeveloperUserId)
                     {
                         <p class="text-end mt-3">
-                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                                add a comment?
+                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                add a comment
                             </button>
                         </p>
                     }
@@ -114,8 +124,8 @@ else
                 {
                     <div class="text-end mt-2">
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
-                            Add Attachment?
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
+                            Add Attachment
                         </button>
                     </div>
                 }
@@ -123,8 +133,8 @@ else
                 {
                     <div class="text-end mt-2">
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
-                            Add Attachment?
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
+                            Add Attachment
                         </button>
                     </div>
                 }
@@ -132,8 +142,8 @@ else
                 {
                     <div class="text-end mt-2">
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
-                            Add Attachment?
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#AttachmentModal">
+                            Add Attachment
                         </button>
                     </div>
                 }
@@ -454,6 +464,43 @@ else
         }
     }
 
+    private async Task HandleArchive(int ticketId)
+    {
+        try
+        {
+            if (userInfo is not null)
+            {
+                await TicketService.ArchiveTicketAsync(ticketId, userInfo.CompanyId);
+                ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
+        }
+    }
+
+    private async Task HandleRestore(int ticketId)
+    {
+        try
+        {
+            if (userInfo is not null)
+            {
+                await TicketService.RestoreTicketAsync(ticketId, userInfo.CompanyId);
+                ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
+               
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
+        }
+    }
 
     #endregion
 }

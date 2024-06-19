@@ -3,41 +3,60 @@
 {
     <EditForm Model="Company" OnValidSubmit="HandleSubmit" class="row">
         <DataAnnotationsValidator />
+        <div class="card border-light shadow-lg">
+            <div class="bg-dark position-absolute top-0 start-0 w-100 h-100 rounded-3 d-none d-dark-mode-block"></div>
+            <div class="card-body position-relative zindex-2">
+                @if(string.IsNullOrEmpty(Company.Name))
+                {
+                    <h2 class="card-title pb-3 mb-4">Create Company</h2>
+                }
+                else
+                {
+                    <h2 class="card-title pb-3 mb-4">Edit: @Company.Name</h2>
+                }
+                <div class="row">
+                    <div class="col-lg-4 gap-2">
+                        <div class="mb-2">
+                            <label class="form-label">
+                                Company Name
+                            </label>
+                            <InputText class="form-control" @bind-Value="Company.Name" />
+                            <ValidationMessage For="() => Company.Name" />
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-4 text-center overflow-hidden">
+                                <img src="@Company.ImageUrl" class="img-fluid" id="imagePreview" height="80" />
+                            </div>
+                            @* image *@
+                            <div class="mb-2 mt-5">
+                                <img class="img-fluid" style="max-height: 350px"
+                                     src="@( string.IsNullOrEmpty(Company.ImageUrl) ? ImageHelper.DefaultCompanyImage : Company.ImageUrl)" />
+                                <InputFile OnChange="OnFileChange" class="form-control mt-2" accept=".png,.jpg, .jpeg, .svg" />
+                                <span class="text-danger">@imageError</span>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Description *@
+                    <div class="col-lg-8">
+                        <div class="mb-2">
+                            <label class="form-label">Project Description</label>
+                            <InputTextArea class="form-control" rows="10" @bind-Value="Company.Description" />
+                            <ValidationMessage For="() => Company.Description" />
+                        </div>
+                    </div>
+
+                    <div class="col-12 pt-2 pt-sm-3 text-end">
+                        <button type="submit" class="btn btn-lg btn-outline-primary w-100 w-sm-auto">Save</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
         @* Name *@
-        <div class="col-lg-4 gap-2">
-            <div class="mb-2">
-                <label class="form-label">
-                    Company Name
-                </label>
-                <InputText class="form-control" @bind-Value="Company.Name" />
-                <ValidationMessage For="() => Company.Name" />
-            </div>
-            <div class="mb-3 row">
-                <div class="col-md-4 text-center overflow-hidden">
-                    <img src="@Company.ImageUrl" class="img-fluid" id="imagePreview" height="80" />
-                </div>
-                @* image *@
-                <div class="mb-2">
-                    <img class="img-fluid" style="max-height: 350px"
-                         src="@( string.IsNullOrEmpty(Company.ImageUrl) ? ImageHelper.DefaultContactImage : Company.ImageUrl)" />
-                    <InputFile OnChange="OnFileChange" class="form-control mt-2" accept=".png,.jpg, .jpeg, .svg" />
-                    <span class="text-danger">@imageError</span>
-
-
-                </div>
-            </div>
-        </div>
-
-        @* Description *@
-        <div class="col-lg-8">
-            <div class="mb-2">
-                <label class="form-label">Project Description</label>
-                <InputTextArea class="form-control" rows="10" @bind-Value="Company.Description" />
-                <ValidationMessage For="() => Company.Description" />
-            </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        
     </EditForm>
 }
 

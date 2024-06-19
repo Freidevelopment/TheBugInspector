@@ -1,4 +1,4 @@
-﻿@page "/tickets/Personal"
+﻿@page "/tickets/archived/personal"
 
 @using TheBugInspector.Client.Components.UI.Projects
 @using TheBugInspector.Client.Components.UI.Tickets
@@ -19,22 +19,16 @@
 
 <div class="container-xxl background-primary">
 
-    @if (userInfo is not null)
+    @if(userInfo is not null)
     {
-
-    }
-
-    @if (activeTickets is not null)
-    {
-        <div class="row g-3">
-            <div class="col-12 col-md-6">
-                <h1>My Tickets</h1>
-            </div>
-            <div class="col-12 col-md-6 text-end">
-                <a class="btn btn-outline-primary" href="/tickets/create">Create Ticket</a>
-            </div>
+        
+    
+    <AuthorizeView Context="ProjectManagerView">
+        <div class="col-12">
+            <h1>My Archived Tickets</h1>
 
         </div>
+
         <div class="card bg-faded-primary p-3">
 
             <div class="table-responsive">
@@ -51,7 +45,7 @@
                     </thead>
                     <tbody>
 
-                        @foreach (TicketDTO ticket in activeTickets)
+                        @foreach (TicketDTO ticket in archivedTickets)
                         {
 
                             <TicketTable Ticket="ticket"
@@ -67,10 +61,14 @@
             </div>
         </div>
 
+
+    </AuthorizeView>
+
+
     }
     else
     {
-        <span class="text-danger">@ErrorMessage</span>
+    <span class="text-danger">@ErrorMessage</span>
     }
 </div>
 
@@ -158,4 +156,3 @@
     }
     #endregion
 }
-

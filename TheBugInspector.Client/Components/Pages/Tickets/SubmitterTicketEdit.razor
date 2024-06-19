@@ -23,9 +23,8 @@
     @if (ticket is not null)
     {
 
-        <h3>Ticket: @ticket.Title</h3>
         <span class="text-danger">@ErrorMessage</span>
-        <div class="card-shadow">
+        <div class="card bg-faded-primary">
             <div class="card-body">
                 <TicketSubmitterForm Ticket="ticket"
                                      OnSubmit="HandleSubmit"

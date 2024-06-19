@@ -23,13 +23,13 @@
         <div class="col-12 col-md-10">
             @if (project is not null)
             {
-                <h3>Details: @project.Name</h3>
-
+                <h1 class="mb-0">Details:</h1>
+                <h1> @project.Name</h1>
             }
             else
             {
 
-                <h3>Project Details</h3>
+                <h1>Project Details</h1>
             }
         </div>
         <div class="col-12 col-md-2 text-end">
@@ -38,8 +38,16 @@
                 {
                     @if (ProjectDetailsAuthor.User.IsInRole("Admin") || ProjectDetailsAuthor.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
                     {
-                        <a href="/projects/edit/@Id" class="btn btn-warning">Edit?</a>
+                        <a href="/projects/edit/@Id" class="btn btn-outline-info">Edit</a>
+                        @if (project.IsArchived == false)
+                        {
+                            <button class="btn btn-outline-info mt-2 mb-2" @onclick="(() => ProjectArchive(project.Id))">Archive</button>
 
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-info mt-2 mb-2" @onclick="(() => ProjectRestore(project.Id))">Restore</button>
+                        }
                     }
 
                 }
@@ -62,40 +70,40 @@
                                 OnMemberSubmit="AssignProjectMembers"
                                 OnManagerSubmit="AssignProjectManager"
                                 OnManagerRemoval="RemoveProjectManager"
-                                OnMemberRemoval="RemoveProjectMember"/>
+                                OnMemberRemoval="RemoveProjectMember" />
 
         </div>
 
-       @*  <AuthorizeView Context="AdjustProjectMembers">
-            @if (userInfo is not null)
-            {
-                @if (AdjustProjectMembers.User.IsInRole("Admin") || projectManager is not null && AdjustProjectMembers.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
-                {
-                    <div class="text-end mt-3">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#MemberAssignmentmodal" aria-expanded="false" aria-controls="collapseExample">
-                            Adjust members on Project
-                        </button>
+        @*  <AuthorizeView Context="AdjustProjectMembers">
+    @if (userInfo is not null)
+    {
+    @if (AdjustProjectMembers.User.IsInRole("Admin") || projectManager is not null && AdjustProjectMembers.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+    {
+    <div class="text-end mt-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#MemberAssignmentmodal" aria-expanded="false" aria-controls="collapseExample">
+    Adjust members on Project
+    </button>
 
-                    </div>
+    </div>
 
-                }
+    }
 
-            }
+    }
 
-            <div class="collapse" id="MemberAssignmentmodal">
-                <div class="card card-body mt-3">
-                    <ProjectMemberManagementModal ProjectManager="projectManager"
-                                                  userInfo="userInfo"
-                                                  Employees="companyMembers"
-                                                  Members="projectMembers"
-                                                  OnSubmit="AssignProjectMembers"
-                                                  OnManagerSubmit="AssignProjectManager"
-                                                  OnManagerRemoval="RemoveProjectManager"
-                                                  OnMemberRemoval="RemoveProjectMember" />
-                </div>
-            </div>
+    <div class="collapse" id="MemberAssignmentmodal">
+    <div class="card card-body mt-3">
+    <ProjectMemberManagementModal ProjectManager="projectManager"
+    userInfo="userInfo"
+    Employees="companyMembers"
+    Members="projectMembers"
+    OnSubmit="AssignProjectMembers"
+    OnManagerSubmit="AssignProjectManager"
+    OnManagerRemoval="RemoveProjectManager"
+    OnMemberRemoval="RemoveProjectMember" />
+    </div>
+    </div>
 
-        </AuthorizeView> *@
+    </AuthorizeView> *@
 
         <AuthorizeView Context="TicketCreation">
             @if (userInfo is not null)
@@ -103,7 +111,7 @@
                 @if (project.CompanyMembers.Any(c => c.UserId == userInfo.UserId) || TicketCreation.User.IsInRole("Admin"))
                 {
                     <div class="text-end mt-3">
-                        <a class="btn btn-primay bg-info" href="/tickets/create/@project.Id">Create Ticket</a>
+                        <a class="btn btn-outline-primary" href="/tickets/create/@project.Id">Create Ticket</a>
                     </div>
 
                 }
@@ -121,7 +129,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Ticket Name</th>
-                            <th scope="col">Ticket last Updated</th>
+                            <th scope="col">Last Updated</th>
                             <th scope="col">Ticket Type</th>
                             <th scope="col">Ticket Priority</th>
                             <th scope="col">Ticket Status</th>
@@ -371,6 +379,43 @@
             if (userInfo is not null)
             {
                 await TicketService.UpdateTicketAsync(ticket, userInfo.CompanyId, userInfo.UserId);
+
+                project = await ProjectService.GetProjectByIdAsync(Id, userInfo.CompanyId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+
+        }
+    }
+
+    private async Task ProjectArchive(int projectId)
+    {
+        try
+        {
+            if (userInfo is not null)
+            {
+                await ProjectService.ArchiveProjectAsync(projectId, userInfo.CompanyId);
+
+                project = await ProjectService.GetProjectByIdAsync(Id, userInfo.CompanyId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            ErrorMessage = "Something went wrong, servers may be down or having issues. Please return at another time.";
+        }
+    }
+
+    private async Task ProjectRestore(int projectId)
+    {
+        try
+        {
+            if (userInfo is not null)
+            {
+                await ProjectService.RestoreProjectAsync(projectId, userInfo.CompanyId);
 
                 project = await ProjectService.GetProjectByIdAsync(Id, userInfo.CompanyId);
             }

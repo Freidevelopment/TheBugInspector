@@ -25,19 +25,42 @@
 
 
             </div>
-
-            @foreach (TicketDTO ticket in archivedTickets)
-            {
-                <div class="col-12 col-md-6">
-                    <TicketTable Ticket="ticket"
-                                 UserInfo="userInfo"
-                                 OnArchive="HandleArchive"
-                                 OnRestore="HandleRestore" />
-
-                </div>
-            }
-
         </div>
+            <div class="card bg-faded-primary p-3">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered border-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Last Updated</th>
+                                <th scope="col">Project</th>
+                                <th scope="col">Priority</th>
+                                <th scope="col">Submitted By:</th>
+                                <th scope="col">Developer Assigned:</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (TicketDTO ticket in archivedTickets)
+                            {
+
+                                <TicketTable Ticket="ticket"
+                                             UserInfo="userInfo"
+                                             OnArchive="HandleArchive"
+                                             OnRestore="HandleRestore" />
+
+
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        
 
     }
     else

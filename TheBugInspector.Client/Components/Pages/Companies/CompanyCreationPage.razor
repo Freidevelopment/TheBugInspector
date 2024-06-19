@@ -1,4 +1,4 @@
-﻿@page "/Company/Edit/{id:int}"
+﻿@page "/Company/create"
 @using TheBugInspector.Client.Components.UI.Companies
 @using TheBugInspector.Client.Helpers
 
@@ -6,10 +6,9 @@
 @inject NavigationManager Nav
 
 @rendermode InteractiveAuto
-@attribute [Authorize(Roles = $"{nameof(Roles.Admin)}")]
 
 
-<PageTitle>BugInspector | Edit Company</PageTitle>
+<PageTitle>BugInspector | create Company</PageTitle>
 
 <div class="container-xxl">
 
@@ -19,7 +18,9 @@
     {
         <div class="card bg-faded-primary">
             <div class="card-body">
-                <CompanyForm Company="company" OnSubmit="EditCompany" IsNew="false"></CompanyForm>
+                <CompanyForm Company="new CompanyDTO()"
+                             OnSubmit="EditCompany"
+                             IsNew="false"></CompanyForm>
             </div>
 
         </div>
@@ -82,3 +83,4 @@
     }
     #endregion
 }
+

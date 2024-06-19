@@ -94,11 +94,25 @@
                         }
                         else
                         {
-                            <li class="nav-item me-auto ">
-                                <NavLink class="nav-link" href="/tickets/Personal">
-                                    My Tickets
+                            <li class="nav-item dropdown me-auto">
+                                <NavLink class="nav-link dropdown-toggle" href="author" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    Tickets
                                 </NavLink>
+                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                    <li>
+                                        <a class="dropdown-item" href="/tickets/personal">
+                                            My Tickets
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/tickets/archived/personal">
+                                            My Archived Tickets
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
+                            
                         }
                         <ul class="navbar-nav me-auto mb-2 mb-md-0">
                             <li class="nav-item dropdown">

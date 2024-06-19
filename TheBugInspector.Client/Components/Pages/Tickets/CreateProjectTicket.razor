@@ -22,9 +22,8 @@
         @if (userInfo is not null && project is not null && project.CompanyMembers.Any(c => c.UserId == userInfo.UserId) || context.User.IsInRole("Admin"))
         {
 
-            <h3>New Ticket</h3>
             <span class="text-danger">@ErrorMessage</span>
-            <div class="card-shadow">
+            <div class="card bg-faded-primary">
                 <div class="card-body">
                     <ProjectTicketForm Ticket="Ticket"
                                        Project="project"

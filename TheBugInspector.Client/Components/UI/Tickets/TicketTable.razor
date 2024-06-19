@@ -2,7 +2,7 @@
 
 @if (Ticket is not null)
 {
-    <!-- Item -->
+    @* <!-- Item -->
     <div class="card d-sm-flex flex-sm-row align-items-sm-center card-hover justify-content-between bg-faded-info border-info shadow-sm p-3 p-md-4 mb-4 h-100">
         <div class="d-flex align-items-center pe-sm-3">
             <div class="ps-3 ps-sm-4">
@@ -39,19 +39,19 @@
             </div>
             </div>
         </div>
-    </div>
+    </div> *@
 
-    @* <tr>
-        <th scope="row"><a class="nav-link text-primary" href="/tickets/Index/@Ticket.Id"><u>@Ticket.Title</u></a></th>
-        <td>@Ticket.Created.ToString("g")</td>
+    <tr>
+        <th scope="row"><a class="nav-link text-primary" href="/tickets/Index/@Ticket.Id">@Ticket.Title</a></th>
+        
         @if (Ticket.Updated is not null)
         {
-            <td>@Ticket.Updated.Value.ToString("D")</td>
+            <td>@Ticket.Updated.Value.ToString("d")</td>
 
         }
         else
         {
-            <td>This Ticket has not been updated</td>
+            <td>@Ticket.Created.ToString("d")</td>
         }
         @if (project is not null)
         {
@@ -59,13 +59,23 @@
 
         }
         <td>@Ticket.Priority.GetDisplayName()</td>
-        <td>@Ticket.Status.GetDisplayName()</td>
+
         @if (Ticket.SubmitterUser is not null)
         {
             <td>@Ticket.SubmitterUser.FullName</td>
 
         }
-        <td>@Ticket.Comments.Count()</td>
+        @if (Ticket.DeveloperUserId is not null && Ticket.DeveloperUser is not null)
+        {
+            <td>@Ticket.DeveloperUser.FullName</td>
+
+        }
+        else
+        {
+            <td>No Developer Assigned</td>
+
+        }
+        @*<td>@Ticket.Comments.Count()</td>
         <AuthorizeView>
             @if (project is not null && UserInfo is not null)
             {
@@ -84,8 +94,8 @@
 
                 }
             }
-        </AuthorizeView>
-    </tr> *@
+    </AuthorizeView> *@
+    </tr> 
 
 }
 

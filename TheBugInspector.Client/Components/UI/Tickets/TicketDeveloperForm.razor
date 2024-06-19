@@ -6,105 +6,120 @@
 
     <EditForm Model="Ticket" OnValidSubmit="HandleSubmit" class="row">
         <DataAnnotationsValidator />
+
         @* Name *@
-        <div class="col-lg-4 gap-2">
-            <div class="mb-2">
-                <label class="form-label">
-                    @Ticket.Title
-                </label>
-            </div>
-            @* Project *@
-            @if (IsNew == true)
-            {
-                <div class="mb-2">
-                    <label for="priority" class="form-label">
-                        Project
-                    </label>
-                    <InputSelect @bind-Value="Ticket.ProjectId" class="form-select">
-                        <option value="">Select a Project</option>
-                        @foreach (ProjectDTO project in projects)
-                        {
-                            <option value="@project.Id">
-                                @project.Name
-                            </option>
-                        }
-                    </InputSelect>
-                    <ValidationMessage For="() => Ticket.Priority" />
-                </div>
-            }
-            @if (Ticket.Project is not null)
-            {
-                <div class="mb-2">
-                    <label for="priority" class="form-label">
+        <div class="card border-light shadow-lg">
+            <div class="bg-dark position-absolute top-0 start-0 w-100 h-100 rounded-3 d-none d-dark-mode-block"></div>
+            <div class="card-body position-relative zindex-2">
 
-                        @Ticket.Project.Name
-                    </label>
-                </div>
-            }
-            @* Type *@
-            <div class="mb-2">
-                <label for="priority" class="form-label">
-                    Ticket Type
-                </label>
-                <InputSelect @bind-Value="Ticket.Type" class="form-select">
-                    <option value="">Select a Ticket Type</option>
-                    @foreach (TicketType type in Enum.GetValues<TicketType>())
+                @if (string.IsNullOrEmpty(Ticket.Title))
+                {
+                    <h2 class="card-title pb-3 mb-4">Create Ticket</h2>
+
+                }
+                else
+                {
+                    <h2 class="card-title pb-3 mb-4">Edit: @Ticket.Title</h2>
+                }
+                <div class="row">
+
+
+                    <div class="col-12 col-lg-3 gap-2">
+                        <div class="mb-2">
+                            <label class="form-label">
+                                Ticket Name
+                            </label>
+                            <InputText class="form-control" @bind-Value="Ticket.Title" />
+                            <ValidationMessage For="() => Ticket.Title" />
+                        </div>
+                    </div>
+                    @* Ticket *@
+                    @if (Ticket.Project is not null)
                     {
-                        <option value="@type">
-                            @type.ToString()
-                        </option>
+                        <div class="col-12 col-lg-3">
+                            <div class="mb-2 mt-1">
+                                <label for="priority" class="form-label">
+                                    For Project: @Ticket.Project.Name
+                                </label>
+                            </div>
+                        </div>
                     }
-                </InputSelect>
-                <ValidationMessage For="() => Ticket.Priority" />
-            </div>
-            @* Priority *@
-            <div class="mb-2">
-                <label for="priority" class="form-label">
-                    Ticket Priority
-                </label>
-                <InputSelect @bind-Value="Ticket.Priority" class="form-select">
-                    <option value="">Select a ticket Priority</option>
-                    @foreach (TicketPriority priority in Enum.GetValues<TicketPriority>())
+                    @* Type *@
+                    <div class="col-12 col-lg-3">
+
+                        <div class="mb-2">
+                            <label for="priority" class="form-label">
+                                Ticket Type
+                            </label>
+                            <InputSelect @bind-Value="Ticket.Type" class="form-select">
+                                <option value="">Select a Ticket Type</option>
+                                @foreach (TicketType type in Enum.GetValues<TicketType>())
+                                {
+                                    <option value="@type">
+                                        @type.GetDisplayName()
+                                    </option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => Ticket.Type" />
+                        </div>
+                    </div>
+                    @* Priority *@
+                    <div class="col-12 col-lg-3">
+
+                        <div class="mb-2">
+                            <label for="priority" class="form-label">
+                                Ticket Priority
+                            </label>
+                            <InputSelect @bind-Value="Ticket.Priority" class="form-select">
+                                <option value="">Select a Ticket Priority</option>
+                                @foreach (TicketPriority priority in Enum.GetValues<TicketPriority>())
+                                {
+                                    <option value="@priority">
+                                        @priority.GetDisplayName()
+                                    </option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => Ticket.Priority" />
+                        </div>
+                    </div>
+                    @if (IsNew == false)
                     {
-                        <option value="@priority">
-                            @priority.ToString()
-                        </option>
+                        <div class="col-12 col-lg-3">
+                            @* Status *@
+                            <div class="mb-2">
+                                <label for="priority" class="form-label">
+                                    Ticket Status
+                                </label>
+                                <InputSelect @bind-Value="Ticket.Status" class="form-select">
+                                    <option value="">Select a Ticket Status</option>
+                                    @foreach (TicketStatus status in Enum.GetValues<TicketStatus>())
+                                    {
+                                        <option value="@status">
+                                            @status.GetDisplayName()
+                                        </option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="() => Ticket.Status" />
+                            </div>
+                        </div>
                     }
-                </InputSelect>
-                <ValidationMessage For="() => Ticket.Priority" />
-            </div>
-            @if (IsNew == false)
-            {
-                @* Status *@
-                <div class="mb-2">
-                    <label for="priority" class="form-label">
-                        Ticket Status
-                    </label>
-                    <InputSelect @bind-Value="Ticket.Status" class="form-select">
-                        <option value="">Select a Ticket Status</option>
-                        @foreach (TicketStatus status in Enum.GetValues<TicketStatus>())
-                        {
-                            <option value="@status">
-                                @status.ToString()
-                            </option>
-                        }
-                    </InputSelect>
-                    <ValidationMessage For="() => Ticket.Status" />
-                </div>
-            }
-        </div>
 
-        @* Description *@
-        <div class="col-lg-8">
-            <div class="mb-2">
-                <label class="form-label">Ticket Description</label>
-                <div class="mt-2">
-                    @Ticket.Description
+
+                    @* Description *@
+                    <div class="col-12">
+                        <div class="mb-2">
+                            <label class="form-label">Ticket Description</label>
+                            <div class="mt-2">
+                                @Ticket.Description
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 pt-2 pt-sm-3 text-end">
+                        <button type="submit" class="btn btn-lg btn-outline-primary w-100 w-sm-auto">Save</button>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Save</button>
 
         <ValidationSummary />
     </EditForm>

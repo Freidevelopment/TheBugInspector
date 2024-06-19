@@ -41,6 +41,14 @@
                     {
                         <h6>Last Updated: @Ticket.Created.ToString("d")</h6>
                     }
+                    @if (Ticket.IsArchived == true)
+                    {
+                        <h6>Archived: Archived</h6>
+                    }
+                    else
+                    {
+                        <h6>Archived: Not Archived</h6>
+                    }
                     <h6>Type: @Ticket.Type.GetDisplayName()</h6>
                     <h6>Type: @Ticket.Priority.GetDisplayName()</h6>
                     <h6>Type: @Ticket.Status.GetDisplayName()</h6>
@@ -48,9 +56,14 @@
                     <h6><img src="@Ticket.SubmitterUser.ProfilePictureUrl" width="50" class="rounded-circle" /> @Ticket.SubmitterUser.FullName</h6>
                     @if(Ticket.DeveloperUser is not null)
                     {
-                        <h6>Ticket Developer: @Ticket.DeveloperUser.FullName</h6>
-                        <h6><img src="@Ticket.DeveloperUser.ProfilePictureUrl" width="50" class="rounded-circle" /> @Ticket.SubmitterUser.FullName</h6>
+                        <h6>Ticket Developer:</h6>
+                        <h6><img src="@Ticket.DeveloperUser.ProfilePictureUrl" width="50" class="rounded-circle" /> @Ticket.DeveloperUser.FullName</h6>
 
+                    }
+                    else
+                    {
+                        <h6>Ticket Developer:</h6>
+                        <h6>None Assigned</h6>
                     }
                 </div>
             </div>

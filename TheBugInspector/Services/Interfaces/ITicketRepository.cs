@@ -1,4 +1,5 @@
-﻿using TheBugInspector.Data;
+﻿using TheBugInspector.Client.Models;
+using TheBugInspector.Data;
 using TheBugInspector.Models;
 
 namespace TheBugInspector.Services.Interfaces
@@ -12,6 +13,10 @@ namespace TheBugInspector.Services.Interfaces
         #region Retrieve
         Task<IEnumerable<Ticket>> GetAllTicketsAsync(int companyId);
         Task<IEnumerable<Ticket>> GetAllArchivedTicketsAsync(int companyId);
+        //Task<PagedList<Ticket>> GetPagedActiveTicketsAsync(int companyId, int page, int pageSize);
+        //Task<PagedList<Ticket>> GetPagedArchivedTicketsAsync(int companyId, int page, int pageSize);
+        //Task<PagedList<Ticket>> GetPagedUserTicketsAsync(int companyId, string userId, int page, int pageSize);
+        //Task<PagedList<Ticket>> GetPagedArchivedUserTicketsAsync(int companyId, string userId, int page, int pageSize);
         Task<IEnumerable<Ticket>> GetMostRecentActiveTicketsAsync(int companyId);
         Task<IEnumerable<Ticket>> GetMostRecentArchivedTicketsAsync(int companyId);
         Task<IEnumerable<Ticket>> GetUserTicketsAsync(int companyId, string userId);

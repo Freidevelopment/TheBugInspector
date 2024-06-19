@@ -11,7 +11,7 @@
         }
         else
         {
-            <td>@Ticket.Created.ToString("g")</td>
+            <td>@Ticket.Created.ToString("d")</td>
         }
         <td>@Ticket.Type.GetDisplayName()</td>
         <td>@Ticket.Priority.GetDisplayName()</td>
@@ -48,50 +48,52 @@
 
                     @if (AssignDeveloper == false)
                     {
-                        <td><button class="btn btn-warning" @onclick="() => AssignDeveloper = true">Assign Developer</button></td>
+                        <td><button class="btn btn-outline-info" @onclick="() => AssignDeveloper = true">Assign Developer</button></td>
 
                     }
                     else if (AssignDeveloper == true)
                     {
                         @* Work on this button to look better on the app*@
+                        <td>
 
-                        <label for="DeveloperAssignment" class="form-label">
-                            Available Developers
-                        </label>
 
-                        <InputSelect @bind-Value="Ticket.DeveloperUserId" class="form-select">
-                            <option value="">Assign Developer to Ticket</option>
-                            @if (Members is not null)
-                            {
-                                @foreach (UserDTO? user in Members)
+                            <label for="DeveloperAssignment" class="form-label">
+                                Available Developers
+                            </label>
+
+                            <InputSelect @bind-Value="Ticket.DeveloperUserId" class="form-select">
+                                <option value="">Assign Developer to Ticket</option>
+                                @if (Members is not null)
                                 {
-                                    if (user.UserId != Ticket.DeveloperUserId)
+                                    @foreach (UserDTO? user in Members)
                                     {
-
-
-                                        if (user.Role == Roles.Developer.ToString())
+                                        if (user.UserId != Ticket.DeveloperUserId)
                                         {
-                                            <option value="@user.UserId">
-                                                @user.FullName: @user.Role
-                                            </option>
 
 
+                                            if (user.Role == Roles.Developer.ToString())
+                                            {
+                                                <option value="@user.UserId">
+                                                    @user.FullName: @user.Role
+                                                </option>
+
+
+                                            }
                                         }
+
                                     }
 
                                 }
-
-                            }
-                        </InputSelect>
+                            </InputSelect>
 
 
-                        <button class="btn btn-info mt-3" @onclick="AssignMember">Assign Developer</button>
+                            <button class="btn btn-outline-info mt-3" @onclick="AssignMember">Assign Developer</button>
 
-                        <div class="text-end">
-                            <button class="btn btn-danger btn-sm text-end mt-3" @onclick="() => AssignDeveloper = false"><i class='bx bxs-x-square'></i></button>
+                            <div class="text-end">
+                                <button class="btn btn-outline-danger text-end mt-3" @onclick="() => AssignDeveloper = false"><i class='bx bxs-x-square'></i></button>
 
-                        </div>
-
+                            </div>
+                        </td>
                     }
                 }
             }

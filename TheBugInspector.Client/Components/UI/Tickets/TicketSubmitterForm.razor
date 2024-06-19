@@ -7,73 +7,92 @@
     <EditForm Model="Ticket" OnValidSubmit="HandleSubmit" class="row">
         <DataAnnotationsValidator />
         @* Name *@
-        <div class="col-lg-4 gap-2">
-            <div class="mb-2">
-                <label class="form-label">
-                    Ticket Name
-                </label>
-                <InputText class="form-control" @bind-Value="Ticket.Title" />
-                <ValidationMessage For="() => Ticket.Title" />
-            </div>
-            @* Project *@
-            @if (IsNew == true)
-            {
-                <div class="mb-2">
-                    <label for="priority" class="form-label">
-                        Project
-                    </label>
-                    <InputSelect @bind-Value="Ticket.ProjectId" class="form-select">
-                        <option value="">Select a Project</option>
-                        @foreach (ProjectDTO project in projects)
-                        {
-                            <option value="@project.Id">
-                                @project.Name
-                            </option>
-                        }
-                    </InputSelect>
-                    <ValidationMessage For="() => Ticket.Priority" />
-                </div>
-            }
-            @if (Ticket.Project is not null)
-            {
-                <div class="mb-2">
-                    <label for="priority" class="form-label">
-                        Project: @Ticket.Project.Name
-                    </label>
-                </div>
+        <div class="card border-light shadow-lg">
+            <div class="bg-dark position-absolute top-0 start-0 w-100 h-100 rounded-3 d-none d-dark-mode-block"></div>
+            <div class="card-body position-relative zindex-2">
 
-            }
-            @* Type *@
-            <div class="mb-2">
-                <label for="priority" class="form-label">
-                    Type: @Ticket.Type
-                </label>
-            </div>
-            @* Priority *@
-            <div class="mb-2">
-                <label for="priority" class="form-label">
-                    Priority: @Ticket.Priority
-                </label>
-            </div>
+                @if (string.IsNullOrEmpty(Ticket.Title))
+                {
+                    <h2 class="card-title pb-3 mb-4">Create Ticket</h2>
 
-            @* Status *@
-            <div class="mb-2">
-                <label for="priority" class="form-label">
-                    Status: @Ticket.Status
-                </label>
+                }
+                else
+                {
+                    <h2 class="card-title pb-3 mb-4">Edit: @Ticket.Title</h2>
+                }
+                <div class="row">
+
+
+                    <div class="col-12 col-lg-3 gap-2">
+                        <div class="mb-2">
+                            <label class="form-label">
+                                Ticket Name
+                            </label>
+                            <InputText class="form-control" @bind-Value="Ticket.Title" />
+                            <ValidationMessage For="() => Ticket.Title" />
+                        </div>
+                    </div>
+                    @* Ticket *@
+                    @if (Ticket.Project is not null)
+                    {
+                        <div class="col-12 col-lg-3">
+                            <div class="mb-2 mt-1">
+                                <label for="priority" class="form-label">
+                                    For Project: @Ticket.Project.Name
+                                </label>
+                            </div>
+                        </div>
+                    }
+                    @* Type *@
+                    <div class="col-12 col-lg-3">
+
+
+                        <div class="mb-2 mt-1">
+                            <label for="priority" class="form-label">
+                                Type: @Ticket.Type.GetDisplayName()
+                            </label>
+                        </div>
+
+                    </div>
+                    @* Priority *@
+                    <div class="col-12 col-lg-3">
+
+
+                        <div class="mb-2 mt-1">
+                            <label for="priority" class="form-label">
+                                Priority: @Ticket.Priority.GetDisplayName()
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="col-12 col-lg-3">
+
+                        <div class="mb-2 mt-1">
+                            <label for="priority" class="form-label">
+                                Status: @Ticket.Status.GetDisplayName()
+                            </label>
+                        </div>
+
+                    </div>
+
+
+
+                    @* Description *@
+                    <div class="col-12">
+                        <div class="mb-2">
+                            <label class="form-label">Ticket Description</label>
+                            <InputTextArea class="form-control" rows="10" @bind-Value="Ticket.Description" />
+                            <ValidationMessage For="() => Ticket.Description" />
+                        </div>
+                    </div>
+                    <div class="col-12 pt-2 pt-sm-3 text-end">
+                        <button type="submit" class="btn btn-lg btn-primary w-100 w-sm-auto">Save</button>
+                    </div>
+                    <ValidationSummary />
+                </div>
             </div>
         </div>
-
-        @* Description *@
-        <div class="col-lg-8">
-            <div class="mb-2">
-                <label class="form-label">Ticket Description</label>
-                <InputTextArea class="form-control" rows="10" @bind-Value="Ticket.Description" />
-                <ValidationMessage For="() => Ticket.Description" />
-            </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Save</button>
 
         <ValidationSummary />
     </EditForm>

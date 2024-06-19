@@ -2,19 +2,27 @@
 
 @if (Project is not null && Members is not null)
 {
+    @if (Project.IsArchived == true)
+    {
+        backgroundColor = "bg-success-subtle";
+    }
+    else
+    {
+        backgroundColor = "bg-primary-subtle";
+    }
 
     <div class="col-12">
 
-        <div class="card h-100 p-lg-5">
+        <div class="card bg-faded-primary h-100 p-lg-5">
             <div class="card-body p-lg-2">
                 @if (ProjectManager is not null)
                 {
-                    <h4>Project Manager: @ProjectManager.FullName</h4>
+                    <h4 class="card-title">Project Manager: @ProjectManager.FullName</h4>
 
                 }
                 else
                 {
-                    <h4>Project Manager: None Assigned</h4>
+                    <h4 class="card-title">Project Manager: None Assigned</h4>
                 }
 
                 <h6>Description</h6>
@@ -24,6 +32,9 @@
     </div>
     <div class="col-12">
         <div class="card bg-faded-primary mt-3 p-3">
+            @*             <div class="card border-light shadow-lg">
+        <div class="bg-dark position-absolute top-0 start-0 w-100 h-100 rounded-3 d-none d-dark-mode-block"></div>
+        <div class="card-body position-relative zindex-2"> *@
 
             <div class="accordion mt-3" id="faq">
 
@@ -31,11 +42,29 @@
                 <!-- Item -->
                 <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
                     <h3 class="accordion-header">
-                        <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-3" aria-expanded="false" aria-controls="q-3">Project Priority: @Project.Priority.GetDisplayName()</button>
+                        <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-3" aria-expanded="false" aria-controls="q-3">Important Information</button>
                     </h3>
                     <div class="accordion-collapse collapse" id="q-3" data-bs-parent="#faq">
                         <div class="accordion-body fs-sm pt-0">
-                            <h3>@Project.Priority.GetDisplayName()</h3>
+                            <h3>Priority: @Project.Priority.GetDisplayName()</h3>
+                            @if (Project.IsArchived == true)
+                            {
+                                <h5>Archived: Project is Archived</h5>
+
+                            }
+                            else
+                            {
+                                <h5>Archived: Project is not Archived</h5>
+                            }
+                            @if (activeTickets is not null && activeTickets.Count() > 0)
+                            {
+                                <h5>Active Tickets: @activeTickets.Count()</h5>
+                                @if (archivedTickets is not null && archivedTickets.Count() > 0)
+                                {
+                                    <h5>Archived Tickets: @archivedTickets.Count()</h5>
+
+                                }
+                            }
                         </div>
                     </div>
                 </div>
@@ -251,6 +280,8 @@
                 </AuthorizeView>
 
             </div>
+            @*                 </div> This one
+        </div> This one *@
         </div>
 
     </div>
@@ -294,9 +325,20 @@
     public string? MemberAssignment;
     public string? ManagerAssignment;
     public string? MemberRemoval;
+    private IEnumerable<TicketDTO>? activeTickets = [];
+    private IEnumerable<TicketDTO>? archivedTickets = [];
     #endregion
 
     #region Methods
+    protected override void OnParametersSet()
+    {
+        if (Project.Tickets is not null)
+        {
+            activeTickets = Project.Tickets.Where(t => t.IsArchived == false);
+            archivedTickets = Project.Tickets.Where(t => t.IsArchived == true);
+
+        }
+    }
     private async Task AssignMember()
     {
         try

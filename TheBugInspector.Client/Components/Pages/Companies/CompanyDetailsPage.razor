@@ -14,7 +14,48 @@
 
     <div class="container">
         <!-- About -->
-        <section class="container my-5 py-lg-5 py-md-4 py-3">
+
+            <!-- Project item -->
+            <div class="row gy-4 mb-xl-3">
+                <div class="col-md-6 rellax" data-rellax-percentage="0.5" data-rellax-speed="0.5" data-disable-parallax-down="md">
+                    <div class="bg-secondary rounded-3">
+                        <img src="@company.ImageUrl" class="rounded" alt="Project image">
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-5 col-md-6 col-sm-8 offset-lg-1 d-flex rellax" data-rellax-percentage="0.5" data-rellax-speed="-0.5" data-disable-parallax-down="md">
+
+                    <div class="align-self-center ps-lg-0 ps-md-4">
+                        <h4 class="mb-lg-4 mb-3 fs-base fw-normal text-body">@company.Name</h4>
+                        <h3 class="h2 mb-lg-4 mb-3">Description</h3>
+                        <p class="mb-lg-4 mb-3">@company.Description</p>
+                        <div class="row g-5">
+                        <div class="col-6">
+                            <a href="/projects" class="btn btn-outline-primary">Active Projects</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="/archived/projects" class="btn btn-outline-primary">Archived Projects</a>
+                        </div>
+                        <AuthorizeView Context="AdminCompanyControl">
+                            @if (AdminCompanyControl.User.IsInRole("Admin") && company.Id == userInfo.CompanyId)
+                            {
+                                
+                                <div class="col-12 text-center">
+                                    <a href="/Company/Edit/@company.Id" class="btn btn-outline-primary">
+                                        Edit Company Page
+                                    </a>
+
+                                </div>
+                            }
+                        </AuthorizeView>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+        @* <div class="card bg-faded-primary">
+
+
             <div class="row gy-4 py-xl-3">
                 <div class="col-md-6">
                     <img src="@company.ImageUrl" alt="Image" class="rounded-3">
@@ -49,7 +90,9 @@
 
                 </div>
             </div>
-        </section>
+        </div> *@
+
+
 
         <section class="container py-5 my-md-3 my-lg-5">
             <h2 class="h1 text-center pt-1 pb-3 mb-3 mb-lg-4">Our Employees</h2>

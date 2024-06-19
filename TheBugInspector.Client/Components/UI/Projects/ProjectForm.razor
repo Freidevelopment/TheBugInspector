@@ -1,61 +1,66 @@
 ﻿@if (Project is not null)
 {
+
     <EditForm Model="Project" OnValidSubmit="HandleSubmit" class="row">
         <DataAnnotationsValidator />
-        @* Name *@
-        <div class="col-lg-4 gap-2">
-            <div class="mb-2">
-                <label class="form-label">
-                    Project Name
-                </label>
-                <InputText class="form-control" @bind-Value="Project.Name" />
-                <ValidationMessage For="() => Project.Name" />
-            </div>
-            @* StartDate *@
-            <div class="mb-2">
-                <label class="form-label" for="StartDate">
-                    Project Start Date
-                </label>
-                <InputDate id="StartDate" @bind-Value="Project.StartDate" class="form-control" />
-                <ValidationMessage For="() => Project.StartDate" />
-            </div>
-            @* EndDate *@
-            <div class="mb-2">
-                <label class="form-label" for="EndDate">
-                    Project End Date
-                </label>
-                <InputDate id="EndDate" @bind-Value="Project.EndDate" class="form-control" />
-                <ValidationMessage For="() => Project.EndDate" />
-            </div>
-            @* Priority *@
-            <div class="mb-2">
-                <label for="priority" class="form-label">
-                    Project Priority
-                </label>
-                <InputSelect @bind-Value="Project.Priority" class="form-select">
-                    <option value="">Select a project Priority</option>
-                    @foreach (ProjectPriority priority in Enum.GetValues<ProjectPriority>())
+@*         <div class="col-xl-6 col-lg-7 offset-xl-2"> *@
+            <div class="card border-light shadow-lg py-3 p-sm-4 p-md-5">
+                <div class="bg-dark position-absolute top-0 start-0 w-100 h-100 rounded-3 d-none d-dark-mode-block"></div>
+                <div class="card-body position-relative zindex-2">
+                    @if (string.IsNullOrEmpty(Project.Name))
                     {
-                        <option value="@priority">
-                            @priority.ToString()
-                        </option>
+                        <h2 class="card-title pb-3 mb-4">Create Project</h2>
+
                     }
-                </InputSelect>
-                <ValidationMessage For="() => Project.Priority" />
-            </div>
-        </div>
+                    else
+                    {
+                        <h2 class="card-title pb-3 mb-4">Edit: @Project.Name</h2>
+                    }
+                    <form class="row g-4 needs-validation" novalidate>
+                        <div class="col-12">
+                            <label for="fn" class="form-label fs-base">Project Name</label>
+                            <InputText @bind-Value="Project.Name" class="form-control form-control-lg" id="fn" />
+                            <ValidationMessage For="() => Project.Name" />
+                        </div>
 
-        @* Description *@
-        <div class="col-lg-8">
-            <div class="mb-2">
-                <label class="form-label">Project Description</label>
-                <InputTextArea class="form-control" rows="10" @bind-Value="Project.Description" />
-                <ValidationMessage For="() => Project.Description" />
+                        <div class="col-12">
+                            <label for="specialist" class="form-label fs-base">Priority</label>
+                            <InputSelect @bind-Value="Project.Priority" class="form-select form-select-lg" id="specialist" required>
+                                <option value="" selected disabled>Choose a Priority</option>
+                                @foreach (ProjectPriority priority in Enum.GetValues<ProjectPriority>())
+                                {
+                                    <option value="@priority">
+                                        @priority.GetDisplayName()
+                                    </option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => Project.Priority" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="date" class="form-label fs-base">Start Date</label>
+                            <InputDate @bind-Value="Project.StartDate" class="form-control form-control-lg"  />
+                            <ValidationMessage For="() => Project.StartDate" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="time" class="form-label fs-base">End Date</label>
+                            <InputDate @bind-Value="Project.EndDate" class="form-control form-control-lg" />
+                            <ValidationMessage For="() => Project.EndDate" />
+                        </div>
+                        <div class="col-12">
+                            <label for="description" class="form-label fs-base">Description</label>
+                            <InputTextArea @bind-Value="Project.Description" rows="8" class="form-control form-control-lg" id="email" />
+                            <ValidationMessage For="() => Project.Description" />
+                        </div>
+                        <div class="col-12 pt-2 pt-sm-3 text-end">
+                            <button type="submit" class="btn btn-lg btn-outline-primary w-100 w-sm-auto">Save</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+@*         </div> *@
 
-        <button type="submit" class="btn btn-primary mt-3">Save</button>
     </EditForm>
+
 }
 
 
