@@ -9,6 +9,7 @@
 @rendermode InteractiveAuto
 
 @inject ITicketDTOService TicketService
+@inject IProjectDTOService ProjectService
 @attribute [Authorize]
 
 <PageTitle>BugInspector | Active Tickets</PageTitle>
@@ -23,7 +24,7 @@
 
         <div class="row row-cols-2 g-3">
             <div class="col">
-                <h1>Active Tickets</h1>
+                <h1>All Tickets</h1>
 
             </div>
             <!-- Needs to be moved over to project details page-->
@@ -36,6 +37,56 @@
                 }
             </AuthorizeView>
         </div>
+        @*  foreach (ProjectDTO project in projects)
+    {
+
+
+
+
+
+    <h3 class="mt-5">Project: @project.Name</h3>
+
+    if (project.Tickets.Count() > 0)
+    {
+    <div class="card bg-faded-primary p-3">
+
+    <div class="table-responsive">
+    <table class="table table-hover table-bordered border-primary">
+    <thead>
+    <tr>
+    <th scope="col">Title</th>
+    <th scope="col">Last Updated</th>
+    <th scope="col">Archived</th>
+    <th scope="col">Priority</th>
+    <th scope="col">Submitted By:</th>
+    <th scope="col">Developer Assigned:</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    @foreach (TicketDTO ticket in project.Tickets)
+    {
+
+    <TicketTable TicketId="ticket.Id"
+    UserInfo="userInfo"
+    OnArchive="HandleArchive"
+    OnRestore="HandleRestore" />
+
+
+    }
+
+    </tbody>
+    </table>
+    </div>
+    </div>
+    }
+    else
+    {
+    <h6 class="mb-3">There are no tickets assigned to this project</h6>
+    }
+
+    } *@
+
         <div class="card bg-faded-primary p-3">
 
             <div class="table-responsive">
@@ -86,6 +137,7 @@
     #region State
     private IEnumerable<TicketDTO> activeTickets = [];
     private IEnumerable<TicketDTO> archivedTickets = [];
+    private IEnumerable<ProjectDTO> projects = [];
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
     #endregion
@@ -100,6 +152,7 @@
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
+                projects = await ProjectService.GetAllProjectsCountAsync(userInfo.CompanyId);
                 activeTickets = await TicketService.GetAllTicketsAsync(userInfo.CompanyId);
                 archivedTickets = await TicketService.GetAllArchivedTicketsAsync(userInfo.CompanyId);
             }

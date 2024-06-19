@@ -9,6 +9,7 @@
 @rendermode InteractiveAuto
 
 @inject ITicketDTOService TicketService
+@inject IProjectDTOService ProjectService
 @attribute [Authorize]
 
 <PageTitle>BugInspector | Archived Tickets</PageTitle>
@@ -26,7 +27,8 @@
 
             </div>
         </div>
-            <div class="card bg-faded-primary p-3">
+
+        <div class="card bg-faded-primary p-3">
 
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered border-primary">
@@ -78,6 +80,7 @@
     #region State
     private IEnumerable<TicketDTO> activeTickets = [];
     private IEnumerable<TicketDTO> archivedTickets = [];
+    private IEnumerable<ProjectDTO> projects = [];
     private string? ErrorMessage = string.Empty;
     private UserInfo? userInfo;
     #endregion
@@ -92,6 +95,7 @@
             userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
             if (userInfo is not null)
             {
+                projects = await ProjectService.GetAllProjectsCountAsync(userInfo.CompanyId);
                 activeTickets = await TicketService.GetAllTicketsAsync(userInfo.CompanyId);
                 archivedTickets = await TicketService.GetAllArchivedTicketsAsync(userInfo.CompanyId);
             }

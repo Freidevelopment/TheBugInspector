@@ -13,7 +13,6 @@
         {
             <td>@Ticket.Created.ToString("d")</td>
         }
-        <td>@Ticket.Type.GetDisplayName()</td>
         <td>@Ticket.Priority.GetDisplayName()</td>
         <td>@Ticket.Status.GetDisplayName()</td>
         @if (Ticket.SubmitterUser is not null)

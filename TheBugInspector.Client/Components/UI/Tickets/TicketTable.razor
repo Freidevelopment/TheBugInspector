@@ -1,5 +1,5 @@
 ﻿@inject IProjectDTOService ProjectService
-
+@inject ITicketDTOService TicketService
 @if (Ticket is not null)
 {
     @* <!-- Item -->
@@ -53,11 +53,19 @@
         {
             <td>@Ticket.Created.ToString("d")</td>
         }
-        @if (project is not null)
+        @if(project is not null)
         {
             <td>@project.Name</td>
+        }
+        @*         @if (Ticket.IsArchived == true)
+        {
+            <td>Archived</td>
 
         }
+        else
+        {
+            <td>In Progress</td>
+        } *@
         <td>@Ticket.Priority.GetDisplayName()</td>
 
         @if (Ticket.SubmitterUser is not null)
@@ -118,13 +126,15 @@
     #region State
     private string? backgroundColor = string.Empty;
     private ProjectDTO? project;
+    // private TicketDTO? Ticket;
     #endregion
 
     #region Methods
     protected override async Task OnParametersSetAsync()
     {
-        if (Ticket is not null && UserInfo is not null)
+        if (UserInfo is not null)
         {
+            // Ticket = await TicketService.GetTicketByIdAsync(TicketId, UserInfo.CompanyId);
             project = await ProjectService.GetProjectByIdAsync(Ticket.ProjectId, UserInfo.CompanyId);
 
         }

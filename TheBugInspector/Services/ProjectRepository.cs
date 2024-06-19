@@ -24,14 +24,14 @@ namespace TheBugInspector.Services
 
             bool isAdmin = await userManager.IsInRoleAsync(manager, nameof(Roles.Admin));
 
-            if(isAdmin == false)
+            if (isAdmin == false)
             {
                 ApplicationUser? projectManager = await GetProjectManagerAsync(projectId, manager.CompanyId);
 
                 if ((projectManager?.Id != managerId)) return;
             }
 
-            ApplicationUser? userToAdd = await context.Users.FirstOrDefaultAsync(u =>  u.Id == userId && u.CompanyId == manager.CompanyId);
+            ApplicationUser? userToAdd = await context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == manager.CompanyId);
             if (userToAdd is null) return;
 
             bool userIsProjectManager = await userManager.IsInRoleAsync(userToAdd, nameof(Roles.ProjectManager));
@@ -46,7 +46,7 @@ namespace TheBugInspector.Services
 
             if (project is null) return;
 
-            if(project.CompanyMembers.Any(m => m.Id == userToAdd.Id) ==  false)
+            if (project.CompanyMembers.Any(m => m.Id == userToAdd.Id) == false)
             {
                 project.CompanyMembers.Add(userToAdd);
                 await context.SaveChangesAsync();
@@ -101,11 +101,18 @@ namespace TheBugInspector.Services
 
             if (shouldEdit)
             {
-                Project? project = await context.Projects.FirstOrDefaultAsync(p => p.CompanyId == companyId && p.Id == projectId);
+                Project? project = await context.Projects.Include(p => p.Tickets)
+                                .FirstOrDefaultAsync(p => p.CompanyId == companyId && p.Id == projectId);
 
                 if (project is not null)
                 {
                     project.IsArchived = true;
+                    project.Tickets.Where(p => p.ProjectId == project.Id);
+                    foreach (Ticket ticket in project.Tickets)
+                    {
+                        ticket.IsArchived = true;
+                        ticket.IsArchivedByProject = true;
+                    }
                     context.Projects.Update(project);
                     await context.SaveChangesAsync();
                 }
@@ -124,11 +131,11 @@ namespace TheBugInspector.Services
             bool isAdmin = admin is not null && await userManager.IsInRoleAsync(admin, nameof(Roles.Admin));
             bool isPM = admin is not null && await userManager.IsInRoleAsync(admin, nameof(Roles.ProjectManager));
 
-            if(isAdmin == true || (isPM == true && userId == adminId))
+            if (isAdmin == true || (isPM == true && userId == adminId))
             {
-                ApplicationUser? projectManager = userId == adminId ? admin : await userManager.FindByIdAsync(userId);
+                ApplicationUser? projectManager = await context.Users.FindAsync(userId);
 
-                if(projectManager is not null
+                if (projectManager is not null
                    && projectManager.CompanyId == admin!.CompanyId
                    && await userManager.IsInRoleAsync(projectManager, nameof(Roles.ProjectManager)))
                 {
@@ -138,10 +145,13 @@ namespace TheBugInspector.Services
                                                               .Include(p => p.CompanyMembers)
                                                               .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == admin.CompanyId);
 
-                    if (project is not null) 
+                    if (project is not null)
                     {
+
                         project.CompanyMembers.Add(projectManager);
                         await context.SaveChangesAsync();
+
+
                     }
                 }
             }
@@ -172,7 +182,7 @@ namespace TheBugInspector.Services
                                                          .OrderByDescending(p => p.Created)
                                                          .ToPagedListAsync(page, pageSize);
 
-            
+
 
             return projects;
         }
@@ -210,7 +220,7 @@ namespace TheBugInspector.Services
             using IServiceScope scope = serviceProvider.CreateScope();
             UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            foreach(ApplicationUser member in projectMembers)
+            foreach (ApplicationUser member in projectMembers)
             {
                 bool isProjectManager = await userManager.IsInRoleAsync(member, nameof(Roles.ProjectManager));
 
@@ -246,7 +256,7 @@ namespace TheBugInspector.Services
 
             if (projectManager is null) return;
 
-            if(await userManager.IsInRoleAsync(admin, nameof(Roles.Admin)))
+            if (await userManager.IsInRoleAsync(admin, nameof(Roles.Admin)))
             {
                 await RemoveMemberFromProjectAsync(projectId, projectManager.Id, adminId);
             }
@@ -283,11 +293,17 @@ namespace TheBugInspector.Services
 
             if (shouldEdit)
             {
-                Project? project = await context.Projects.FirstOrDefaultAsync(p => p.CompanyId == companyId && p.Id == projectId);
+                Project? project = await context.Projects.Include(p => p.Tickets)
+                                                         .FirstOrDefaultAsync(p => p.CompanyId == companyId && p.Id == projectId);
 
                 if (project is not null)
                 {
                     project.IsArchived = false;
+                    project.Tickets.Where(p => p.ProjectId == project.Id);
+                    foreach(Ticket ticket in project.Tickets)
+                    {
+                        ticket.IsArchivedByProject = false;
+                    }
                     context.Projects.Update(project);
                     await context.SaveChangesAsync();
                 }

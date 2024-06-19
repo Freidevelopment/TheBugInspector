@@ -4,16 +4,16 @@
 {
     @if (Project.IsArchived == true)
     {
-        backgroundColor = "bg-success-subtle";
+        backgroundColor = "bg-faded-success";
     }
     else
     {
-        backgroundColor = "bg-primary-subtle";
+        backgroundColor = "bg-faded-primary";
     }
 
     <div class="col-12">
 
-        <div class="card bg-faded-primary h-100 p-lg-5">
+        <div class="card @backgroundColor h-100 p-lg-5">
             <div class="card-body p-lg-2">
                 @if (ProjectManager is not null)
                 {
@@ -31,7 +31,7 @@
         </div>
     </div>
     <div class="col-12">
-        <div class="card bg-faded-primary mt-3 p-3">
+        <div class="card @backgroundColor mt-3 p-3">
             @*             <div class="card border-light shadow-lg">
         <div class="bg-dark position-absolute top-0 start-0 w-100 h-100 rounded-3 d-none d-dark-mode-block"></div>
         <div class="card-body position-relative zindex-2"> *@

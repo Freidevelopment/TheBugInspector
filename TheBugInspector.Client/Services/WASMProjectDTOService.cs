@@ -10,7 +10,7 @@ namespace TheBugInspector.Client.Services
 
         public WASMProjectDTOService(HttpClient httpClient)
         {
-            _httpClient = httpClient;  
+            _httpClient = httpClient;
         }
 
         public async Task AddMemberToProjectAsync(int projectId, string userId, string managerId)
@@ -36,8 +36,17 @@ namespace TheBugInspector.Client.Services
 
         public async Task AssignProjectManagerAsync(int projectId, string userId, string adminId)
         {
-            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/projects/{projectId}/manager/add", userId);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/projects/{projectId}/manager/add", userId);
+                response.EnsureSuccessStatusCode();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+
+            }
         }
 
         public async Task<PagedList<ProjectDTO>> GetAllProjectsAsync(int companyId, int page, int pageSize)
