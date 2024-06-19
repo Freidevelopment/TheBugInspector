@@ -110,7 +110,7 @@ namespace TheBugInspector.Services
                     project.Tickets.Where(p => p.ProjectId == project.Id);
                     foreach (Ticket ticket in project.Tickets)
                     {
-                        ticket.IsArchived = true;
+                        
                         ticket.IsArchivedByProject = true;
                     }
                     context.Projects.Update(project);

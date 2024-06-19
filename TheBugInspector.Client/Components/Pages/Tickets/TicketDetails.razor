@@ -36,35 +36,39 @@ else
             </div>
             <div class="col-12 col-md-2 text-end">
                 <AuthorizeView>
-                    @if (projectManager is not null && userInfo is not null)
+                    @if (ticket.IsArchivedByProject == false)
                     {
-                        @if (context.User.IsInRole("Admin") ||
-                       context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                        @if (projectManager is not null && userInfo is not null)
                         {
-                            <a class="btn btn-outline-info" href="Tickets/edit/@ticket.Id">Edit</a>
-                            @if (ticket.IsArchived == false)
+                            @if (context.User.IsInRole("Admin") ||
+                           context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
                             {
-                                <button class="btn btn-outline-info mt-2 mb-2" @onclick="(() => HandleArchive(ticket.Id))">Archive</button>
+                                <a class="btn btn-outline-info" href="Tickets/edit/@ticket.Id">Edit</a>
 
+                                @if (ticket.IsArchived == false)
+                                {
+                                    <button class="btn btn-outline-info mt-2 mb-2" @onclick="(() => HandleArchive(ticket.Id))">Archive</button>
+
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-info mt-2 mb-2" @onclick="(() => HandleRestore(ticket.Id))">Restore</button>
+                                }
                             }
-                            else
+                            else if (userInfo.UserId == ticket.SubmitterUserId && userInfo.UserId == ticket.DeveloperUserId)
                             {
-                                <button class="btn btn-outline-info mt-2 mb-2" @onclick="(() => HandleRestore(ticket.Id))">Restore</button>
+                                <a class="btn btn-outline-info" href="Tickets/edit/@ticket.Id">Edit</a>
                             }
-                        }
-                        else if (userInfo.UserId == ticket.SubmitterUserId && userInfo.UserId == ticket.DeveloperUserId)
-                        {
-                            <a class="btn btn-outline-info" href="Tickets/edit/@ticket.Id">Edit</a>
-                        }
-                        else if (userInfo.UserId == ticket.SubmitterUserId)
-                        {
-                            <a class="btn btn-outline-info" href="Tickets/submitter/edit/@ticket.Id">Edit</a>
-                        }
-                        else if (userInfo.UserId == ticket.DeveloperUserId)
-                        {
-                            <a class="btn btn-outline-info" href="Tickets/developer/edit/@ticket.Id">Edit</a>
-                        }
+                            else if (userInfo.UserId == ticket.SubmitterUserId)
+                            {
+                                <a class="btn btn-outline-info" href="Tickets/submitter/edit/@ticket.Id">Edit</a>
+                            }
+                            else if (userInfo.UserId == ticket.DeveloperUserId)
+                            {
+                                <a class="btn btn-outline-info" href="Tickets/developer/edit/@ticket.Id">Edit</a>
+                            }
 
+                        }
                     }
                 </AuthorizeView>
             </div>
@@ -73,37 +77,42 @@ else
         <TicketDetailsCard Ticket="ticket" />
 
         <AuthorizeView>
-            @if (userInfo is not null)
+            @if (ticket.IsArchivedByProject == false)
             {
-                <div class="text-end mt-3">
 
-                    @if (context.User.IsInRole("Admin") ||
-                   context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
-                    {
-                        <p class="text-end mt-3">
-                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                                add a comment
-                            </button>
-                        </p>
-                    }
-                    else if (userInfo.UserId == ticket.SubmitterUserId)
-                    {
-                        <p class="text-end mt-3">
-                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                                add a comment
-                            </button>
-                        </p>
-                    }
-                    else if (userInfo.UserId == ticket.DeveloperUserId)
-                    {
-                        <p class="text-end mt-3">
-                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
-                                add a comment
-                            </button>
-                        </p>
-                    }
-                </div>
 
+                @if (userInfo is not null)
+                {
+                    <div class="text-end mt-3">
+
+                        @if (context.User.IsInRole("Admin") ||
+                       context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
+                        {
+                            <p class="text-end mt-3">
+                                <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                    add a comment
+                                </button>
+                            </p>
+                        }
+                        else if (userInfo.UserId == ticket.SubmitterUserId)
+                        {
+                            <p class="text-end mt-3">
+                                <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                    add a comment
+                                </button>
+                            </p>
+                        }
+                        else if (userInfo.UserId == ticket.DeveloperUserId)
+                        {
+                            <p class="text-end mt-3">
+                                <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CommentCreation" aria-expanded="false" aria-controls="TicketCreation">
+                                    add a comment
+                                </button>
+                            </p>
+                        }
+                    </div>
+
+                }
             }
         </AuthorizeView>
 
@@ -117,7 +126,7 @@ else
         </div>
 
         <AuthorizeView>
-            @if (projectManager is not null && userInfo is not null)
+            @if (projectManager is not null && userInfo is not null && ticket.IsArchivedByProject == false)
             {
                 @if (context.User.IsInRole("Admin") ||
                context.User.IsInRole("ProjectManager") && userInfo.UserId == projectManager.UserId)
@@ -491,7 +500,7 @@ else
             {
                 await TicketService.RestoreTicketAsync(ticketId, userInfo.CompanyId);
                 ticket = await TicketService.GetTicketByIdAsync(Id, userInfo.CompanyId);
-               
+
             }
         }
         catch (Exception ex)

@@ -132,7 +132,7 @@ namespace TheBugInspector.Services
 
 
             IEnumerable<Ticket> tickets = await context.Tickets
-                                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false)
+                                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false && t.IsArchivedByProject == false)
                                                                .Include(t => t.Project)
                                                                     .ThenInclude(t => t!.CompanyMembers)
                                                                .Include(t => t.Attachments)
@@ -316,7 +316,7 @@ namespace TheBugInspector.Services
 
 
             IEnumerable<Ticket> tickets = await context.Tickets
-                                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true && t.IsArchivedByProject == true)
+                                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true || t.Project!.CompanyId == companyId && t.IsArchivedByProject == true)
                                                                .Include(t => t.Project)
                                                                     .ThenInclude(t => t!.CompanyMembers)
                                                                .Include(t => t.Attachments)
@@ -347,7 +347,7 @@ namespace TheBugInspector.Services
                 //ApplicationUser? projectManager = userId == userId ? user : await userManager.FindByIdAsync(userId);
 
                 tickets = await context.Tickets
-                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true && t.IsArchivedByProject == true && t.Project.CompanyMembers.Any(c => c.Id == userId) || t.SubmitterUserId == userId)
+                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true || t.Project!.CompanyId == companyId && t.IsArchivedByProject == true && t.Project.CompanyMembers.Any(c => c.Id == userId) || t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
@@ -363,7 +363,7 @@ namespace TheBugInspector.Services
             if (isDeveloper == true)
             {
                 tickets = await context.Tickets
-                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true && t.IsArchivedByProject == true && t.DeveloperUserId == userId || t.SubmitterUserId == userId)
+                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true || t.Project!.CompanyId == companyId && t.IsArchivedByProject == true && t.DeveloperUserId == userId || t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
@@ -379,7 +379,7 @@ namespace TheBugInspector.Services
             if (isSubmitter)
             {
                 tickets = await context.Tickets
-                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true && t.IsArchivedByProject == true && t.SubmitterUserId == userId)
+                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true || t.Project!.CompanyId == companyId && t.IsArchivedByProject == true && t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
@@ -430,7 +430,7 @@ namespace TheBugInspector.Services
 
 
             IEnumerable<Ticket> tickets = await context.Tickets
-                                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true )
+                                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == true || t.Project!.CompanyId == companyId && t.IsArchivedByProject == true)
                                                                .Include(t => t.Project)
                                                                     .ThenInclude(t => t!.CompanyMembers)
                                                                .Include(t => t.Attachments)
@@ -462,7 +462,7 @@ namespace TheBugInspector.Services
                 //ApplicationUser? projectManager = userId == userId ? user : await userManager.FindByIdAsync(userId);
 
                 tickets = await context.Tickets
-                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false && t.Project.CompanyMembers.Any(c => c.Id == userId) || t.SubmitterUserId == userId)
+                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false && t.IsArchivedByProject == false && t.Project.CompanyMembers.Any(c => c.Id == userId) || t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
@@ -479,7 +479,7 @@ namespace TheBugInspector.Services
             if (isDeveloper == true)
             {
                 tickets = await context.Tickets
-                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false && t.DeveloperUserId == userId || t.SubmitterUserId == userId)
+                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false && t.IsArchivedByProject == false && t.DeveloperUserId == userId || t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
@@ -496,7 +496,7 @@ namespace TheBugInspector.Services
             if (isSubmitter)
             {
                 tickets = await context.Tickets
-                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false && t.SubmitterUserId == userId)
+                                               .Where(t => t.Project!.CompanyId == companyId && t.IsArchived == false && t.IsArchivedByProject == false && t.SubmitterUserId == userId)
                                                .Include(t => t.Project)
                                                .Include(t => t.Attachments)
                                                .Include(t => t.Comments)
