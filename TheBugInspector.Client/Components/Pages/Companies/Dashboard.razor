@@ -31,7 +31,14 @@
                                     <img src="@userInfo.ProfilePictureUrl" class="rounded-circle" height="50" width="100" />
                                 </div>
                                 <div class="col-6">
-                                    <p class="card-text text-primary">Role:@user.Role</p>
+                                    @foreach (Roles role in Enum.GetValues<Roles>())
+                                    {
+                                        if (role.ToString() == user.Role)
+                                        {
+                                            <p class="card-text text-primary">Role:@role.GetDisplayName()</p>
+
+                                        }
+                                    }
 
                                     <a class="btn btn-outline-primary" href="/Account/Manage">Manage Account</a>
                                 </div>
