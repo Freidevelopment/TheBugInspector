@@ -50,8 +50,8 @@
                         <h6>Archived: Not Archived</h6>
                     }
                     <h6>Type: @Ticket.Type.GetDisplayName()</h6>
-                    <h6>Type: @Ticket.Priority.GetDisplayName()</h6>
-                    <h6>Type: @Ticket.Status.GetDisplayName()</h6>
+                    <h6>Priority: @Ticket.Priority.GetDisplayName()</h6>
+                    <h6>Status: @Ticket.Status.GetDisplayName()</h6>
                     <h6>Ticket Submitter: </h6>
                     <h6><img src="@Ticket.SubmitterUser.ProfilePictureUrl" width="50" class="rounded-circle" /> @Ticket.SubmitterUser.FullName</h6>
                     @if(Ticket.DeveloperUser is not null)
