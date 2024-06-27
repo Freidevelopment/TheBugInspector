@@ -27,7 +27,7 @@ namespace TheBugInspector.Data
         public static string? GetConnectionString(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_PRIVATE_URL");
             return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
         }
 
@@ -56,7 +56,7 @@ namespace TheBugInspector.Data
         {
             //Service: An instance of RoleManager
             await using var dbContextSvc = svcProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>().CreateDbContext();
-            //Service: An instance of RoleManager
+            //Service: An
             var roleManagerSvc = svcProvider.GetRequiredService<RoleManager<IdentityRole>>();
             //Service: An instance of the UserManager
             var userManagerSvc = svcProvider.GetRequiredService<UserManager<ApplicationUser>>();
