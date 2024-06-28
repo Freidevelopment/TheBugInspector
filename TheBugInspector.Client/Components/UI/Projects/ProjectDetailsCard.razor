@@ -279,16 +279,19 @@
                                                 <button class="btn btn-primary mt-2 text-end" @onclick="AssignManager">Assign Manager</button>
                                             </div>
                                         </div>
+                                        @if (ProjectManager is not null)
+                                        {
 
-                                        <div class="col-6 text-end">
+                                            <div class="col-6 text-end">
 
-                                            @if (ProjectManager is not null)
-                                            {
-                                                <button class="btn btn-danger mt-4" @onclick="RemoveManager">Remove Manager </button>
+                                                @if (!string.IsNullOrEmpty(ProjectManager.UserId))
+                                                {
+                                                    <button class="btn btn-danger mt-4" @onclick="RemoveManager">Remove Manager </button>
 
-                                            }
+                                                }
 
-                                        </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
