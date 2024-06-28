@@ -240,17 +240,34 @@
                                                         {
                                                             if (user is not null)
                                                             {
-
-                                                                if (user.Role == Roles.ProjectManager.ToString() && ProjectManager.UserId != user.UserId)
+                                                                if (ProjectManager is null)
                                                                 {
+                                                                    if (user.Role == Roles.ProjectManager.ToString())
+                                                                    {
 
-                                                                    <option value="@user.UserId">
-                                                                        @user.FullName: @Roles.ProjectManager.GetDisplayName()
-                                                                    </option>
+                                                                        <option value="@user.UserId">
+                                                                            @user.FullName: @Roles.ProjectManager.GetDisplayName()
+                                                                        </option>
 
 
+
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (user.Role == Roles.ProjectManager.ToString() && ProjectManager.UserId != user.UserId)
+                                                                    {
+
+                                                                        <option value="@user.UserId">
+                                                                            @user.FullName: @Roles.ProjectManager.GetDisplayName()
+                                                                        </option>
+
+
+
+                                                                    }
 
                                                                 }
+
 
                                                             }
                                                         }
