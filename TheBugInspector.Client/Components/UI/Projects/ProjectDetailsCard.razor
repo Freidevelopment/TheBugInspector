@@ -164,7 +164,7 @@
                                                 </InputSelect>
                                             </div>
                                             <div class="text-end">
-                                                <button class="btn btn-primary mt-2 text-end" @onclick="AssignMember">Assign Members</button>
+                                                <button class="btn btn-primary mt-3 btn-sm text-end" @onclick="AssignMember">Assign Members</button>
                                             </div>
                                         </div>
 
@@ -200,7 +200,7 @@
                                                         }
                                                     </InputSelect>
                                                     <div class="text-end">
-                                                        <button class="btn btn-danger mt-3" @onclick="RemoveMember">Remove Member</button>
+                                                        <button class="btn btn-danger btn-sm mt-3" @onclick="RemoveMember">Remove Member</button>
 
                                                     </div>
                                                 }
@@ -230,7 +230,7 @@
                                             <div class="text-end">
 
                                                 <label for="ManagerAssignment" class="form-label">
-                                                    Project Manager
+                                                    Project Managers Available
                                                 </label>
                                                 <InputSelect @bind-Value="ManagerAssignment" class="form-select">
                                                     <option value="">Assign Project Manager</option>
@@ -276,7 +276,7 @@
                                                 </InputSelect>
                                             </div>
                                             <div class="text-end">
-                                                <button class="btn btn-primary mt-2 text-end" @onclick="AssignManager">Assign Manager</button>
+                                                <button class="btn btn-primary mt-3 btn-sm text-end" @onclick="AssignManager">Assign Manager</button>
                                             </div>
                                         </div>
                                         @if (ProjectManager is not null)
@@ -286,7 +286,13 @@
 
                                                 @if (!string.IsNullOrEmpty(ProjectManager.UserId))
                                                 {
-                                                    <button class="btn btn-danger mt-4" @onclick="RemoveManager">Remove Manager </button>
+                                                    <div>
+                                                        <strong>Project Manager:</strong> 
+                                                    </div>
+                                                    <div class="mt-3">
+                                                        <strong>@ProjectManager.FullName</strong>
+                                                    </div>
+                                                    <button class="btn btn-danger mt-4 btn-sm text-end" @onclick="RemoveManager">Remove Manager </button>
 
                                                 }
 
